@@ -3,6 +3,7 @@ import 'package:productos_app/providers/providers.dart';
 import 'package:productos_app/screens/screens.dart';
 import 'package:productos_app/services/auth_service.dart';
 import 'package:productos_app/ui/input_decorations.dart';
+import 'package:productos_app/ui/notifications.dart';
 import 'package:productos_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -133,6 +134,7 @@ class _LoginForm extends StatelessWidget {
                             HomeScreen.routerName,
                           );
                         } else {
+                          Notifications.showSnackBar(errorMessage);
                           loginForm.isLoading = false;
                         }
                       },
