@@ -21,7 +21,7 @@ class AuthService extends ChangeNotifier {
 
     final Map<String, dynamic> decodedResp = json.decode(response.body);
 
-    print(decodedResp);
+    //print(decodedResp);
     if (decodedResp['code'] == 200) {
       //guardar el token y la info del usuario
       await storage.write(key: 'jwtToken', value: decodedResp['jwt']);
