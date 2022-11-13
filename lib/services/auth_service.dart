@@ -1,0 +1,30 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class AuthService extends ChangeNotifier {
+  final String _apiUrl = '205.251.136.75';
+  final String _proyectName = '/HopeV200';
+
+  Future<String?> loginUser(String nickname, String password) async {
+    final Map<String, dynamic> authData = {
+      'nickname': nickname,
+      'password': password
+    };
+
+    final url = Uri.http(_apiUrl, '$_proyectName/api/login', authData);
+
+    final response = await http.post(url, body: json.encode(authData));
+
+    final Map<String, dynamic> decodedResp = json.decode(response.body);
+
+    print(decodedResp);
+    if (decodedResp['code'] == 200) {
+      //guardar el token y la info del usuario
+      return null;
+    } else {
+      return decodedResp['message'];
+    }
+  }
+}

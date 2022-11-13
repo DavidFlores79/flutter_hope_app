@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:productos_app/providers/providers.dart';
 import 'package:productos_app/screens/screens.dart';
-import 'package:productos_app/services/auth_service.dart';
 import 'package:productos_app/ui/input_decorations.dart';
 import 'package:productos_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
-  static const String routerName = 'Login';
+class RegisterScreen extends StatelessWidget {
+  static const String routerName = 'Register';
+
+  const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class LoginScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Login',
+                      'Crear Cuenta',
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -42,10 +43,10 @@ class LoginScreen extends StatelessWidget {
                 ),
                 onPressed: () => Navigator.pushReplacementNamed(
                   context,
-                  RegisterScreen.routerName,
+                  LoginScreen.routerName,
                 ),
                 child: const Text(
-                  'Crear nueva cuenta',
+                  'Iniciar Sesión',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
@@ -79,15 +80,20 @@ class _LoginForm extends StatelessWidget {
             children: [
               TextFormField(
                 autocorrect: false,
-                keyboardType: TextInputType.name,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecorations.authInputDecoration(
                     color: myColor,
-                    hintText: 'john.doe',
-                    labelText: 'Nickname',
-                    prefixIcon: Icons.person_outline),
+                    hintText: 'john.doe@mail.com',
+                    labelText: 'Email',
+                    prefixIcon: Icons.alternate_email_outlined),
                 onChanged: (value) => loginForm.email = value,
                 validator: (value) {
-                  return (value != null) ? null : 'Nickname inválido.';
+                  String pattern =
+                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                  RegExp regExp = RegExp(pattern);
+                  return regExp.hasMatch(value ?? '')
+                      ? null
+                      : 'Correo inválido.';
                 },
               ),
               const SizedBox(
@@ -119,21 +125,13 @@ class _LoginForm extends StatelessWidget {
                         if (!loginForm.isValidForm()) return;
                         loginForm.isLoading = true;
                         FocusScope.of(context).unfocus();
+                        await Future.delayed(const Duration(seconds: 2));
 
-                        //hacer la peticion al backend para validar usuario
-                        final authService =
-                            Provider.of<AuthService>(context, listen: false);
-                        final String? errorMessage = await authService
-                            .loginUser(loginForm.email, loginForm.password);
+                        loginForm.isLoading = false;
 
-                        if (errorMessage == null) {
-                          loginForm.isLoading = false;
-                          // ignore: use_build_context_synchronously
-                          Navigator.pushReplacementNamed(
-                            context,
-                            HomeScreen.routerName,
-                          );
-                        } else {}
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushReplacementNamed(
+                            context, HomeScreen.routerName);
                       },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
