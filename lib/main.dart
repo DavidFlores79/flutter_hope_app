@@ -29,11 +29,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Material App',
-      initialRoute: LoginScreen.routerName,
+      initialRoute: AuthTokenScreen.routerName,
       routes: {
         LoginScreen.routerName: (context) => LoginScreen(),
-        RegisterScreen.routerName: (context) => RegisterScreen(),
+        RegisterScreen.routerName: (context) => const RegisterScreen(),
         HomeScreen.routerName: (context) => HomeScreen(),
+        AuthTokenScreen.routerName: (context) => const AuthTokenScreen(),
       },
     );
   }

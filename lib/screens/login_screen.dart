@@ -127,13 +127,14 @@ class _LoginForm extends StatelessWidget {
                             .loginUser(loginForm.email, loginForm.password);
 
                         if (errorMessage == null) {
-                          loginForm.isLoading = false;
                           // ignore: use_build_context_synchronously
                           Navigator.pushReplacementNamed(
                             context,
                             HomeScreen.routerName,
                           );
-                        } else {}
+                        } else {
+                          loginForm.isLoading = false;
+                        }
                       },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
