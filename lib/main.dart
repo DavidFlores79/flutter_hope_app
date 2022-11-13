@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:productos_app/providers/navbar_provider.dart';
 import 'package:productos_app/screens/screens.dart';
 import 'package:productos_app/services/auth_service.dart';
 import 'package:productos_app/ui/notifications.dart';
@@ -13,9 +14,12 @@ class AppState extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
+        ChangeNotifierProvider<AuthService>(
           create: (context) => AuthService(),
-        )
+        ),
+        ChangeNotifierProvider<NavbarProvider>(
+          create: (context) => NavbarProvider(),
+        ),
       ],
       child: const MyApp(),
     );
