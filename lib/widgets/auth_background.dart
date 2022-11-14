@@ -7,6 +7,8 @@ class AuthBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentRoute = ModalRoute.of(context)!.settings.name;
+
     return Container(
       decoration: _LinearGradient(),
       width: double.infinity,
@@ -19,7 +21,7 @@ class AuthBackground extends StatelessWidget {
             right: 30,
             child: LogoBrand(),
           ),
-          const UserIcon(),
+          if (currentRoute != 'registro') const UserIcon(),
           Center(
             child: child,
           )
@@ -75,13 +77,18 @@ class UserIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.topCenter,
-      margin: const EdgeInsets.only(top: 100),
-      child: const Icon(
-        Icons.person_pin,
-        size: 100,
-        color: Colors.white,
+    final size = MediaQuery.of(context).size;
+    final distance = size.height * 0.08;
+
+    return SafeArea(
+      child: Container(
+        alignment: Alignment.topCenter,
+        margin: EdgeInsets.only(top: distance),
+        child: const Icon(
+          Icons.person_pin,
+          size: 100,
+          color: Colors.white,
+        ),
       ),
     );
   }

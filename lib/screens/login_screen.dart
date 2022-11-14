@@ -8,7 +8,7 @@ import 'package:productos_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
-  static const String routerName = 'Login';
+  static const String routeName = 'login';
 
   @override
   Widget build(BuildContext context) {
@@ -29,33 +29,44 @@ class LoginScreen extends StatelessWidget {
                     ),
                     // _LoginForm(),
                     ChangeNotifierProvider(
-                        create: (context) => LoginFormProvider(),
-                        child: const _LoginForm()),
+                      create: (context) => LoginFormProvider(),
+                      child: const _LoginForm(),
+                    ),
+                    // _newAccountButton(),
+                    const SizedBox(
+                      height: 10,
+                    ),
                   ],
                 ),
               ),
               const SizedBox(
-                height: 50,
-              ),
-              TextButton(
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all(const StadiumBorder()),
-                ),
-                onPressed: () => Navigator.pushReplacementNamed(
-                  context,
-                  RegisterScreen.routerName,
-                ),
-                child: const Text(
-                  'Crear nueva cuenta',
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+                height: 25,
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _newAccountButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all(const StadiumBorder()),
+      ),
+      onPressed: () => Navigator.pushReplacementNamed(
+        context,
+        RegisterScreen.routeName,
+      ),
+      child: Text(
+        'Crear nueva cuenta',
+        style: TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey[700],
         ),
       ),
     );
@@ -111,7 +122,7 @@ class _LoginForm extends StatelessWidget {
                 },
               ),
               const SizedBox(
-                height: 15,
+                height: 20,
               ),
               MaterialButton(
                 onPressed: loginForm.isLoading
@@ -131,7 +142,7 @@ class _LoginForm extends StatelessWidget {
                           // ignore: use_build_context_synchronously
                           Navigator.pushReplacementNamed(
                             context,
-                            HomeScreen.routerName,
+                            HomeScreen.routeName,
                           );
                         } else {
                           Notifications.showSnackBar(errorMessage);

@@ -6,7 +6,7 @@ import 'package:productos_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatelessWidget {
-  static const String routerName = 'Register';
+  static const String routeName = 'registro';
 
   const RegisterScreen({super.key});
 
@@ -29,31 +29,13 @@ class RegisterScreen extends StatelessWidget {
                     ),
                     // _LoginForm(),
                     ChangeNotifierProvider(
-                        create: (context) => LoginFormProvider(),
-                        child: const _LoginForm()),
+                      create: (context) => LoginFormProvider(),
+                      child: const _RegisterForm(),
+                    ),
+                    const _signInButton()
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 50,
-              ),
-              TextButton(
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all(const StadiumBorder()),
-                ),
-                onPressed: () => Navigator.pushReplacementNamed(
-                  context,
-                  LoginScreen.routerName,
-                ),
-                child: const Text(
-                  'Iniciar Sesión',
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              )
             ],
           ),
         ),
@@ -62,8 +44,35 @@ class RegisterScreen extends StatelessWidget {
   }
 }
 
-class _LoginForm extends StatelessWidget {
-  const _LoginForm({super.key});
+class _signInButton extends StatelessWidget {
+  const _signInButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all(const StadiumBorder()),
+      ),
+      onPressed: () => Navigator.pushReplacementNamed(
+        context,
+        LoginScreen.routeName,
+      ),
+      child: Text(
+        '¿Ya tienes una cuenta?',
+        style: TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey[700],
+        ),
+      ),
+    );
+  }
+}
+
+class _RegisterForm extends StatelessWidget {
+  const _RegisterForm({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +87,40 @@ class _LoginForm extends StatelessWidget {
           autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: [
+              TextFormField(
+                autocorrect: false,
+                keyboardType: TextInputType.name,
+                decoration: InputDecorations.authInputDecoration(
+                    color: myColor,
+                    hintText: 'John Doe',
+                    labelText: 'Nombre',
+                    prefixIcon: Icons.person_pin_outlined),
+                onChanged: (value) => loginForm.email = value,
+                validator: (value) {
+                  return (value != null)
+                      ? null
+                      : 'Nombre debe contener mas de 3 caracteres.';
+                },
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              TextFormField(
+                autocorrect: false,
+                keyboardType: TextInputType.name,
+                decoration: InputDecorations.authInputDecoration(
+                    color: myColor,
+                    hintText: 'john.doe',
+                    labelText: 'Nickname',
+                    prefixIcon: Icons.person),
+                onChanged: (value) => loginForm.email = value,
+                validator: (value) {
+                  return (value != null) ? null : 'Nickname inválido.';
+                },
+              ),
+              const SizedBox(
+                height: 15,
+              ),
               TextFormField(
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
@@ -131,7 +174,7 @@ class _LoginForm extends StatelessWidget {
 
                         // ignore: use_build_context_synchronously
                         Navigator.pushReplacementNamed(
-                            context, HomeScreen.routerName);
+                            context, HomeScreen.routeName);
                       },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
@@ -142,7 +185,7 @@ class _LoginForm extends StatelessWidget {
                   padding:
                       EdgeInsets.symmetric(horizontal: width80, vertical: 15),
                   child: Text(
-                    loginForm.isLoading ? 'Espere' : 'Iniciar Sesión',
+                    loginForm.isLoading ? 'Espere' : 'Regístrame',
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),

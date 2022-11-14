@@ -5,7 +5,7 @@ import 'package:productos_app/services/services.dart';
 import 'package:provider/provider.dart';
 
 class AuthTokenScreen extends StatelessWidget {
-  static const String routerName = 'AuthToken';
+  static const String routeName = 'authtoken';
 
   const AuthTokenScreen({super.key});
 
@@ -23,7 +23,7 @@ class AuthTokenScreen extends StatelessWidget {
             if (snapshot.data == '') {
               Future.microtask(
                 () {
-                  // Navigator.pushReplacementNamed(context, LoginScreen.routerName);
+                  // Navigator.pushReplacementNamed(context, LoginScreen.routeName);
                   Navigator.pushReplacement(
                       context,
                       PageRouteBuilder(
@@ -36,7 +36,7 @@ class AuthTokenScreen extends StatelessWidget {
             } else {
               Future.microtask(
                 () {
-                  // Navigator.pushReplacementNamed(context, LoginScreen.routerName);
+                  // Navigator.pushReplacementNamed(context, LoginScreen.routeName);
                   Navigator.pushReplacement(
                       context,
                       PageRouteBuilder(

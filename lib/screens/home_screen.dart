@@ -6,7 +6,7 @@ import 'package:productos_app/widgets/bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
-  static const String routerName = 'Inicio';
+  static const String routeName = 'inicio';
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () async {
-                Navigator.pushReplacementNamed(context, LoginScreen.routerName);
+                Navigator.pushReplacementNamed(context, LoginScreen.routeName);
                 await authService.logout();
               },
               icon: const Icon(Icons.logout))

@@ -35,12 +35,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: Notifications.messengerKey,
       title: 'Material App',
-      initialRoute: AuthTokenScreen.routerName,
+      initialRoute: AuthTokenScreen.routeName,
       routes: {
-        LoginScreen.routerName: (context) => LoginScreen(),
-        RegisterScreen.routerName: (context) => const RegisterScreen(),
-        HomeScreen.routerName: (context) => HomeScreen(),
-        AuthTokenScreen.routerName: (context) => const AuthTokenScreen(),
+        LoginScreen.routeName: (context) => LoginScreen(),
+        RegisterScreen.routeName: (context) => const RegisterScreen(),
+        HomeScreen.routeName: (context) => HomeScreen(),
+        AuthTokenScreen.routeName: (context) => const AuthTokenScreen(),
+        OrdersScreen.routeName: (context) => OrdersScreen(),
+        ModulesScreen.routeName: (context) => ModulesScreen(),
+        AboutScreen.routeName: (context) => AboutScreen(),
       },
     );
   }
