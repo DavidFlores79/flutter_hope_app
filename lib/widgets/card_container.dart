@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:productos_app/shared/preferences.dart';
 
 class CardContainer extends StatelessWidget {
   const CardContainer({super.key, required this.child});
@@ -19,7 +20,9 @@ class CardContainer extends StatelessWidget {
   }
 
   BoxDecoration _CardShape() => BoxDecoration(
-          color: Colors.white,
+          color: Preferences.isDarkMode
+              ? const Color.fromRGBO(35, 35, 35, 1)
+              : Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: const [
             BoxShadow(

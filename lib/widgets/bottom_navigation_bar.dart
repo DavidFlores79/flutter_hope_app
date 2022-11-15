@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:productos_app/providers/navbar_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -10,8 +9,12 @@ class CustomBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final mp = Provider.of<NavbarProvider>(context);
 
+    final Color color = Colors.indigo;
+
     return BottomNavigationBar(
         currentIndex: mp.selectedIndex,
+        selectedIconTheme: IconThemeData(color: color),
+        fixedColor: color,
         onTap: (value) {
           mp.selectedIndex = value;
         },

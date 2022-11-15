@@ -27,6 +27,7 @@ class HomeScreen extends StatelessWidget {
               },
               icon: const Icon(Icons.logout))
         ],
+        backgroundColor: const Color.fromRGBO(35, 35, 35, 1),
       ),
       body: mp.items[mp.selectedIndex].widget,
       bottomNavigationBar: const CustomBottomNavigationBar(),
