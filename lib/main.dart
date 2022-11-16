@@ -30,6 +30,13 @@ class AppState extends StatelessWidget {
           create: (context) =>
               ThemeProvider(isDarkmode: Preferences.isDarkMode),
         ),
+        ChangeNotifierProvider<ModulosProvider>(
+          create: (context) => ModulosProvider(),
+          lazy: false,
+        ),
+        ChangeNotifierProvider<OrdersProvider>(
+          create: (context) => OrdersProvider(),
+        ),
       ],
       child: const MyApp(),
     );

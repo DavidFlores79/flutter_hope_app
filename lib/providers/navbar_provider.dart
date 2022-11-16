@@ -5,14 +5,14 @@ import 'package:productos_app/screens/screens.dart';
 class NavbarProvider extends ChangeNotifier {
   List<NavbarDTO> items = [
     NavbarDTO(
-      label: 'Ordenes',
-      iconData: const FaIcon(FontAwesomeIcons.newspaper),
-      widget: OrdersScreen(),
-    ),
-    NavbarDTO(
       label: 'Modulos',
       iconData: const FaIcon(FontAwesomeIcons.tableCellsLarge),
       widget: ModulesScreen(),
+    ),
+    NavbarDTO(
+      label: 'Ordenes',
+      iconData: const FaIcon(FontAwesomeIcons.newspaper),
+      widget: OrdersScreen(),
     ),
     NavbarDTO(
       label: 'Acerca de',

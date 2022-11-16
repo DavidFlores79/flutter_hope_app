@@ -7,6 +7,7 @@ class Preferences {
   static bool _isActive = false;
   static String _expirationDate = '1979-04-10';
   static bool _isDarkMode = false;
+  static bool _isModulesActive = true;
 
   static String get apiServer {
     return _prefs.getString('apiServer') ?? _apiServer;
@@ -24,6 +25,15 @@ class Preferences {
   static set isActive(bool value) {
     _isActive = value;
     _prefs.setBool('isActive', value);
+  }
+
+  static bool get isModulesActive {
+    return _prefs.getBool('isModulesActive') ?? _isModulesActive;
+  }
+
+  static set isModulesActive(bool value) {
+    _isModulesActive = value;
+    _prefs.setBool('isModulesActive', value);
   }
 
   static bool get isDarkMode {

@@ -19,6 +19,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         elevation: 0,
         title: const Text('Configuración'),
         actions: [
@@ -29,7 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
               icon: const Icon(Icons.logout))
         ],
-        backgroundColor: const Color.fromRGBO(35, 35, 35, 1),
+        //backgroundColor: const Color.fromRGBO(35, 35, 35, 1),
       ),
       body: SafeArea(
         child: Padding(

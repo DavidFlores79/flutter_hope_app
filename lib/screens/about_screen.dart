@@ -53,11 +53,6 @@ class AboutScreen extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            TextButton(
-              onPressed: () =>
-                  Navigator.pushNamed(context, SettingsScreen.routeName),
-              child: const Text('Preferencias de usuario'),
-            )
           ],
         ),
       ),

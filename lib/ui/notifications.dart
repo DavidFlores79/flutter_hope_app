@@ -6,12 +6,11 @@ class Notifications {
 
   static showSnackBar(String message) {
     final snackBar = SnackBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromRGBO(240, 171, 0, 1),
         content: Text(
           message,
-          style: const TextStyle(
-            color: Colors.black,
-          ),
+          style:
+              const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ));
     messengerKey.currentState!.showSnackBar(snackBar);

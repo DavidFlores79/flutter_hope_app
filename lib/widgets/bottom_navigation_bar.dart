@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:productos_app/providers/navbar_provider.dart';
+import 'package:productos_app/shared/preferences.dart';
 import 'package:provider/provider.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
@@ -9,12 +10,12 @@ class CustomBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final mp = Provider.of<NavbarProvider>(context);
 
-    final Color color = Colors.indigo;
+    // const Color selectedColor = Color.fromRGBO(35, 35, 35, 1);
+    // const Color selectedDarkColor = Colors.white;
+    // const Color unselectedColor = Color.fromRGBO(132, 140, 142, 1);
 
     return BottomNavigationBar(
         currentIndex: mp.selectedIndex,
-        selectedIconTheme: IconThemeData(color: color),
-        fixedColor: color,
         onTap: (value) {
           mp.selectedIndex = value;
         },
