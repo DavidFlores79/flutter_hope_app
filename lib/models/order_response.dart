@@ -81,29 +81,3 @@ class Pedido {
         "posiciones": List<dynamic>.from(posiciones.map((x) => x)),
       };
 }
-
-// enum OLiberacion { CB }
-
-// final oLiberacionValues = EnumValues({"CB": OLiberacion.CB});
-
-// enum ResponsableSap { ITSF_OAHP, ITSF_CARCAR, ITSF_DALG }
-
-// final responsableSapValues = EnumValues({
-//   "ITSF-CARCAR": ResponsableSap.ITSF_CARCAR,
-//   "ITSF-DALG": ResponsableSap.ITSF_DALG,
-//   "ITSF-OAHP": ResponsableSap.ITSF_OAHP
-// });
-
-// class EnumValues<T> {
-//   Map<String, T> map;
-//   Map<T, String> reverseMap;
-
-//   EnumValues(this.map);
-
-//   Map<T, String> get reverse {
-//     if (reverseMap == null) {
-//       reverseMap = map.map((k, v) => new MapEntry(v, k));
-//     }
-//     return reverseMap;
-//   }
-// }

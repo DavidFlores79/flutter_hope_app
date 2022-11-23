@@ -13,8 +13,6 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context, listen: false);
     final mp = Provider.of<NavbarProvider>(context);
-    // const Color selectedColor = Color.fromRGBO(35, 35, 35, 1);
-    // const Color selectedDarkColor = Color.fromRGBO(240, 171, 0, 1);
 
     return Scaffold(
       appBar: AppBar(

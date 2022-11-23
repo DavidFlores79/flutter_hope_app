@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:productos_app/models/login_response.dart';
 import 'package:productos_app/providers/providers.dart';
 import 'package:productos_app/screens/screens.dart';
 import 'package:productos_app/services/auth_service.dart';
@@ -135,17 +136,17 @@ class _LoginForm extends StatelessWidget {
                         //hacer la peticion al backend para validar usuario
                         final authService =
                             Provider.of<AuthService>(context, listen: false);
-                        final String? errorMessage = await authService
+                        final String? loginMessage = await authService
                             .loginUser(loginForm.email, loginForm.password);
 
-                        if (errorMessage == null) {
+                        if (loginMessage == 'true') {
                           // ignore: use_build_context_synchronously
                           Navigator.pushReplacementNamed(
                             context,
                             HomeScreen.routeName,
                           );
                         } else {
-                          Notifications.showSnackBar(errorMessage);
+                          Notifications.showSnackBar(loginMessage.toString());
                           loginForm.isLoading = false;
                         }
                       },

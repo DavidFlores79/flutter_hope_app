@@ -1,28 +1,30 @@
-// To parse this JSON data, do
-//
-//     final errorResponse = errorResponseFromMap(jsonString);
+// ignore: slash_for_doc_comments
+/**
+ * Creado por: David Amilcar Flores Castillo
+ * el 22/11/2022
+ */
 
 import 'dart:convert';
 
-class ErrorResponse {
-  ErrorResponse({
+class LoginResponse {
+  LoginResponse({
     required this.code,
     required this.status,
-    required this.message,
+    this.message,
     required this.success,
   });
 
   int code;
   String status;
-  String message;
+  String? message;
   bool success;
 
-  factory ErrorResponse.fromJson(String str) =>
-      ErrorResponse.fromMap(json.decode(str));
+  factory LoginResponse.fromJson(String str) =>
+      LoginResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory ErrorResponse.fromMap(Map<String, dynamic> json) => ErrorResponse(
+  factory LoginResponse.fromMap(Map<String, dynamic> json) => LoginResponse(
         code: json["code"],
         status: json["status"],
         message: json["message"],

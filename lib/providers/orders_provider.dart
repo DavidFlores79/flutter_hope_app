@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:productos_app/models/error_response.dart';
+import 'package:productos_app/models/login_response.dart';
 import 'package:productos_app/models/models.dart';
+import 'package:productos_app/screens/home_screen.dart';
 import 'package:productos_app/ui/notifications.dart';
 
 class OrdersProvider extends ChangeNotifier {
@@ -11,7 +12,8 @@ class OrdersProvider extends ChangeNotifier {
   final String _endPoint = '/api/v1/ordenes-pendientes';
   String jwtToken = '';
   List<Pedido> pedidos = [];
-  ErrorResponse? errorResponse;
+  List<PedidosProv> pedidosXProv = [];
+  LoginResponse? loginResponse;
 
   final storage = const FlutterSecureStorage();
 
@@ -24,6 +26,7 @@ class OrdersProvider extends ChangeNotifier {
     print('listado de Ordenes');
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+    print('Token: $jwtToken');
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -33,27 +36,34 @@ class OrdersProvider extends ChangeNotifier {
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
-    final response = await http.post(url, headers: headers);
+    try {
+      final response = await http.post(url, headers: headers);
 
-    switch (response.statusCode) {
-      case 200:
-        final ordersResponse = OrderResponse.fromJson(response.body);
-        pedidos.addAll(ordersResponse.pedidos);
-        print(pedidos);
-        break;
-      case 401:
-        logout();
-        break;
-      case 404:
-        errorResponse = ErrorResponse.fromJson(response.body);
-        Notifications.showSnackBar(errorResponse!.message);
-        notifyListeners();
-        print(errorResponse);
-        break;
-      default:
-        print(response.body);
+      switch (response.statusCode) {
+        case 200:
+          //final ordersResponse = OrderResponse.fromJson(response.body);
+          final ordersResponseProv = PedidosProvModel.fromJson(response.body);
+          //pedidos = [...ordersResponse.pedidos];
+          pedidosXProv = [...ordersResponseProv.pedidosProv];
+          print(pedidosXProv);
+          break;
+        case 401:
+          logout();
+          break;
+        case 404:
+          loginResponse = LoginResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              loginResponse?.message ?? 'Error Desconocido');
+          notifyListeners();
+          print(loginResponse);
+          break;
+        default:
+          print(response.body);
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
     }
-    notifyListeners();
   }
 
   Future logout() async {
