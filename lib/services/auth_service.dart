@@ -8,7 +8,7 @@ import 'package:productos_app/ui/notifications.dart';
 class AuthService extends ChangeNotifier {
   final String _apiUrl = '205.251.136.75';
   final String _proyectName = '/HopeV200';
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
 
   Future<String?> loginUser(String nickname, String password) async {
     final Map<String, dynamic> authData = {

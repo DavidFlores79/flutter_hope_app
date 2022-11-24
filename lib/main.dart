@@ -34,22 +34,25 @@ class AppState extends StatelessWidget {
           create: (context) => ModulosProvider(),
           lazy: false,
         ),
-        ChangeNotifierProvider<OrdersProvider>(
-          create: (context) => OrdersProvider(),
+        ChangeNotifierProvider<PedidosProvider>(
+          create: (context) => PedidosProvider(),
         ),
       ],
-      child: const MyApp(),
+      child: MyApp(),
     );
   }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      navigatorKey: navigatorKey,
       scaffoldMessengerKey: Notifications.messengerKey,
       title: 'Material App',
       initialRoute: AuthTokenScreen.routeName,
@@ -58,7 +61,7 @@ class MyApp extends StatelessWidget {
         RegisterScreen.routeName: (context) => const RegisterScreen(),
         HomeScreen.routeName: (context) => HomeScreen(),
         AuthTokenScreen.routeName: (context) => const AuthTokenScreen(),
-        OrdersScreen.routeName: (context) => OrdersScreen(),
+        PedidosScreen.routeName: (context) => PedidosScreen(),
         ModulesScreen.routeName: (context) => ModulesScreen(),
         AboutScreen.routeName: (context) => AboutScreen(),
         SettingsScreen.routeName: (context) => SettingsScreen(),

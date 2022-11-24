@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class ThemeProvider extends ChangeNotifier {
   ThemeData currentTheme;
-  Color lightColor = const Color.fromRGBO(35, 35, 35, 0.9);
-  Color darkColor = const Color.fromRGBO(240, 171, 0, 1);
+  static Color lightColor = const Color.fromRGBO(55, 55, 55, 0.9);
+  static Color darkColor = const Color.fromRGBO(240, 171, 0, 1);
 
   ThemeProvider({
     required isDarkmode,
-    lightColor = const Color.fromRGBO(35, 35, 35, 0.9),
+    lightColor = const Color.fromRGBO(55, 55, 55, 0.9),
     darkColor = const Color.fromRGBO(240, 171, 0, 1),
   }) : currentTheme = isDarkmode
             ? ThemeData.dark().copyWith(

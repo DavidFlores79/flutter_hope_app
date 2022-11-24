@@ -12,7 +12,7 @@ class NavbarProvider extends ChangeNotifier {
     NavbarDTO(
       label: 'Ordenes',
       iconData: const FaIcon(FontAwesomeIcons.newspaper),
-      widget: OrdersScreen(),
+      widget: PedidosScreen(),
     ),
     NavbarDTO(
       label: 'Acerca de',

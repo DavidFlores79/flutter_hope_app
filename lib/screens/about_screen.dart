@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:productos_app/screens/settings_screen.dart';
 import 'package:productos_app/shared/preferences.dart';
 
 class AboutScreen extends StatelessWidget {

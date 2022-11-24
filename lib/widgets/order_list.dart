@@ -2,12 +2,82 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:productos_app/models/models.dart';
+import 'package:productos_app/providers/providers.dart';
 import 'package:productos_app/shared/preferences.dart';
+import 'package:provider/provider.dart';
 
-class OrderList extends StatelessWidget {
+class PedidosList extends StatefulWidget {
   List<PedidosProv> pedidosProv = [];
 
-  OrderList({super.key, required this.pedidosProv});
+  PedidosList({super.key, required this.pedidosProv});
+
+  @override
+  State<PedidosList> createState() => _PedidosListState();
+}
+
+class _PedidosListState extends State<PedidosList> {
+  //confirmar liberar todos los pedidos del proveedor
+  confirmarLiberarTodos(List<Pedido> pedidos, String nombreProveedor) async {
+    return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          title: const Text(
+            "Confirmar Liberar",
+            textAlign: TextAlign.center,
+          ),
+          content: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                  style: TextStyle(
+                      fontSize: 15,
+                      color:
+                          Preferences.isDarkMode ? Colors.white : Colors.black),
+                  text: "¿Desea liberar todos los pedidos del Proveedor: ",
+                  children: [
+                    TextSpan(
+                      text: nombreProveedor,
+                    ),
+                    const TextSpan(
+                      text: '?',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const TextSpan(
+                      text: "??",
+                    ),
+                  ]),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  final orderProvider =
+                      Provider.of<PedidosProvider>(context, listen: false);
+                  orderProvider.liberarMultiple(pedidos, nombreProveedor);
+                });
+                Navigator.of(context).pop(true);
+              },
+              child: const Text("Confirmar"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text(
+                "Cancelar",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +86,9 @@ class OrderList extends StatelessWidget {
     return Column(
       children: [
         const Padding(
-          padding: EdgeInsets.symmetric(vertical: 25),
+          padding: EdgeInsets.only(top: 25, bottom: 10),
           child: Text(
-            'Liberacion de Pedidos',
+            'Liberación de Pedidos',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -27,13 +97,54 @@ class OrderList extends StatelessWidget {
         ),
         Expanded(
           child: ListView.builder(
-              itemCount: pedidosProv.length,
+              itemCount: widget.pedidosProv.length,
               itemBuilder: (context, index) {
-                final nombreProveedor = pedidosProv[index].proveedor;
-                final pedidos = pedidosProv[index].pedidos;
+                final nombreProveedor = widget.pedidosProv[index].proveedor;
+                final pedidos = widget.pedidosProv[index].pedidos;
 
                 return ExpansionTile(
-                  title: Text(nombreProveedor),
+                  childrenPadding: const EdgeInsets.only(bottom: 15, left: 5),
+                  backgroundColor: Preferences.isDarkMode
+                      ? Colors.grey.shade800
+                      : Colors.grey.shade200,
+                  textColor: Preferences.isDarkMode
+                      ? ThemeProvider.darkColor
+                      : ThemeProvider.lightColor,
+                  iconColor: Preferences.isDarkMode
+                      ? ThemeProvider.darkColor
+                      : ThemeProvider.lightColor,
+                  title: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        nombreProveedor,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            overflow: TextOverflow.ellipsis),
+                      ),
+                      TextButton(
+                        onPressed: () =>
+                            confirmarLiberarTodos(pedidos, nombreProveedor),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 3, horizontal: 7),
+                            decoration: const BoxDecoration(color: Colors.blue),
+                            child: const Text(
+                              'Liberar todos',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   children: pedidos.map((pedido) {
                     return Dismissible(
                       key: UniqueKey(),
@@ -48,68 +159,22 @@ class OrderList extends StatelessWidget {
                       ),
                       direction: DismissDirection.startToEnd,
                       confirmDismiss: (DismissDirection direction) async {
-                        return await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20.0))),
-                              title: const Text("Confirmar Liberar"),
-                              content: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: RichText(
-                                  textAlign: TextAlign.center,
-                                  text: TextSpan(
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: Preferences.isDarkMode
-                                              ? Colors.white
-                                              : Colors.black),
-                                      text:
-                                          "Estas seguro que deseas liberar el pedido ",
-                                      children: [
-                                        TextSpan(
-                                          text: pedido.pedido,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        const TextSpan(
-                                          text: "??",
-                                        ),
-                                      ]),
-                                ),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(true),
-                                    child: const Text("Confirmar")),
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(false),
-                                  child: const Text(
-                                    "Cancelar",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        return await confirmarLiberar(
+                            context, pedido, nombreProveedor);
                       },
                       onDismissed: (DismissDirection direction) {
-                        // setState(() {
-                        //   widget.pedidos.removeAt(index);
-                        // });
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(
-                                'El documento ${pedido.pedido} ha sido liberado')));
+                        setState(() {
+                          pedidos.removeAt(index);
+                        });
+                        final orderProvider = Provider.of<PedidosProvider>(
+                            context,
+                            listen: false);
+                        orderProvider.liberarPedido(pedido);
                       },
                       child: ListTile(
                         onTap: () {},
                         title: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -183,6 +248,60 @@ class OrderList extends StatelessWidget {
               }),
         ),
       ],
+    );
+  }
+
+  Future<bool?> confirmarLiberar(
+      BuildContext context, Pedido pedido, String nombreProveedor) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          title: const Text("Confirmar Liberar"),
+          content: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                  style: TextStyle(
+                      fontSize: 15,
+                      color:
+                          Preferences.isDarkMode ? Colors.white : Colors.black),
+                  text: "¿Quieres liberar el pedido ",
+                  children: [
+                    TextSpan(
+                      text: pedido.pedido,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const TextSpan(
+                      text: " del proveedor ",
+                    ),
+                    TextSpan(
+                      text: nombreProveedor,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const TextSpan(
+                      text: "??",
+                    ),
+                  ]),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text("Confirmar")),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text(
+                "Cancelar",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

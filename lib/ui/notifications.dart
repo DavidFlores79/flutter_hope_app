@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:productos_app/providers/providers.dart';
+import 'package:productos_app/shared/preferences.dart';
 
 class Notifications {
   static GlobalKey<ScaffoldMessengerState> messengerKey =
@@ -6,7 +8,9 @@ class Notifications {
 
   static showSnackBar(String message) {
     final snackBar = SnackBar(
-        backgroundColor: const Color.fromRGBO(240, 171, 0, 1),
+        backgroundColor: Preferences.isDarkMode
+            ? ThemeProvider.darkColor
+            : ThemeProvider.lightColor,
         content: Text(
           message,
           style:
