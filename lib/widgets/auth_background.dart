@@ -50,7 +50,7 @@ class _BackgroundImage extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      height: size.height * 0.55,
+      height: size.height * 0.85,
       child: const Image(
         image: AssetImage('assets/merida-background.jpg'),
         fit: BoxFit.cover,
@@ -78,7 +78,7 @@ class UserIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final distance = size.height * 0.08;
+    final distance = size.height * 0.09;
 
     return SafeArea(
       child: Container(

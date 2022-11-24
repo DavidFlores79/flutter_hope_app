@@ -10,11 +10,13 @@ class LiberarPedidoResponse {
   LiberarPedidoResponse({
     required this.code,
     required this.status,
+    required this.success,
     required this.message,
   });
 
   int code;
   String status;
+  bool success;
   Message message;
 
   factory LiberarPedidoResponse.fromJson(String str) =>
@@ -26,12 +28,14 @@ class LiberarPedidoResponse {
       LiberarPedidoResponse(
         code: json["code"],
         status: json["status"],
+        success: json["success"],
         message: Message.fromMap(json["message"]),
       );
 
   Map<String, dynamic> toMap() => {
         "code": code,
         "status": status,
+        "success": success,
         "message": message.toMap(),
       };
 }

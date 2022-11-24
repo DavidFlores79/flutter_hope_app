@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:productos_app/screens/home_screen.dart';
-import 'package:productos_app/screens/login_screen.dart';
-import 'package:productos_app/services/services.dart';
+import 'package:hope_app/screens/home_screen.dart';
+import 'package:hope_app/screens/login_screen.dart';
+import 'package:hope_app/services/services.dart';
 import 'package:provider/provider.dart';
 
 class AuthTokenScreen extends StatelessWidget {

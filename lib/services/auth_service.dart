@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:productos_app/ui/notifications.dart';
+import 'package:hope_app/ui/notifications.dart';
 
 class AuthService extends ChangeNotifier {
   final String _apiUrl = '205.251.136.75';

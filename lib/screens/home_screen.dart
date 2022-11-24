@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:productos_app/providers/navbar_provider.dart';
-import 'package:productos_app/screens/screens.dart';
-import 'package:productos_app/services/auth_service.dart';
-import 'package:productos_app/widgets/widgets.dart';
+import 'package:hope_app/providers/navbar_provider.dart';
+import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/services/auth_service.dart';
+import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {

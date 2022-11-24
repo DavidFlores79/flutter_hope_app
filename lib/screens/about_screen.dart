@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:productos_app/shared/preferences.dart';
+import 'package:hope_app/shared/preferences.dart';
 
 class AboutScreen extends StatelessWidget {
   static const String routeName = 'acerca-de';

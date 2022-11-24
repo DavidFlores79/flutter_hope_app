@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:productos_app/providers/providers.dart';
-import 'package:productos_app/screens/screens.dart';
-import 'package:productos_app/ui/input_decorations.dart';
-import 'package:productos_app/widgets/widgets.dart';
+import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/ui/input_decorations.dart';
+import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatelessWidget {

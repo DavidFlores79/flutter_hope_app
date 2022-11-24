@@ -6,8 +6,8 @@
 
 import 'dart:convert';
 
-class LoginResponse {
-  LoginResponse({
+class ServerResponse {
+  ServerResponse({
     required this.code,
     required this.status,
     this.message,
@@ -19,12 +19,12 @@ class LoginResponse {
   String? message;
   bool success;
 
-  factory LoginResponse.fromJson(String str) =>
-      LoginResponse.fromMap(json.decode(str));
+  factory ServerResponse.fromJson(String str) =>
+      ServerResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory LoginResponse.fromMap(Map<String, dynamic> json) => LoginResponse(
+  factory ServerResponse.fromMap(Map<String, dynamic> json) => ServerResponse(
         code: json["code"],
         status: json["status"],
         message: json["message"],

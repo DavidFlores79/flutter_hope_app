@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:productos_app/providers/navbar_provider.dart';
+import 'package:hope_app/providers/navbar_provider.dart';
 import 'package:provider/provider.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {

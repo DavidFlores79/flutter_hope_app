@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:productos_app/providers/navbar_provider.dart';
-import 'package:productos_app/providers/providers.dart';
-import 'package:productos_app/screens/screens.dart';
-import 'package:productos_app/services/auth_service.dart';
-import 'package:productos_app/shared/preferences.dart';
-import 'package:productos_app/ui/notifications.dart';
+import 'package:hope_app/providers/navbar_provider.dart';
+import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/services/auth_service.dart';
+import 'package:hope_app/shared/preferences.dart';
+import 'package:hope_app/ui/notifications.dart';
 import 'package:provider/provider.dart';
 
 void main() async {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:productos_app/models/models.dart';
-import 'package:productos_app/providers/providers.dart';
-import 'package:productos_app/shared/preferences.dart';
+import 'package:hope_app/models/models.dart';
+import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:provider/provider.dart';
 
 class PedidosList extends StatefulWidget {
@@ -17,7 +17,8 @@ class PedidosList extends StatefulWidget {
 
 class _PedidosListState extends State<PedidosList> {
   //confirmar liberar todos los pedidos del proveedor
-  confirmarLiberarTodos(List<Pedido> pedidos, String nombreProveedor) async {
+  confirmarLiberarTodos(
+      List<Pedido> pedidos, String nombreProveedor, int index) async {
     return await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -59,8 +60,9 @@ class _PedidosListState extends State<PedidosList> {
                   final orderProvider =
                       Provider.of<PedidosProvider>(context, listen: false);
                   orderProvider.liberarMultiple(pedidos, nombreProveedor);
+                  widget.pedidosProv.removeAt(index);
+                  Navigator.of(context).pop(true);
                 });
-                Navigator.of(context).pop(true);
               },
               child: const Text("Confirmar"),
             ),
@@ -124,8 +126,8 @@ class _PedidosListState extends State<PedidosList> {
                             overflow: TextOverflow.ellipsis),
                       ),
                       TextButton(
-                        onPressed: () =>
-                            confirmarLiberarTodos(pedidos, nombreProveedor),
+                        onPressed: () => confirmarLiberarTodos(
+                            pedidos, nombreProveedor, index),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
                           child: Container(
@@ -163,13 +165,13 @@ class _PedidosListState extends State<PedidosList> {
                             context, pedido, nombreProveedor);
                       },
                       onDismissed: (DismissDirection direction) {
-                        setState(() {
-                          pedidos.removeAt(index);
-                        });
                         final orderProvider = Provider.of<PedidosProvider>(
                             context,
                             listen: false);
                         orderProvider.liberarPedido(pedido);
+                        setState(() {
+                          pedidos.removeAt(index);
+                        });
                       },
                       child: ListTile(
                         onTap: () {},

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:productos_app/providers/providers.dart';
-import 'package:productos_app/widgets/order_list.dart';
+import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/widgets/order_list.dart';
 import 'package:provider/provider.dart';
 
 class PedidosScreen extends StatelessWidget {

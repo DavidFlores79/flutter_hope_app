@@ -6,7 +6,7 @@
 
 import 'dart:convert' show json;
 
-import 'package:productos_app/models/order_response.dart';
+import 'package:hope_app/models/order_response.dart';
 
 class PedidosProvModel {
   PedidosProvModel({

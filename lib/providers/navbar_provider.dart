@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:productos_app/screens/screens.dart';
+import 'package:hope_app/screens/screens.dart';
 
 class NavbarProvider extends ChangeNotifier {
   List<NavbarDTO> items = [

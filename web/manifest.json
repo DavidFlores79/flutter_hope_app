@@ -1,6 +1,6 @@
 {
-    "name": "productos_app",
-    "short_name": "productos_app",
+    "name": "hope_app",
+    "short_name": "hope_app",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

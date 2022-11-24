@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:productos_app/providers/providers.dart';
-import 'package:productos_app/shared/preferences.dart';
+import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/shared/preferences.dart';
 
 class Notifications {
   static GlobalKey<ScaffoldMessengerState> messengerKey =
