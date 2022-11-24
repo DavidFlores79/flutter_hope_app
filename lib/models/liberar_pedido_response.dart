@@ -12,12 +12,14 @@ class LiberarPedidoResponse {
     required this.status,
     required this.success,
     required this.message,
+    this.pedidoLiberado,
   });
 
   int code;
   String status;
   bool success;
-  Message message;
+  String message;
+  PedidoLiberado? pedidoLiberado;
 
   factory LiberarPedidoResponse.fromJson(String str) =>
       LiberarPedidoResponse.fromMap(json.decode(str));
@@ -29,19 +31,21 @@ class LiberarPedidoResponse {
         code: json["code"],
         status: json["status"],
         success: json["success"],
-        message: Message.fromMap(json["message"]),
+        message: json["message"],
+        pedidoLiberado: PedidoLiberado.fromMap(json["pedidoLiberado"]),
       );
 
   Map<String, dynamic> toMap() => {
         "code": code,
         "status": status,
         "success": success,
-        "message": message.toMap(),
+        "message": message,
+        "pedidoLiberado": pedidoLiberado!.toMap(),
       };
 }
 
-class Message {
-  Message({
+class PedidoLiberado {
+  PedidoLiberado({
     required this.pedido,
     required this.codigo,
     required this.resultado,
@@ -53,11 +57,12 @@ class Message {
   bool resultado;
   List<dynamic> mensajes;
 
-  factory Message.fromJson(String str) => Message.fromMap(json.decode(str));
+  factory PedidoLiberado.fromJson(String str) =>
+      PedidoLiberado.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Message.fromMap(Map<String, dynamic> json) => Message(
+  factory PedidoLiberado.fromMap(Map<String, dynamic> json) => PedidoLiberado(
         pedido: json["pedido"],
         codigo: json["codigo"],
         resultado: json["resultado"],
@@ -69,39 +74,5 @@ class Message {
         "codigo": codigo,
         "resultado": resultado,
         "mensajes": List<dynamic>.from(mensajes.map((x) => x)),
-      };
-}
-
-class ErrorLiberarPedidoResponse {
-  ErrorLiberarPedidoResponse({
-    required this.code,
-    required this.status,
-    required this.message,
-    required this.success,
-  });
-
-  int code;
-  String status;
-  String message;
-  bool success;
-
-  factory ErrorLiberarPedidoResponse.fromJson(String str) =>
-      ErrorLiberarPedidoResponse.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory ErrorLiberarPedidoResponse.fromMap(Map<String, dynamic> json) =>
-      ErrorLiberarPedidoResponse(
-        code: json["code"],
-        status: json["status"],
-        message: json["message"],
-        success: json["success"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "code": code,
-        "status": status,
-        "message": message,
-        "success": success,
       };
 }

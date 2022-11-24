@@ -51,6 +51,10 @@ class PedidosProvider extends ChangeNotifier {
           final ordersResponseProv = PedidosProvModel.fromJson(response.body);
           //pedidos = [...ordersResponse.pedidos];
           pedidosXProv = [...ordersResponseProv.pedidosProv];
+          if (pedidosXProv.isEmpty) {
+            Notifications.showSnackBar(
+                "No se encontraron ordenes para mostrar");
+          }
           print(pedidosXProv);
           break;
         case 401:
@@ -61,8 +65,13 @@ class PedidosProvider extends ChangeNotifier {
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido');
+          pedidos = [];
+          pedidosXProv = [];
           notifyListeners();
           print(serverResponse);
+          break;
+        case 500:
+          Notifications.showSnackBar('500 Server Error');
           break;
         default:
           print(response.body);
@@ -70,11 +79,12 @@ class PedidosProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error $e');
+      Notifications.showSnackBar(e.toString());
     }
   }
 
-  liberarPedido(Pedido pedido) async {
-    //print('Liberar Pedido: ${pedido.pedido}');
+  Future<bool> liberarPedido(Pedido pedido) async {
+    result = false;
     _endPoint = '/api/v1/ordenes-pendientes/liberar';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
@@ -88,6 +98,7 @@ class PedidosProvider extends ChangeNotifier {
     Map<String, dynamic> dataRaw = {
       'lang': 'S',
       'order': pedido.pedido,
+      // 'order': '4500002182',
       'code': pedido.codigoLiberacion,
       'responsable_sap': pedido.responsableSap
     };
@@ -97,36 +108,48 @@ class PedidosProvider extends ChangeNotifier {
     try {
       final response =
           await http.post(url, headers: headers, body: jsonEncode(dataRaw));
-
       switch (response.statusCode) {
         case 200:
+          result = true;
           final liberarPedidoResponse =
               LiberarPedidoResponse.fromJson(response.body);
-          Message pedidoLiberado = liberarPedidoResponse.message;
+          final pedidoLiberado = liberarPedidoResponse.pedidoLiberado;
           Notifications.showSnackBar(
-              'El Pedido: ${pedidoLiberado.pedido} ha sido liberado.');
-          print('Pedido Liberado: ${pedidoLiberado.pedido}');
+              'El Pedido: ${pedidoLiberado?.pedido} ha sido liberado.');
+          print('Pedido Liberado: $pedidoLiberado');
           break;
         case 401:
           logout();
           break;
         case 400:
-          final errorLiberarPedidoResponse =
-              ErrorLiberarPedidoResponse.fromJson(response.body);
-          Notifications.showSnackBar(errorLiberarPedidoResponse.message);
-          print('Error Liberando: ${errorLiberarPedidoResponse.message}');
+          print('Estatus: ${response.statusCode}');
+          final liberarPedidoResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(liberarPedidoResponse.message!);
+          print('Error Liberando: ${liberarPedidoResponse.message}');
+          break;
+        case 422:
+          print('Validator: ${response.statusCode}');
+          final liberarPedidoResponse =
+              ValidatorResponse.fromJson(response.body);
+          Notifications.showSnackBar(liberarPedidoResponse.message);
+          break;
+        case 500:
+          Notifications.showSnackBar('500 Server Error');
           break;
         default:
           print(response.body);
       }
-      getOrdenes();
+      //getOrdenes();
+
     } catch (e) {
       print('Error $e');
+      Notifications.showSnackBar(e.toString());
     }
+
+    return result;
   }
 
   liberarMultiple(List<Pedido> pedidos, String nombreProveedor) async {
-    //print('Liberar Pedido: ${pedido.pedido}');
     _endPoint = '/api/v1/ordenes-pendientes/liberar-multiple';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
@@ -148,32 +171,43 @@ class PedidosProvider extends ChangeNotifier {
 
       switch (response.statusCode) {
         case 200:
+          result = true;
           print('Response pedidos liberados: ${response.body}');
           final liberarPedidoMultipleResponse =
               LiberarMultipleResponse.fromJson(response.body);
           Notifications.showSnackBar(
-              'Los pedidos del Proveedor: $nombreProveedor han sido liberados.');
-          print('Pedidos Liberados: ${pedidos.length}');
+              'Los pedidos del Proveedor: $nombreProveedor se enviaron a liberación.');
+          print(
+              'Pedidos Enviados: ${liberarPedidoMultipleResponse.orders.length}');
           break;
         case 401:
           logout();
           break;
         case 400:
-          final errorLiberarPedidoResponse =
-              ErrorLiberarPedidoResponse.fromJson(response.body);
-          Notifications.showSnackBar(errorLiberarPedidoResponse.message);
-          notifyListeners();
-          print('Error Liberando: $errorLiberarPedidoResponse');
+          print('Estatus Multiple: ${response.statusCode}');
+          final liberarPedidoResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(liberarPedidoResponse.message!);
+          print('Error Liberando Multiple: ${liberarPedidoResponse.message}');
+          break;
+        case 422:
+          print('Validator: ${response.statusCode}');
+          final liberarPedidoResponse =
+              ValidatorResponse.fromJson(response.body);
+          Notifications.showSnackBar(liberarPedidoResponse.errors.toJson());
+          break;
+        case 500:
+          Notifications.showSnackBar('500 Server Error');
           break;
         default:
           print(response.statusCode);
           print(response.body);
       }
-
-      getOrdenes();
     } catch (e) {
       print('Error $e');
+      Notifications.showSnackBar(e.toString());
     }
+
+    getOrdenes();
   }
 
   Future logout() async {

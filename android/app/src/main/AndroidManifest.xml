@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.hope_app">
+    package="mx.itsoft.hope_movil_app">
    <application
         android:label="Hope Móvil"
         android:name="${applicationName}"

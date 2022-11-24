@@ -56,13 +56,10 @@ class _PedidosListState extends State<PedidosList> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                setState(() {
-                  final orderProvider =
-                      Provider.of<PedidosProvider>(context, listen: false);
-                  orderProvider.liberarMultiple(pedidos, nombreProveedor);
-                  widget.pedidosProv.removeAt(index);
-                  Navigator.of(context).pop(true);
-                });
+                final orderProvider =
+                    Provider.of<PedidosProvider>(context, listen: false);
+                orderProvider.liberarMultiple(pedidos, nombreProveedor);
+                Navigator.of(context).pop(true);
               },
               child: const Text("Confirmar"),
             ),
@@ -165,10 +162,6 @@ class _PedidosListState extends State<PedidosList> {
                             context, pedido, nombreProveedor);
                       },
                       onDismissed: (DismissDirection direction) {
-                        final orderProvider = Provider.of<PedidosProvider>(
-                            context,
-                            listen: false);
-                        orderProvider.liberarPedido(pedido);
                         setState(() {
                           pedidos.removeAt(index);
                         });
@@ -292,7 +285,19 @@ class _PedidosListState extends State<PedidosList> {
           ),
           actions: <Widget>[
             TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
+                onPressed: () {
+                  final orderProvider =
+                      Provider.of<PedidosProvider>(context, listen: false);
+                  final result = orderProvider.liberarPedido(pedido);
+                  result.then(print);
+                  result.then((value) {
+                    if (value) {
+                      Navigator.of(context).pop(true);
+                    } else {
+                      Navigator.of(context).pop(false);
+                    }
+                  });
+                },
                 child: const Text("Confirmar")),
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
