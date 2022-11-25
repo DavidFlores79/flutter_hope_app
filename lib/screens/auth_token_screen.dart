@@ -22,7 +22,7 @@ class AuthTokenScreen extends StatelessWidget {
             if (!snapshot.hasData) return CircularProgressIndicator.adaptive();
 
             if (snapshot.data == '') {
-              if (Preferences.apiUser != '') {
+              if (Preferences.apiUser == '') {
                 authService.logout();
               }
               Future.microtask(
