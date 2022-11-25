@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hope_app/models/models.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:provider/provider.dart';
 
 class PopupMenuList extends StatelessWidget {
@@ -9,29 +11,100 @@ class PopupMenuList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context, listen: false);
+    final User apiUser = User.fromJson(Preferences.apiUser);
 
     return PopUpMenu(
       menuList: [
         PopupMenuItem(
-          child: const ListTile(
-            //leading: Icon(Icons.person),
-            title: Text('Mi perfil'),
+          height: 30,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          enabled: false,
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+                style: TextStyle(
+                    fontSize: 15,
+                    color: Preferences.isDarkMode ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.bold),
+                text: "Nick: ",
+                children: [
+                  TextSpan(
+                    text: apiUser.nickname,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ]),
           ),
-          onTap: () {},
         ),
-        const PopupMenuItem(
-          value: 0,
-          child: ListTile(
-            //leading: Icon(Icons.person),
-            title: Text('Preferencias'),
+        PopupMenuItem(
+          height: 30,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          enabled: false,
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: TextStyle(
+                fontSize: 15,
+                color: Preferences.isDarkMode ? Colors.white : Colors.black,
+              ),
+              text: apiUser.nombre,
+              children: [],
+            ),
           ),
         ),
         const PopupMenuDivider(),
         PopupMenuItem(
-          child: const ListTile(
-            //leading: Icon(Icons.logout_outlined),
-            title: Text('Logout'),
+          value: 1,
+          height: 30,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: TextStyle(
+                fontSize: 15,
+                color: Preferences.isDarkMode ? Colors.white : Colors.black,
+              ),
+              text: 'Mi perfil',
+              children: [],
+            ),
           ),
+        ),
+        PopupMenuItem(
+          value: 0,
+          height: 30,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: TextStyle(
+                fontSize: 15,
+                color: Preferences.isDarkMode ? Colors.white : Colors.black,
+              ),
+              text: 'Preferencias',
+              children: [],
+            ),
+          ),
+        ),
+        const PopupMenuDivider(),
+        PopupMenuItem(
+          height: 30,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: TextStyle(
+                fontSize: 15,
+                color: Preferences.isDarkMode ? Colors.white : Colors.black,
+              ),
+              text: 'Logout',
+              children: [],
+            ),
+          ),
+          // child: const ListTile(
+          //   // trailing: Icon(Icons.output_outlined),
+          //   title: Text('Logout'),
+          // ),
           onTap: () async {
             await authService.logout();
             // ignore: use_build_context_synchronously
@@ -70,6 +143,12 @@ class PopUpMenu extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => SettingsScreen()),
+            );
+            break;
+          case 1:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfileScreen()),
             );
             break;
           default:

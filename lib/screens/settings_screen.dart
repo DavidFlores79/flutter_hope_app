@@ -24,7 +24,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         elevation: 0,
         title: const Text('Configuración'),
         actions: const [
-          PopupMenuList(),
+          // PopupMenuList(),
         ],
       ),
       body: SafeArea(

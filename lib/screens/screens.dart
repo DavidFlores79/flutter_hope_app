@@ -1,3 +1,4 @@
+export 'package:hope_app/screens/profile_screen.dart';
 export 'package:hope_app/screens/about_screen.dart';
 export 'package:hope_app/screens/auth_token_screen.dart';
 export 'package:hope_app/screens/home_screen.dart';

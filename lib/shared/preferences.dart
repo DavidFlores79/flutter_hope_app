@@ -3,7 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Preferences {
   static late SharedPreferences _prefs;
 
-  static String _apiServer = 'localhost';
+  static String _apiUser = '';
+  static String _apiServer = '205.251.136.75';
   static bool _isActive = false;
   static String _expirationDate = '1979-04-10';
   static bool _isDarkMode = false;
@@ -16,6 +17,15 @@ class Preferences {
   static set apiServer(String value) {
     _apiServer = value;
     _prefs.setString('apiServer', value);
+  }
+
+  static String get apiUser {
+    return _prefs.getString('apiUser') ?? _apiUser;
+  }
+
+  static set apiUser(String value) {
+    _apiUser = value;
+    _prefs.setString('apiUser', value);
   }
 
   static bool get isActive {

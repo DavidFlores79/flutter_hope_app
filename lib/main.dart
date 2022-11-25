@@ -69,6 +69,7 @@ class MyApp extends StatelessWidget {
         ModulesScreen.routeName: (context) => ModulesScreen(),
         AboutScreen.routeName: (context) => AboutScreen(),
         SettingsScreen.routeName: (context) => SettingsScreen(),
+        ProfileScreen.routeName: (context) => ProfileScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );

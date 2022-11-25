@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:hope_app/ui/notifications.dart';
 
@@ -28,6 +29,7 @@ class AuthService extends ChangeNotifier {
       if (decodedResp['code'] == 200) {
         //guardar el token y la info del usuario
         await storage.write(key: 'jwtToken', value: decodedResp['jwt']);
+        Preferences.apiUser = jsonEncode(decodedResp['user']);
         return true.toString();
       } else {
         return decodedResp['message'];
