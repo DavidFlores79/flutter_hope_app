@@ -5,6 +5,7 @@ import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/widgets/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -26,9 +27,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         centerTitle: true,
         elevation: 0,
         title: const Text('Mi Perfil'),
-        actions: const [
-          // PopupMenuList(),
-        ],
       ),
       body: SafeArea(
         child: Padding(
@@ -45,7 +43,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  '${apiUser.nombre} ${apiUser.apellido}'.toUpperCase(),
+                  getCapitalizedString(
+                      str: '${apiUser.nombre} ${apiUser.apellido}'),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     letterSpacing: 1.5,
@@ -57,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 Text(
-                  apiUser.miPerfil!.nombre,
+                  apiUser.miPerfil.nombre,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     overflow: TextOverflow.ellipsis,
@@ -96,6 +95,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontFamily: "Barlow",
                   ),
                 ),
+                Text(
+                  Preferences.expirationDate,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    overflow: TextOverflow.ellipsis,
+                    fontSize: 25,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                    fontFamily: "Barlow",
+                  ),
+                ),
               ],
             ),
           ),
@@ -103,4 +113,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+}
+
+String getCapitalizedString({required String str}) {
+  if (str.length <= 1) {
+    return str.toUpperCase();
+  }
+  return '${str[0].toUpperCase()}${str.substring(1)}';
 }

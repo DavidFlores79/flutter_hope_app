@@ -22,19 +22,14 @@ class PopupMenuList extends StatelessWidget {
           child: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-                style: TextStyle(
-                    fontSize: 15,
-                    color: Preferences.isDarkMode ? Colors.white : Colors.black,
-                    fontWeight: FontWeight.bold),
-                text: "Nick: ",
-                children: [
-                  TextSpan(
-                    text: apiUser.nickname,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ]),
+              style: TextStyle(
+                fontSize: 15,
+                color: Preferences.isDarkMode ? Colors.white : Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+              text: 'Bienvenido',
+              children: [],
+            ),
           ),
         ),
         PopupMenuItem(
@@ -51,6 +46,21 @@ class PopupMenuList extends StatelessWidget {
               text: apiUser.nombre,
               children: [],
             ),
+          ),
+        ),
+        PopupMenuItem(
+          height: 30,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          enabled: false,
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+                style: TextStyle(
+                    fontSize: 15,
+                    color: Preferences.isDarkMode ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.bold),
+                text: apiUser.nickname,
+                children: []),
           ),
         ),
         const PopupMenuDivider(),

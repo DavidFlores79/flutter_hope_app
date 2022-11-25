@@ -30,6 +30,8 @@ class AuthService extends ChangeNotifier {
         //guardar el token y la info del usuario
         await storage.write(key: 'jwtToken', value: decodedResp['jwt']);
         Preferences.apiUser = jsonEncode(decodedResp['user']);
+        Preferences.expirationDate =
+            Preferences.timestampToDate(decodedResp['exp']);
         return true.toString();
       } else {
         return decodedResp['message'];
