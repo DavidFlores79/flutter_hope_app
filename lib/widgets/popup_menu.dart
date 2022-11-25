@@ -11,7 +11,7 @@ class PopupMenuList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context, listen: false);
-    final User apiUser = User.fromJson(Preferences.apiUser);
+    User apiUser = User.fromJson(Preferences.apiUser);
 
     return PopUpMenu(
       menuList: [
@@ -98,7 +98,6 @@ class PopupMenuList extends StatelessWidget {
                 color: Preferences.isDarkMode ? Colors.white : Colors.black,
               ),
               text: 'Logout',
-              children: [],
             ),
           ),
           // child: const ListTile(

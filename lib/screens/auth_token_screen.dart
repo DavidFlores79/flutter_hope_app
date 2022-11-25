@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hope_app/screens/home_screen.dart';
 import 'package:hope_app/screens/login_screen.dart';
 import 'package:hope_app/services/services.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:provider/provider.dart';
 
 class AuthTokenScreen extends StatelessWidget {
@@ -21,6 +22,9 @@ class AuthTokenScreen extends StatelessWidget {
             if (!snapshot.hasData) return CircularProgressIndicator.adaptive();
 
             if (snapshot.data == '') {
+              if (Preferences.apiUser != '') {
+                authService.logout();
+              }
               Future.microtask(
                 () {
                   // Navigator.pushReplacementNamed(context, LoginScreen.routeName);

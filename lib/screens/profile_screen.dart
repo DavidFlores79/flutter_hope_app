@@ -31,24 +31,74 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: const [
-            CircleAvatar(
-              radius: 70,
-              backgroundImage: AssetImage('assets/user1.png'),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const CircleAvatar(
+                  radius: 70,
+                  backgroundImage: AssetImage('assets/user1.png'),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  '${apiUser.nombre} ${apiUser.apellido}'.toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    letterSpacing: 1.5,
+                    overflow: TextOverflow.ellipsis,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontFamily: "Anton",
+                  ),
+                ),
+                Text(
+                  apiUser.miPerfil!.nombre,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    overflow: TextOverflow.ellipsis,
+                    fontSize: 25,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                    fontFamily: "Barlow",
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                  child: Divider(
+                    thickness: 2,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  'Nickname: ${apiUser.nickname}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    overflow: TextOverflow.ellipsis,
+                    fontSize: 25,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                    fontFamily: "Barlow",
+                  ),
+                ),
+                Text(
+                  apiUser.email,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    overflow: TextOverflow.ellipsis,
+                    fontSize: 25,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                    fontFamily: "Barlow",
+                  ),
+                ),
+              ],
             ),
-            Text(
-              'David Amilcar Flores Castillo',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontFamily: "Barlow",
-              ),
-            )
-          ],
+          ),
         ),
       ),
     );

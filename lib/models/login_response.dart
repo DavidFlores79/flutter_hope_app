@@ -9,7 +9,6 @@ class LoginResponse {
     required this.status,
     required this.success,
     required this.user,
-    required this.jwt,
     required this.exp,
   });
 
@@ -17,7 +16,6 @@ class LoginResponse {
   String status;
   bool success;
   User user;
-  String jwt;
   int exp;
 
   factory LoginResponse.fromJson(String str) =>
@@ -30,7 +28,6 @@ class LoginResponse {
         status: json["status"],
         success: json["success"],
         user: User.fromMap(json["user"]),
-        jwt: json["jwt"],
         exp: json["exp"],
       );
 
@@ -39,7 +36,6 @@ class LoginResponse {
         "status": status,
         "success": success,
         "user": user.toMap(),
-        "jwt": jwt,
         "exp": exp,
       };
 }
@@ -60,6 +56,7 @@ class User {
     required this.estatus,
     required this.createdAt,
     this.deviceToken,
+    required this.miPerfil,
   });
 
   int id;
@@ -76,6 +73,7 @@ class User {
   int estatus;
   String createdAt;
   String? deviceToken;
+  MiPerfil miPerfil;
 
   factory User.fromJson(String str) => User.fromMap(json.decode(str));
 
@@ -96,6 +94,7 @@ class User {
         estatus: json["estatus"],
         createdAt: json["created_at"],
         deviceToken: json["device_token"],
+        miPerfil: MiPerfil.fromMap(json["mi_perfil"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -113,5 +112,42 @@ class User {
         "estatus": estatus,
         "created_at": createdAt,
         "device_token": deviceToken,
+        "mi_perfil": miPerfil.toMap(),
+      };
+}
+
+class MiPerfil {
+  MiPerfil({
+    required this.id,
+    required this.nombre,
+    this.descripcion,
+    required this.visible,
+    required this.estatus,
+  });
+
+  int id;
+  String nombre;
+  String? descripcion;
+  int visible;
+  int estatus;
+
+  factory MiPerfil.fromJson(String str) => MiPerfil.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory MiPerfil.fromMap(Map<String, dynamic> json) => MiPerfil(
+        id: json["id"],
+        nombre: json["nombre"],
+        descripcion: json["descripcion"],
+        visible: json["visible"],
+        estatus: json["estatus"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "id": id,
+        "nombre": nombre,
+        "descripcion": descripcion,
+        "visible": visible,
+        "estatus": estatus,
       };
 }

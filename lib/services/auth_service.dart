@@ -43,6 +43,7 @@ class AuthService extends ChangeNotifier {
 
   Future logout() async {
     await storage.deleteAll();
+    Preferences.apiUser = '';
     notifyListeners();
     return;
   }

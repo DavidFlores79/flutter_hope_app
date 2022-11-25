@@ -59,20 +59,26 @@ class PedidosProvider extends ChangeNotifier {
           print(pedidosXProv);
           break;
         case 401:
-          logout();
-          print('logout');
+          if (response.body.contains('code')) {
+            serverResponse = ServerResponse.fromJson(response.body);
+            Notifications.showSnackBar(
+                serverResponse?.message ?? 'Error de Autenticación.');
+          } else {
+            logout();
+            print('logout');
+          }
           break;
         case 404:
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido');
+              serverResponse?.message ?? 'Error Desconocido.');
           pedidos = [];
           pedidosXProv = [];
           notifyListeners();
           print(serverResponse);
           break;
         case 500:
-          Notifications.showSnackBar('500 Server Error');
+          Notifications.showSnackBar('500 Server Error.');
           break;
         default:
           print(response.body);
@@ -120,7 +126,14 @@ class PedidosProvider extends ChangeNotifier {
           print('Pedido Liberado: $pedidoLiberado');
           break;
         case 401:
-          logout();
+          if (response.body.contains('code')) {
+            serverResponse = ServerResponse.fromJson(response.body);
+            Notifications.showSnackBar(
+                serverResponse?.message ?? 'Error de Autenticación.');
+          } else {
+            logout();
+            print('logout');
+          }
           break;
         case 400:
           print('Estatus: ${response.statusCode}');
@@ -182,7 +195,14 @@ class PedidosProvider extends ChangeNotifier {
               'Pedidos Enviados: ${liberarPedidoMultipleResponse.orders.length}');
           break;
         case 401:
-          logout();
+          if (response.body.contains('code')) {
+            serverResponse = ServerResponse.fromJson(response.body);
+            Notifications.showSnackBar(
+                serverResponse?.message ?? 'Error de Autenticación.');
+          } else {
+            logout();
+            print('logout');
+          }
           break;
         case 400:
           print('Estatus Multiple: ${response.statusCode}');
