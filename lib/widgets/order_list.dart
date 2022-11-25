@@ -38,10 +38,11 @@ class _PedidosListState extends State<PedidosList> {
                       fontSize: 15,
                       color:
                           Preferences.isDarkMode ? Colors.white : Colors.black),
-                  text: "¿Desea liberar todos los pedidos del Proveedor: ",
+                  text: "¿Desea liberar todos los pedidos del Proveedor:   ",
                   children: [
                     TextSpan(
                       text: nombreProveedor,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const TextSpan(
                       text: '?',
@@ -81,6 +82,7 @@ class _PedidosListState extends State<PedidosList> {
   @override
   Widget build(BuildContext context) {
     const double titleSize = 15;
+    int selected = 0;
 
     return Column(
       children: [
@@ -123,6 +125,9 @@ class _PedidosListState extends State<PedidosList> {
                             overflow: TextOverflow.ellipsis),
                       ),
                       TextButton(
+                        style: const ButtonStyle(
+                          visualDensity: VisualDensity.compact,
+                        ),
                         onPressed: () => confirmarLiberarTodos(
                             pedidos, nombreProveedor, index),
                         child: ClipRRect(
@@ -130,7 +135,10 @@ class _PedidosListState extends State<PedidosList> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 3, horizontal: 7),
-                            decoration: const BoxDecoration(color: Colors.blue),
+                            decoration: BoxDecoration(
+                                color: Preferences.isDarkMode
+                                    ? ThemeProvider.darkColor
+                                    : Colors.blue),
                             child: const Text(
                               'Liberar todos',
                               style: TextStyle(
@@ -254,7 +262,10 @@ class _PedidosListState extends State<PedidosList> {
         return AlertDialog(
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          title: const Text("Confirmar Liberar"),
+          title: const Text(
+            "Confirmar Liberar",
+            textAlign: TextAlign.center,
+          ),
           content: Padding(
             padding: const EdgeInsets.all(5.0),
             child: RichText(

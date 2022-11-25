@@ -9,10 +9,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final mp = Provider.of<NavbarProvider>(context);
 
-    // const Color selectedColor = Color.fromRGBO(35, 35, 35, 1);
-    // const Color selectedDarkColor = Colors.white;
-    // const Color unselectedColor = Color.fromRGBO(132, 140, 142, 1);
-
     return BottomNavigationBar(
         currentIndex: mp.selectedIndex,
         onTap: (value) {

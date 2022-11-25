@@ -11,7 +11,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context, listen: false);
     final mp = Provider.of<NavbarProvider>(context);
 
     return Scaffold(
@@ -22,13 +21,8 @@ class HomeScreen extends StatelessWidget {
           image: AssetImage('assets/hope-logo.png'),
           height: 45,
         ),
-        actions: [
-          IconButton(
-              onPressed: () async {
-                Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-                await authService.logout();
-              },
-              icon: const Icon(Icons.logout))
+        actions: const [
+          PopupMenuList(),
         ],
       ),
       body: mp.items[mp.selectedIndex].widget,

@@ -28,8 +28,10 @@ class ThemeProvider extends ChangeNotifier {
                 appBarTheme: AppBarTheme(backgroundColor: lightColor),
                 floatingActionButtonTheme:
                     FloatingActionButtonThemeData(backgroundColor: lightColor),
-                bottomNavigationBarTheme:
-                    BottomNavigationBarThemeData(selectedItemColor: lightColor),
+                bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                  selectedItemColor: lightColor,
+                  unselectedItemColor: Colors.grey,
+                ),
                 switchTheme: SwitchThemeData(
                   thumbColor: MaterialStateProperty.all(lightColor),
                   trackColor: MaterialStateProperty.all(
@@ -42,8 +44,10 @@ class ThemeProvider extends ChangeNotifier {
       appBarTheme: AppBarTheme(backgroundColor: lightColor),
       floatingActionButtonTheme:
           FloatingActionButtonThemeData(backgroundColor: lightColor),
-      bottomNavigationBarTheme:
-          BottomNavigationBarThemeData(selectedItemColor: lightColor),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        selectedItemColor: lightColor,
+        unselectedItemColor: Colors.grey,
+      ),
       switchTheme: SwitchThemeData(
         thumbColor: MaterialStateProperty.all(lightColor),
         trackColor:

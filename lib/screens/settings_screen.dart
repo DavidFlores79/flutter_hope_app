@@ -3,6 +3,7 @@ import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -22,15 +23,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         centerTitle: true,
         elevation: 0,
         title: const Text('Configuración'),
-        actions: [
-          IconButton(
-              onPressed: () async {
-                Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-                await authService.logout();
-              },
-              icon: const Icon(Icons.logout))
+        actions: const [
+          PopupMenuList(),
         ],
-        //backgroundColor: const Color.fromRGBO(35, 35, 35, 1),
       ),
       body: SafeArea(
         child: Padding(

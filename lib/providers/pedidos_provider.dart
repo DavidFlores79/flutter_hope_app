@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hope_app/locator.dart';
+import 'package:hope_app/services/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/screens/login_screen.dart';
@@ -17,8 +19,7 @@ class PedidosProvider extends ChangeNotifier {
   ServerResponse? serverResponse;
   bool result = false;
 
-  static final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
+  final NavigationService _navigationService = locator<NavigationService>();
 
   final storage = const FlutterSecureStorage();
 
@@ -210,9 +211,9 @@ class PedidosProvider extends ChangeNotifier {
     getOrdenes();
   }
 
-  Future logout() async {
+  logout() async {
     await storage.deleteAll();
-    navigatorKey.currentState?.pushReplacementNamed(LoginScreen.routeName);
-    notifyListeners();
+    Notifications.showSnackBar('Su sesión ha vencido.');
+    _navigationService.navigateTo(LoginScreen.routeName);
   }
 }
