@@ -2,4 +2,7 @@
 <resources>
   <color name="red">#FF0000</color>
   <color name="itsoft">#353535</color>
+  <color name="azul_itsoft">#041976</color>
+  <color name="cafe_hope">#353535</color>
+  <color name="amarillo_hope">#F0AB00</color>
 </resources>
