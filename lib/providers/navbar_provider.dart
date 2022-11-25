@@ -21,7 +21,7 @@ class NavbarProvider extends ChangeNotifier {
     ),
   ];
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   int get selectedIndex => _selectedIndex;
 

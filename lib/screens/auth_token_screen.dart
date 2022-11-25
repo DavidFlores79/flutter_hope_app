@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hope_app/providers/theme_provider.dart';
 import 'package:hope_app/screens/home_screen.dart';
 import 'package:hope_app/screens/login_screen.dart';
 import 'package:hope_app/services/services.dart';
@@ -15,6 +16,7 @@ class AuthTokenScreen extends StatelessWidget {
     final authService = Provider.of<AuthService>(context);
 
     return Scaffold(
+      backgroundColor: ThemeProvider.lightColor,
       body: Center(
         child: FutureBuilder(
           future: authService.getToken(),

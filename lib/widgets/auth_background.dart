@@ -17,7 +17,7 @@ class AuthBackground extends StatelessWidget {
         children: [
           const _BackgroundImage(),
           const Positioned(
-            bottom: 30,
+            bottom: 20,
             right: 30,
             child: LogoBrand(),
           ),
@@ -50,7 +50,7 @@ class _BackgroundImage extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      height: size.height * 0.85,
+      height: size.height - 90,
       child: const Image(
         image: AssetImage('assets/merida-background.jpg'),
         fit: BoxFit.cover,
@@ -78,7 +78,7 @@ class UserIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final distance = size.height * 0.09;
+    final distance = size.height - (size.height - 80);
 
     return SafeArea(
       child: Container(

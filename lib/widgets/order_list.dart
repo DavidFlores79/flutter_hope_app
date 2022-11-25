@@ -105,15 +105,6 @@ class _PedidosListState extends State<PedidosList> {
 
                 return ExpansionTile(
                   childrenPadding: const EdgeInsets.only(bottom: 15, left: 5),
-                  backgroundColor: Preferences.isDarkMode
-                      ? Colors.grey.shade800
-                      : Colors.grey.shade200,
-                  textColor: Preferences.isDarkMode
-                      ? ThemeProvider.darkColor
-                      : ThemeProvider.lightColor,
-                  iconColor: Preferences.isDarkMode
-                      ? ThemeProvider.darkColor
-                      : ThemeProvider.lightColor,
                   title: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,

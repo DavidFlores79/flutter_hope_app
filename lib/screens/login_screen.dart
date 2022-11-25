@@ -90,8 +90,9 @@ class _LoginForm extends StatelessWidget {
           child: Column(
             children: [
               TextFormField(
+                textCapitalization: TextCapitalization.none,
                 autocorrect: false,
-                keyboardType: TextInputType.name,
+                keyboardType: TextInputType.text,
                 decoration: InputDecorations.authInputDecoration(
                     color: myColor,
                     hintText: 'john.doe',

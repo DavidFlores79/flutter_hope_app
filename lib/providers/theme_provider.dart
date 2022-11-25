@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class ThemeProvider extends ChangeNotifier {
   ThemeData currentTheme;
-  static Color lightColor = const Color.fromRGBO(55, 55, 55, 0.9);
+  static Color lightColor = const Color.fromRGBO(35, 35, 35, 0.9);
   static Color darkColor = const Color.fromRGBO(240, 171, 0, 1);
 
   ThemeProvider({
     required isDarkmode,
-    lightColor = const Color.fromRGBO(55, 55, 55, 0.9),
+    lightColor = const Color.fromRGBO(35, 35, 35, 0.9),
     darkColor = const Color.fromRGBO(240, 171, 0, 1),
   }) : currentTheme = isDarkmode
             ? ThemeData.dark().copyWith(
@@ -23,6 +23,11 @@ class ThemeProvider extends ChangeNotifier {
                   trackColor: MaterialStateProperty.all(
                       const Color.fromRGBO(240, 171, 0, 0.5)),
                 ),
+                expansionTileTheme: ExpansionTileThemeData(
+                  backgroundColor: Colors.grey.shade800,
+                  textColor: darkColor,
+                  iconColor: darkColor,
+                ),
               )
             : ThemeData.light().copyWith(
                 appBarTheme: AppBarTheme(backgroundColor: lightColor),
@@ -36,6 +41,11 @@ class ThemeProvider extends ChangeNotifier {
                   thumbColor: MaterialStateProperty.all(lightColor),
                   trackColor: MaterialStateProperty.all(
                       const Color.fromRGBO(35, 35, 35, 0.5)),
+                ),
+                expansionTileTheme: ExpansionTileThemeData(
+                  backgroundColor: Colors.grey.shade200,
+                  textColor: lightColor,
+                  iconColor: lightColor,
                 ),
               );
 
@@ -52,6 +62,11 @@ class ThemeProvider extends ChangeNotifier {
         thumbColor: MaterialStateProperty.all(lightColor),
         trackColor:
             MaterialStateProperty.all(const Color.fromRGBO(35, 35, 35, 0.5)),
+      ),
+      expansionTileTheme: ExpansionTileThemeData(
+        backgroundColor: Colors.grey.shade200,
+        textColor: lightColor,
+        iconColor: lightColor,
       ),
     );
     notifyListeners();
@@ -70,6 +85,11 @@ class ThemeProvider extends ChangeNotifier {
         thumbColor: MaterialStateProperty.all(darkColor),
         trackColor:
             MaterialStateProperty.all(const Color.fromRGBO(240, 171, 0, 0.5)),
+      ),
+      expansionTileTheme: ExpansionTileThemeData(
+        backgroundColor: Colors.grey.shade800,
+        textColor: darkColor,
+        iconColor: darkColor,
       ),
     );
     notifyListeners();
