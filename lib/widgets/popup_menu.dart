@@ -15,105 +15,51 @@ class PopupMenuList extends StatelessWidget {
 
     return PopUpMenu(
       menuList: [
-        PopupMenuItem(
+        const PopupMenuItem(
           height: 30,
-          padding: const EdgeInsets.symmetric(horizontal: 15),
+          padding: EdgeInsets.symmetric(horizontal: 15),
           enabled: false,
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: TextStyle(
-                fontSize: 15,
-                color: Preferences.isDarkMode ? Colors.white : Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-              text: 'Bienvenido',
-              children: [],
-            ),
+          child: Text(
+            'Bienvenido',
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         PopupMenuItem(
           height: 30,
           padding: const EdgeInsets.symmetric(horizontal: 15),
           enabled: false,
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: TextStyle(
-                fontSize: 15,
-                color: Preferences.isDarkMode ? Colors.white : Colors.black,
-              ),
-              text: apiUser.nombre,
-              children: [],
-            ),
+          child: Text(
+            apiUser.nombre,
+            //style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         PopupMenuItem(
           height: 30,
           padding: const EdgeInsets.symmetric(horizontal: 15),
           enabled: false,
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-                style: TextStyle(
-                    fontSize: 15,
-                    color: Preferences.isDarkMode ? Colors.white : Colors.black,
-                    fontWeight: FontWeight.bold),
-                text: apiUser.nickname,
-                children: []),
+          child: Text(
+            apiUser.nickname,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         const PopupMenuDivider(),
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 1,
           height: 30,
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: TextStyle(
-                fontSize: 15,
-                color: Preferences.isDarkMode ? Colors.white : Colors.black,
-              ),
-              text: 'Mi perfil',
-              children: [],
-            ),
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 15),
+          child: Text('Mi perfil'),
         ),
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 0,
           height: 30,
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: TextStyle(
-                fontSize: 15,
-                color: Preferences.isDarkMode ? Colors.white : Colors.black,
-              ),
-              text: 'Preferencias',
-              children: [],
-            ),
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 15),
+          child: Text('Preferencias'),
         ),
         const PopupMenuDivider(),
         PopupMenuItem(
           height: 30,
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: TextStyle(
-                fontSize: 15,
-                color: Preferences.isDarkMode ? Colors.white : Colors.black,
-              ),
-              text: 'Logout',
-            ),
-          ),
-          // child: const ListTile(
-          //   // trailing: Icon(Icons.output_outlined),
-          //   title: Text('Logout'),
-          // ),
+          child: const Text('Logout'),
           onTap: () async {
             await authService.logout();
             // ignore: use_build_context_synchronously

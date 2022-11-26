@@ -140,6 +140,7 @@ class _LoginForm extends StatelessWidget {
                             .loginUser(loginForm.email, loginForm.password);
 
                         if (loginMessage == 'true') {
+                          loginForm.isLoading = false;
                           // ignore: use_build_context_synchronously
                           Navigator.pushReplacementNamed(
                             context,

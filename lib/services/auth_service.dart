@@ -20,7 +20,9 @@ class AuthService extends ChangeNotifier {
     final url = Uri.http(_apiUrl, '$_proyectName/api/login', authData);
 
     try {
-      final response = await http.post(url, body: json.encode(authData));
+      final response = await http
+          .post(url, body: json.encode(authData))
+          .timeout(const Duration(seconds: 10));
 
       final Map<String, dynamic> decodedResp = json.decode(response.body);
 
@@ -34,7 +36,7 @@ class AuthService extends ChangeNotifier {
             Preferences.timestampToDate(decodedResp['exp']);
         return true.toString();
       } else {
-        return decodedResp['message'];
+        return decodedResp['message'] ?? "Servidor no disponible.";
       }
     } catch (e) {
       Notifications.showSnackBar('Error: ${e.toString()}');

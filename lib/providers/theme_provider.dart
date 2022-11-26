@@ -28,6 +28,10 @@ class ThemeProvider extends ChangeNotifier {
                   textColor: darkColor,
                   iconColor: darkColor,
                 ),
+
+                // popupMenuTheme: const PopupMenuThemeData(
+                //   color: Colors.white,
+                // ),
               )
             : ThemeData.light().copyWith(
                 appBarTheme: AppBarTheme(backgroundColor: lightColor),
@@ -47,6 +51,9 @@ class ThemeProvider extends ChangeNotifier {
                   textColor: lightColor,
                   iconColor: lightColor,
                 ),
+                // popupMenuTheme: const PopupMenuThemeData(
+                //   color: Colors.black,
+                // ),
               );
 
   setLightMode() {
@@ -68,6 +75,9 @@ class ThemeProvider extends ChangeNotifier {
         textColor: lightColor,
         iconColor: lightColor,
       ),
+      // popupMenuTheme: const PopupMenuThemeData(
+      //   color: Colors.black,
+      // ),
     );
     notifyListeners();
   }
@@ -91,6 +101,9 @@ class ThemeProvider extends ChangeNotifier {
         textColor: darkColor,
         iconColor: darkColor,
       ),
+      // popupMenuTheme: const PopupMenuThemeData(
+      //   color: Colors.white,
+      // ),
     );
     notifyListeners();
   }

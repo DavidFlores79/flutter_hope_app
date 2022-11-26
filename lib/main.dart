@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       navigatorKey: locator<NavigationService>().navigatorKey,
       scaffoldMessengerKey: Notifications.messengerKey,
-      title: 'Material App',
+      title: 'Hope Móvil',
       initialRoute: AuthTokenScreen.routeName,
       routes: {
         LoginScreen.routeName: (context) => LoginScreen(),
