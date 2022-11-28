@@ -28,8 +28,10 @@ class PedidosProvider extends ChangeNotifier {
     getOrdenes();
   }
 
-  getOrdenes() async {
-    //print('listado de Ordenes');
+  Future<bool> getOrdenes() async {
+    result = false;
+    pedidosXProv = [];
+    print('listado de Ordenes');
     _endPoint = '/api/v1/ordenes-pendientes';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
@@ -48,6 +50,7 @@ class PedidosProvider extends ChangeNotifier {
 
       switch (response.statusCode) {
         case 200:
+          result = true;
           //final ordersResponse = OrderResponse.fromJson(response.body);
           final ordersResponseProv = PedidosProvModel.fromJson(response.body);
           //pedidos = [...ordersResponse.pedidos];
@@ -56,7 +59,7 @@ class PedidosProvider extends ChangeNotifier {
             Notifications.showSnackBar(
                 "No se encontraron ordenes para mostrar");
           }
-          print(pedidosXProv);
+          print('200: ${pedidosXProv}');
           break;
         case 401:
           if (response.body.contains('code')) {
@@ -64,6 +67,7 @@ class PedidosProvider extends ChangeNotifier {
             Notifications.showSnackBar(
                 serverResponse?.message ?? 'Error de Autenticación.');
           } else {
+            pedidosXProv = [];
             logout();
             print('logout');
           }
@@ -88,6 +92,8 @@ class PedidosProvider extends ChangeNotifier {
       print('Error $e');
       Notifications.showSnackBar(e.toString());
     }
+
+    return result;
   }
 
   Future<bool> liberarPedido(Pedido pedido) async {

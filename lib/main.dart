@@ -3,7 +3,6 @@ import 'package:hope_app/locator.dart';
 import 'package:hope_app/providers/navbar_provider.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
-import 'package:hope_app/services/auth_service.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:provider/provider.dart';
@@ -48,7 +47,7 @@ class AppState extends StatelessWidget {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   // final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 

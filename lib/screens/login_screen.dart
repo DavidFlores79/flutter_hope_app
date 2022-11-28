@@ -142,6 +142,9 @@ class _LoginForm extends StatelessWidget {
                         if (loginMessage == 'true') {
                           loginForm.isLoading = false;
                           // ignore: use_build_context_synchronously
+                          Provider.of<PedidosProvider>(context, listen: false)
+                              .getOrdenes();
+                          // ignore: use_build_context_synchronously
                           Navigator.pushReplacementNamed(
                             context,
                             HomeScreen.routeName,

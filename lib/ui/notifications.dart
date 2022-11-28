@@ -11,6 +11,7 @@ class Notifications {
         backgroundColor: Preferences.isDarkMode
             ? ThemeProvider.darkColor
             : ThemeProvider.lightColor,
+        dismissDirection: DismissDirection.startToEnd,
         content: Text(
           message,
           style:

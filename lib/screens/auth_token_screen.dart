@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
-import 'package:hope_app/providers/theme_provider.dart';
 import 'package:hope_app/screens/home_screen.dart';
 import 'package:hope_app/screens/login_screen.dart';
 import 'package:hope_app/services/services.dart';
@@ -16,7 +15,6 @@ class AuthTokenScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     final orderProvider = Provider.of<PedidosProvider>(context);
-    orderProvider.getOrdenes();
 
     return Scaffold(
       backgroundColor: ThemeProvider.lightColor,
@@ -43,6 +41,7 @@ class AuthTokenScreen extends StatelessWidget {
                 },
               );
             } else {
+              orderProvider.getOrdenes();
               Future.microtask(
                 () {
                   // Navigator.pushReplacementNamed(context, LoginScreen.routeName);
