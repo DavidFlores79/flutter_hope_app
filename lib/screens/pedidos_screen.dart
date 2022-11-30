@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hope_app/models/models.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/widgets/order_list.dart';
 import 'package:provider/provider.dart';
@@ -10,16 +10,23 @@ class PedidosScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final orderProvider = Provider.of<PedidosProvider>(context);
-    // orderProvider.getOrdenes();
+    bool isLoading = orderProvider.isLoading;
 
     Future<void> onRefresh() async {
-      orderProvider.getOrdenes();
+      await orderProvider.getOrdenes();
     }
 
     return Scaffold(
       body: RefreshIndicator(
+        color: ThemeProvider.darkColor,
         onRefresh: onRefresh,
-        child: PedidosList(pedidosProv: orderProvider.pedidosXProv),
+        child: (!isLoading)
+            ? PedidosList(pedidosProv: orderProvider.pedidosXProv)
+            : Center(
+                child: SpinKitSpinningLines(
+                  color: ThemeProvider.darkColor,
+                ),
+              ),
       ),
     );
   }

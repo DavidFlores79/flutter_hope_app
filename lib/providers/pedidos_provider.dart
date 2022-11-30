@@ -18,6 +18,7 @@ class PedidosProvider extends ChangeNotifier {
   List<PedidosProv> pedidosXProv = [];
   ServerResponse? serverResponse;
   bool result = false;
+  bool isLoading = false;
 
   final NavigationService _navigationService = locator<NavigationService>();
 
@@ -29,6 +30,7 @@ class PedidosProvider extends ChangeNotifier {
   }
 
   Future<bool> getOrdenes() async {
+    isLoading = true;
     result = false;
     pedidosXProv = [];
     print('listado de Ordenes');
@@ -46,11 +48,14 @@ class PedidosProvider extends ChangeNotifier {
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
     try {
-      final response = await http.post(url, headers: headers);
+      final response = await http
+          .post(url, headers: headers)
+          .timeout(const Duration(seconds: 15));
 
       switch (response.statusCode) {
         case 200:
           result = true;
+          isLoading = false;
           //final ordersResponse = OrderResponse.fromJson(response.body);
           final ordersResponseProv = PedidosProvModel.fromJson(response.body);
           //pedidos = [...ordersResponse.pedidos];
@@ -73,6 +78,7 @@ class PedidosProvider extends ChangeNotifier {
           }
           break;
         case 404:
+          isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido.');
@@ -82,6 +88,7 @@ class PedidosProvider extends ChangeNotifier {
           print(serverResponse);
           break;
         case 500:
+          isLoading = false;
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
@@ -90,9 +97,11 @@ class PedidosProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error $e');
-      Notifications.showSnackBar(e.toString());
+      isLoading = false;
+      if (e.toString().contains('TimeoutException'))
+        Notifications.showSnackBar('Tiempo de espera agotado');
+      notifyListeners();
     }
-
     return result;
   }
 
@@ -199,6 +208,7 @@ class PedidosProvider extends ChangeNotifier {
               'Los pedidos del Proveedor: $nombreProveedor se enviaron a liberación.');
           print(
               'Pedidos Enviados: ${liberarPedidoMultipleResponse.orders.length}');
+          getOrdenes();
           break;
         case 401:
           if (response.body.contains('code')) {
@@ -233,8 +243,6 @@ class PedidosProvider extends ChangeNotifier {
       print('Error $e');
       Notifications.showSnackBar(e.toString());
     }
-
-    getOrdenes();
   }
 
   logout() async {
