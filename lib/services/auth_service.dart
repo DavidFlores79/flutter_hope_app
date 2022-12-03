@@ -39,7 +39,9 @@ class AuthService extends ChangeNotifier {
         return decodedResp['message'] ?? "Servidor no disponible.";
       }
     } catch (e) {
-      Notifications.showSnackBar('Error: ${e.toString()}');
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar('Tiempo de espera agotado');
+      }
     }
 
     //print(decodedResp);

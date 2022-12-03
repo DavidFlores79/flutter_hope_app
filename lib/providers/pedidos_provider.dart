@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/locator.dart';
+import 'package:hope_app/screens/pedidos_screen.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:hope_app/models/models.dart';
@@ -60,6 +61,7 @@ class PedidosProvider extends ChangeNotifier {
           final ordersResponseProv = PedidosProvModel.fromJson(response.body);
           //pedidos = [...ordersResponse.pedidos];
           pedidosXProv = [...ordersResponseProv.pedidosProv];
+          notifyListeners();
           if (pedidosXProv.isEmpty) {
             Notifications.showSnackBar(
                 "No se encontraron ordenes para mostrar");
@@ -98,8 +100,9 @@ class PedidosProvider extends ChangeNotifier {
     } catch (e) {
       print('Error $e');
       isLoading = false;
-      if (e.toString().contains('TimeoutException'))
+      if (e.toString().contains('TimeoutException')) {
         Notifications.showSnackBar('Tiempo de espera agotado');
+      }
       notifyListeners();
     }
     return result;
@@ -178,8 +181,10 @@ class PedidosProvider extends ChangeNotifier {
     return result;
   }
 
-  liberarMultiple(List<Pedido> pedidos, String nombreProveedor) async {
+  Future<bool> liberarMultiple(
+      List<Pedido> pedidos, String nombreProveedor) async {
     _endPoint = '/api/v1/ordenes-pendientes/liberar-multiple';
+    result = false;
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -206,9 +211,9 @@ class PedidosProvider extends ChangeNotifier {
               LiberarMultipleResponse.fromJson(response.body);
           Notifications.showSnackBar(
               'Los pedidos del Proveedor: $nombreProveedor se enviaron a liberación.');
+          _navigationService.navigateTo(PedidosScreen.routeName);
           print(
               'Pedidos Enviados: ${liberarPedidoMultipleResponse.orders.length}');
-          getOrdenes();
           break;
         case 401:
           if (response.body.contains('code')) {
@@ -239,10 +244,13 @@ class PedidosProvider extends ChangeNotifier {
           print(response.statusCode);
           print(response.body);
       }
+      await getOrdenes();
     } catch (e) {
       print('Error $e');
       Notifications.showSnackBar(e.toString());
     }
+
+    return result;
   }
 
   logout() async {

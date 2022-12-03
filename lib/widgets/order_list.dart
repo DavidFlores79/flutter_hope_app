@@ -161,9 +161,9 @@ class _PedidosListState extends State<PedidosList> {
                             context, pedido, nombreProveedor);
                       },
                       onDismissed: (DismissDirection direction) {
-                        setState(() {
-                          pedidos.removeAt(index);
-                        });
+                        // setState(() {
+                        //   pedidos.removeAt(index);
+                        // });
                       },
                       child: ListTile(
                         onTap: () {},
