@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/locator.dart';
+import 'package:hope_app/screens/home_screen.dart';
 import 'package:hope_app/screens/pedidos_screen.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:http/http.dart' as http;
@@ -51,7 +53,7 @@ class PedidosProvider extends ChangeNotifier {
     try {
       final response = await http
           .post(url, headers: headers)
-          .timeout(const Duration(seconds: 15));
+          .timeout(const Duration(seconds: 20));
 
       switch (response.statusCode) {
         case 200:
@@ -101,7 +103,8 @@ class PedidosProvider extends ChangeNotifier {
       print('Error $e');
       isLoading = false;
       if (e.toString().contains('TimeoutException')) {
-        Notifications.showSnackBar('Tiempo de espera agotado');
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
       }
       notifyListeners();
     }
@@ -131,8 +134,9 @@ class PedidosProvider extends ChangeNotifier {
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
     try {
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(dataRaw));
+      final response = await http
+          .post(url, headers: headers, body: jsonEncode(dataRaw))
+          .timeout(const Duration(seconds: 20));
       switch (response.statusCode) {
         case 200:
           result = true;
@@ -200,8 +204,9 @@ class PedidosProvider extends ChangeNotifier {
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
     try {
-      final response = await http.post(url,
-          headers: headers, body: jsonEncode(dataRaw.toMap()));
+      final response = await http
+          .post(url, headers: headers, body: jsonEncode(dataRaw.toMap()))
+          .timeout(const Duration(seconds: 20));
 
       switch (response.statusCode) {
         case 200:
@@ -211,7 +216,8 @@ class PedidosProvider extends ChangeNotifier {
               LiberarMultipleResponse.fromJson(response.body);
           Notifications.showSnackBar(
               'Los pedidos del Proveedor: $nombreProveedor se enviaron a liberación.');
-          _navigationService.navigateTo(PedidosScreen.routeName);
+          Timer(const Duration(seconds: 15), getOrdenes);
+          Timer(const Duration(seconds: 20), getOrdenes);
           print(
               'Pedidos Enviados: ${liberarPedidoMultipleResponse.orders.length}');
           break;

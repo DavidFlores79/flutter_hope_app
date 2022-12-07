@@ -22,6 +22,7 @@ class _PedidosListState extends State<PedidosList> {
     return await showDialog(
       context: context,
       builder: (BuildContext context) {
+        final orderProvider = Provider.of<PedidosProvider>(context);
         return AlertDialog(
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
@@ -57,8 +58,6 @@ class _PedidosListState extends State<PedidosList> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                final orderProvider =
-                    Provider.of<PedidosProvider>(context, listen: false);
                 orderProvider.liberarMultiple(pedidos, nombreProveedor);
                 Navigator.of(context).pop(true);
               },
