@@ -7,7 +7,8 @@ class Preferences {
   static String _apiUser = '';
   static String _apiServer = '205.251.136.75';
   static bool _isActive = false;
-  static String _expirationDate = '1979-04-10';
+  static String _expirationDate = '1979-04-10 00:00:00';
+  static String _licenseExp = '2022-12-07 18:35:00';
   static bool _isDarkMode = false;
   static bool _isModulesActive = true;
 
@@ -65,6 +66,15 @@ class Preferences {
     _prefs.setString('expirationDate', value);
   }
 
+  static String get licenseExp {
+    return _prefs.getString('licenseExp') ?? _licenseExp;
+  }
+
+  static set licenseExp(String value) {
+    _licenseExp = value;
+    _prefs.setString('licenseExp', value);
+  }
+
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
   }
@@ -72,8 +82,8 @@ class Preferences {
   static String timestampToDate(int timestamp) {
     var now = DateTime.now();
     //var format = DateFormat('HH:mm a');
-    //var format = DateFormat('yyyy-MM-dd, HH:mm');
-    var format = DateFormat('yyyy-MM-dd, hh:mm a');
+    var format = DateFormat('yyyy-MM-dd HH:mm');
+    // var format = DateFormat('yyyy-MM-dd, hh:mm a');
     var date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
     var diff = now.difference(date);
     var time = '';

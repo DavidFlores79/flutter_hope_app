@@ -261,7 +261,7 @@ class PedidosProvider extends ChangeNotifier {
 
   logout() async {
     await storage.deleteAll();
-    Notifications.showSnackBar('Su sesión ha vencido.');
+    // Notifications.showSnackBar('Su sesión ha vencido.');
     _navigationService.navigateTo(LoginScreen.routeName);
   }
 }

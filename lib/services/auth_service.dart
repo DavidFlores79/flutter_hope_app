@@ -55,6 +55,13 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<String> getToken() async {
+    final DateTime expirationDate = DateTime.parse(Preferences.expirationDate);
+    final DateTime licenseExp = DateTime.parse(Preferences.licenseExp);
+    final DateTime now = DateTime.now();
+    if (now.compareTo(expirationDate) > 0) {
+      Preferences.apiUser = '';
+      return '';
+    }
     return await storage.read(key: 'jwtToken') ?? '';
   }
 }
