@@ -96,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 Text(
-                  Preferences.expirationDate,
+                  Preferences.licenseExp,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     overflow: TextOverflow.ellipsis,

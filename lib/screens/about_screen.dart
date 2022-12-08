@@ -3,7 +3,7 @@ import 'package:hope_app/shared/preferences.dart';
 
 class AboutScreen extends StatelessWidget {
   static const String routeName = 'acerca-de';
-  final String expirationDate = Preferences.expirationDate;
+  final String expirationDate = Preferences.licenseExp;
 
   @override
   Widget build(BuildContext context) {

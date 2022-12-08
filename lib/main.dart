@@ -26,6 +26,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<AuthService>(
           create: (context) => AuthService(),
         ),
+        ChangeNotifierProvider<ActivationService>(
+          create: (context) => ActivationService(),
+        ),
         ChangeNotifierProvider<NavbarProvider>(
           create: (context) => NavbarProvider(),
         ),
@@ -58,7 +61,7 @@ class MyApp extends StatelessWidget {
       navigatorKey: locator<NavigationService>().navigatorKey,
       scaffoldMessengerKey: Notifications.messengerKey,
       title: 'Hope Móvil',
-      initialRoute: AuthTokenScreen.routeName,
+      initialRoute: ActivationScreen.routeName,
       routes: {
         LoginScreen.routeName: (context) => LoginScreen(),
         RegisterScreen.routeName: (context) => const RegisterScreen(),
@@ -69,6 +72,7 @@ class MyApp extends StatelessWidget {
         AboutScreen.routeName: (context) => AboutScreen(),
         SettingsScreen.routeName: (context) => SettingsScreen(),
         ProfileScreen.routeName: (context) => ProfileScreen(),
+        ActivationScreen.routeName: (context) => const ActivationScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );

@@ -8,7 +8,7 @@ class Preferences {
   static String _apiServer = '205.251.136.75';
   static bool _isActive = false;
   static String _expirationDate = '1979-04-10 00:00:00';
-  static String _licenseExp = '2022-12-07 18:35:00';
+  static String _licenseExp = '2022-12-07 20:10:00';
   static bool _isDarkMode = false;
   static bool _isModulesActive = true;
 
