@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
@@ -12,6 +14,9 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final oneSignalProvider = Provider.of<OneSignalProvider>(context);
+    oneSignalProvider.initOneSignal(context);
+
     return Scaffold(
       body: AuthBackground(
         child: SingleChildScrollView(
@@ -81,7 +86,12 @@ class _LoginForm extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final width80 = (size.width * 0.15);
     final loginForm = Provider.of<LoginFormProvider>(context);
-    final Color myColor = Color.fromARGB(255, 17, 92, 153);
+    final Color myColor = ThemeProvider.blueColor;
+    final oneSignalProvider = Provider.of<OneSignalProvider>(context);
+    Timer(
+      const Duration(seconds: 10),
+      () => oneSignalProvider.setOneSignalId(),
+    );
 
     return Container(
       child: Form(
@@ -140,10 +150,12 @@ class _LoginForm extends StatelessWidget {
                             .loginUser(loginForm.email, loginForm.password);
 
                         if (loginMessage == 'true') {
+                          oneSignalProvider.saveUpdateId();
                           loginForm.isLoading = false;
                           // ignore: use_build_context_synchronously
                           Provider.of<PedidosProvider>(context, listen: false)
                               .getOrdenes();
+
                           // ignore: use_build_context_synchronously
                           Navigator.pushReplacementNamed(
                             context,

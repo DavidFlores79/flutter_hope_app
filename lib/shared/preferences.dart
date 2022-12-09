@@ -14,6 +14,8 @@ class Preferences {
   static String _licenseExp = '1979-04-10 00:00:00';
   static bool _isDarkMode = false;
   static bool _isModulesActive = true;
+  static String _oneSignalAppId = '7edc135c-d979-4e44-b761-4e523d31f65b';
+  static String _onesignalUserId = '';
 
   static String get activacionServer {
     return _prefs.getString('activacionServer') ?? _activacionServer;
@@ -103,6 +105,24 @@ class Preferences {
   static set licenseExp(String value) {
     _licenseExp = value;
     _prefs.setString('licenseExp', value);
+  }
+
+  static String get oneSignalAppId {
+    return _prefs.getString('oneSignalAppId') ?? _oneSignalAppId;
+  }
+
+  static set oneSignalAppId(String value) {
+    _oneSignalAppId = value;
+    _prefs.setString('oneSignalAppId', value);
+  }
+
+  static String get onesignalUserId {
+    return _prefs.getString('onesignalUserId') ?? _onesignalUserId;
+  }
+
+  static set onesignalUserId(String value) {
+    _onesignalUserId = value;
+    _prefs.setString('onesignalUserId', value);
   }
 
   static Future init() async {

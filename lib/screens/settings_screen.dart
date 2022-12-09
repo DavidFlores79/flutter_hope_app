@@ -96,6 +96,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           height: 2,
                         ),
                       ),
+                      Text(
+                        'One Signal ID: ${Preferences.onesignalUserId}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          height: 2,
+                        ),
+                      ),
                       const SizedBox(
                         height: 20,
                       ),

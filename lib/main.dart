@@ -29,6 +29,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<ActivationService>(
           create: (context) => ActivationService(),
         ),
+        ChangeNotifierProvider<OneSignalProvider>(
+          create: (context) => OneSignalProvider(),
+        ),
         ChangeNotifierProvider<NavbarProvider>(
           create: (context) => NavbarProvider(),
         ),
