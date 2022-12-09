@@ -5,12 +5,33 @@ class Preferences {
   static late SharedPreferences _prefs;
 
   static String _apiUser = '';
+  static String _activacionServer = '205.251.136.75';
+  static String _activacionRoute = '/HopeConfiguraciones';
   static String _apiServer = '205.251.136.75';
+  static String _projectName = '/HopeV200';
   static bool _isActive = false;
   static String _expirationDate = '1979-04-10 00:00:00';
-  static String _licenseExp = '2022-12-07 20:10:00';
+  static String _licenseExp = '1979-04-10 00:00:00';
   static bool _isDarkMode = false;
   static bool _isModulesActive = true;
+
+  static String get activacionServer {
+    return _prefs.getString('activacionServer') ?? _activacionServer;
+  }
+
+  static set activacionServer(String value) {
+    _activacionServer = value;
+    _prefs.setString('activacionServer', value);
+  }
+
+  static String get activacionRoute {
+    return _prefs.getString('activacionRoute') ?? _activacionRoute;
+  }
+
+  static set activacionRoute(String value) {
+    _activacionRoute = value;
+    _prefs.setString('activacionRoute', value);
+  }
 
   static String get apiServer {
     return _prefs.getString('apiServer') ?? _apiServer;
@@ -19,6 +40,15 @@ class Preferences {
   static set apiServer(String value) {
     _apiServer = value;
     _prefs.setString('apiServer', value);
+  }
+
+  static String get projectName {
+    return _prefs.getString('projectName') ?? _projectName;
+  }
+
+  static set projectName(String value) {
+    _projectName = value;
+    _prefs.setString('projectName', value);
   }
 
   static String get apiUser {

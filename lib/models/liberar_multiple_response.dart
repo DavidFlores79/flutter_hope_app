@@ -1,6 +1,8 @@
-// To parse this JSON data, do
-//
-//     final liberarMultipleResponse = liberarMultipleResponseFromMap(jsonString);
+// ignore: slash_for_doc_comments
+/**
+ * Creado por: David Amilcar Flores Castillo
+ * el 08/12/2022
+ */
 
 import 'dart:convert';
 

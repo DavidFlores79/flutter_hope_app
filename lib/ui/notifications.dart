@@ -10,7 +10,7 @@ class Notifications {
     final snackBar = SnackBar(
         backgroundColor: Preferences.isDarkMode
             ? ThemeProvider.darkColor
-            : ThemeProvider.lightColor,
+            : ThemeProvider.blueColor,
         dismissDirection: DismissDirection.startToEnd,
         content: Text(
           message,

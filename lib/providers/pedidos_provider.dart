@@ -4,17 +4,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/locator.dart';
-import 'package:hope_app/screens/home_screen.dart';
-import 'package:hope_app/screens/pedidos_screen.dart';
 import 'package:hope_app/services/services.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/screens/login_screen.dart';
 import 'package:hope_app/ui/notifications.dart';
 
 class PedidosProvider extends ChangeNotifier {
-  final String _apiUrl = '205.251.136.75';
-  final String _proyectName = '/HopeV200';
+  final String _apiUrl = Preferences.apiServer;
+  final String _proyectName = Preferences.projectName;
   String _endPoint = '/api/v1/ordenes-pendientes';
   String jwtToken = '';
   List<Pedido> pedidos = [];
@@ -72,6 +71,8 @@ class PedidosProvider extends ChangeNotifier {
           break;
         case 401:
           if (response.body.contains('code')) {
+            isLoading = false;
+            result = false;
             serverResponse = ServerResponse.fromJson(response.body);
             Notifications.showSnackBar(
                 serverResponse?.message ?? 'Error de Autenticación.');
@@ -261,6 +262,7 @@ class PedidosProvider extends ChangeNotifier {
 
   logout() async {
     await storage.deleteAll();
+    Preferences.apiUser = '';
     // Notifications.showSnackBar('Su sesión ha vencido.');
     _navigationService.navigateTo(LoginScreen.routeName);
   }

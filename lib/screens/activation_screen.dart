@@ -86,46 +86,34 @@ class ActivationScreen extends StatelessWidget {
                               FocusScope.of(context).requestFocus(
                                   FocusNode()); //ocultar el teclado del movil
 
-                              // if (!myFormKey.currentState!.validate()) {
-                              //   //print('Formulario no valido');
-                              //   return;
-                              // }
-                              // //print(formValues);
-                              // formValues['actualizado'] = 0;
-                              // formValues['userId'] = apiUser.id;
-
-                              // Provider.of<ListaVisitasProvider>(context, listen: false)
-                              //     .agregarVisita(
-                              //   formValues['nombreVisitante'],
-                              //   formValues['nombreAQuienVisita'],
-                              //   formValues['motivoVisita'],
-                              //   formValues['fechaEntrada'],
-                              //   formValues['fechaSalida'],
-                              //   formValues['imagenIdentificacion'],
-                              //   formValues['placas'],
-                              //   formValues['tipoVehiculoId'],
-                              //   formValues['userId'],
-                              //   formValues['actualizado'],
-                              // );
-
-                              // Navigator.pop(context);
-
-                              if (formValues['codigo'] == 'FFFF') {
-                                Preferences.licenseExp = '2022-12-07 21:00:00';
-                                Future.microtask(
-                                  () {
-                                    Navigator.pushReplacement(
-                                        context,
-                                        PageRouteBuilder(
-                                            pageBuilder: (context, animation,
-                                                    secondaryAnimation) =>
-                                                const AuthTokenScreen(),
-                                            transitionDuration:
-                                                const Duration(seconds: 0)));
-                                  },
-                                );
+                              if (!myFormKey.currentState!.validate()) {
+                                return;
                               }
-                              return;
+                              print(formValues);
+
+                              final result = Provider.of<ActivationService>(
+                                      context,
+                                      listen: false)
+                                  .getLicence(formValues['codigo']);
+
+                              result.then((value) {
+                                print('Resultado: $value');
+                                if (value == true) {
+                                  Future.microtask(
+                                    () {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          PageRouteBuilder(
+                                              pageBuilder: (context, animation,
+                                                      secondaryAnimation) =>
+                                                  const AuthTokenScreen(),
+                                              transitionDuration:
+                                                  const Duration(seconds: 0)));
+                                    },
+                                  );
+                                }
+                                return;
+                              });
                             },
                             child: const SizedBox(
                               width: double.infinity,

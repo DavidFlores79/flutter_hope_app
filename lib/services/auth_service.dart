@@ -7,8 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:hope_app/ui/notifications.dart';
 
 class AuthService extends ChangeNotifier {
-  final String _apiUrl = '205.251.136.75';
-  final String _proyectName = '/HopeV200';
+  final String _apiUrl = Preferences.apiServer;
+  final String _proyectName = Preferences.projectName;
   final storage = const FlutterSecureStorage();
 
   Future<String?> loginUser(String nickname, String password) async {
@@ -25,8 +25,6 @@ class AuthService extends ChangeNotifier {
           .timeout(const Duration(seconds: 10));
 
       final Map<String, dynamic> decodedResp = json.decode(response.body);
-
-      //print('decodedResp = ${decodedResp['success']}');
 
       if (decodedResp['code'] == 200) {
         //guardar el token y la info del usuario
@@ -56,7 +54,6 @@ class AuthService extends ChangeNotifier {
 
   Future<String> getToken() async {
     final DateTime expirationDate = DateTime.parse(Preferences.expirationDate);
-    final DateTime licenseExp = DateTime.parse(Preferences.licenseExp);
     final DateTime now = DateTime.now();
     if (now.compareTo(expirationDate) > 0) {
       Preferences.apiUser = '';

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hope_app/shared/preferences.dart';
 
 class AboutScreen extends StatelessWidget {
   static const String routeName = 'acerca-de';
-  final String expirationDate = Preferences.licenseExp;
 
   @override
   Widget build(BuildContext context) {
@@ -11,12 +9,12 @@ class AboutScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Image(
+          children: const [
+            Image(
               image: AssetImage('assets/itsoft.png'),
               height: 100,
             ),
-            const Text(
+            Text(
               'Desarrollado por:',
               style: TextStyle(
                 fontSize: 16,
@@ -24,7 +22,7 @@ class AboutScreen extends StatelessWidget {
                 height: 2,
               ),
             ),
-            const Text(
+            Text(
               'ItSoft Services de Mexico, S.A. de C.V.',
               style: TextStyle(
                 fontSize: 16,
@@ -32,25 +30,6 @@ class AboutScreen extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 height: 2,
               ),
-            ),
-            Text(
-              'Servidor: ${Preferences.apiServer}',
-              style: const TextStyle(
-                fontSize: 16,
-                overflow: TextOverflow.ellipsis,
-                height: 2,
-              ),
-            ),
-            Text(
-              'Fecha de Vencimiento: $expirationDate',
-              style: const TextStyle(
-                fontSize: 16,
-                overflow: TextOverflow.ellipsis,
-                height: 2,
-              ),
-            ),
-            const SizedBox(
-              height: 20,
             ),
           ],
         ),

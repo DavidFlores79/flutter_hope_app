@@ -4,6 +4,7 @@ class ThemeProvider extends ChangeNotifier {
   ThemeData currentTheme;
   static Color lightColor = const Color.fromRGBO(35, 35, 35, 0.9);
   static Color darkColor = const Color.fromRGBO(240, 171, 0, 1);
+  static Color blueColor = const Color.fromARGB(255, 17, 92, 153);
 
   ThemeProvider({
     required isDarkmode,

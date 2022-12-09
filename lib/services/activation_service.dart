@@ -1,58 +1,58 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hope_app/models/models.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:hope_app/ui/notifications.dart';
 
 class ActivationService extends ChangeNotifier {
-  final String _apiUrl = '205.251.136.75';
-  final String _proyectName = '/HopeConfiguraciones';
-  // final storage = const FlutterSecureStorage();
+  final String _apiUrl = Preferences.activacionServer;
+  final String _proyectName = Preferences.activacionRoute;
+  bool result = false;
 
-  // Future<String?> loginUser(String nickname, String password) async {
-  //   final Map<String, dynamic> authData = {
-  //     'nickname': nickname,
-  //     'password': password
-  //   };
+  Future<bool?> getLicence(String codigo) async {
+    result = false;
 
-  //   final url = Uri.http(_apiUrl, '$_proyectName/api/login', authData);
+    final Map<String, dynamic> activationData = {
+      'activation_code': codigo,
+    };
 
-  //   try {
-  //     final response = await http
-  //         .post(url, body: json.encode(authData))
-  //         .timeout(const Duration(seconds: 10));
+    final url =
+        Uri.http(_apiUrl, '$_proyectName/api/v1/getLicense', activationData);
 
-  //     final Map<String, dynamic> decodedResp = json.decode(response.body);
+    try {
+      final response = await http
+          .post(url, body: json.encode(activationData))
+          .timeout(const Duration(seconds: 10));
 
-  //     //print('decodedResp = ${decodedResp['success']}');
+      final Map<String, dynamic> decodedResp = json.decode(response.body);
 
-  //     if (decodedResp['code'] == 200) {
-  //       //guardar el token y la info del usuario
-  //       await storage.write(key: 'jwtToken', value: decodedResp['jwt']);
-  //       Preferences.apiUser = jsonEncode(decodedResp['user']);
-  //       Preferences.expirationDate =
-  //           Preferences.timestampToDate(decodedResp['exp']);
-  //       return true.toString();
-  //     } else {
-  //       return decodedResp['message'] ?? "Servidor no disponible.";
-  //     }
-  //   } catch (e) {
-  //     if (e.toString().contains('TimeoutException')) {
-  //       Notifications.showSnackBar('Tiempo de espera agotado');
-  //     }
-  //   }
+      if (response.statusCode == 200) {
+        result = true;
+        final activationResponse = ActivationResponse.fromMap(decodedResp);
+        print('activationResponse = $activationResponse');
 
-  //   //print(decodedResp);
-  // }
+        //guardar la fecha de vencimiento de licencia
+        Preferences.licenseExp = activationResponse.license.finalDate;
+        //guardar el servidor (Solo el host sin http o https)
+        Preferences.apiServer = Uri.parse(activationResponse.url.dominio).host;
 
-  // Future logout() async {
-  //   await storage.deleteAll();
-  //   Preferences.apiUser = '';
-  //   notifyListeners();
-  //   return;
-  // }
+        Notifications.showSnackBar(
+            '${activationResponse.message} \n Guardando configuracion...');
+      } else {
+        result = false;
+        Notifications.showSnackBar(decodedResp['message']);
+      }
+    } catch (e) {
+      print('Error: $e');
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar('Tiempo de espera agotado.');
+      }
+      Notifications.showSnackBar('Ocurrió un error inesperado.');
+    }
+
+    return result;
+  }
 
   Future<bool> isLicenseExpired() async {
     final DateTime licenseExp = DateTime.parse(Preferences.licenseExp);
