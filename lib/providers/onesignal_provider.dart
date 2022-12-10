@@ -18,19 +18,26 @@ class OneSignalProvider extends ChangeNotifier {
   }
 
   Future<void> initOneSignal(BuildContext context) async {
+    OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+
     /// Set App Id.
     await OneSignal.shared.setAppId(Preferences.oneSignalAppId);
 
     // The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
-    await OneSignal.shared.promptUserForPushNotificationPermission(
-      fallbackToSettings: true,
-    );
+    await OneSignal.shared
+        .promptUserForPushNotificationPermission()
+        .then((accepted) {
+      print("Accepted permission: $accepted");
+    });
 
     /// Calls when foreground notification arrives.
     OneSignal.shared.setNotificationWillShowInForegroundHandler(
         (OSNotificationReceivedEvent event) {
       print(
-          '&&&&&&&&& Notificacion Recibida en Foreground: ${event.notification}');
+        '&&&&&&&&& Notificacion Recibida en Foreground: ${event.notification}',
+      );
+      Notifications.showSnackBar(
+          event.notification.body ?? 'Se recibio una notificacion');
 
       /// Display Notification, send null to not display
       event.complete(null);
@@ -94,5 +101,9 @@ class OneSignalProvider extends ChangeNotifier {
     }
 
     return result;
+  }
+
+  disableNotifications() {
+    OneSignal.shared.disablePush(false);
   }
 }

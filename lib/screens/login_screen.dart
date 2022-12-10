@@ -88,6 +88,7 @@ class _LoginForm extends StatelessWidget {
     final loginForm = Provider.of<LoginFormProvider>(context);
     final Color myColor = ThemeProvider.blueColor;
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
+
     Timer(
       const Duration(seconds: 10),
       () => oneSignalProvider.setOneSignalId(),
