@@ -62,6 +62,7 @@ class OneSignalProvider extends ChangeNotifier {
     print('guardando one signal id en servidor...');
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+    print('token guardado $jwtToken');
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',

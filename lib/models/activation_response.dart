@@ -6,136 +6,6 @@
 
 import 'dart:convert';
 
-// class ActivationResponse {
-//   ActivationResponse({
-//     required this.code,
-//     required this.status,
-//     required this.message,
-//     required this.license,
-//   });
-
-//   int code;
-//   String status;
-//   String message;
-//   License license;
-
-//   factory ActivationResponse.fromJson(String str) =>
-//       ActivationResponse.fromMap(json.decode(str));
-
-//   String toJson() => json.encode(toMap());
-
-//   factory ActivationResponse.fromMap(Map<String, dynamic> json) =>
-//       ActivationResponse(
-//         code: json["code"],
-//         status: json["status"],
-//         message: json["message"],
-//         license: License.fromMap(json["license"]),
-//       );
-
-//   Map<String, dynamic> toMap() => {
-//         "code": code,
-//         "status": status,
-//         "message": message,
-//         "license": license.toMap(),
-//       };
-// }
-
-// class License {
-//   License({
-//     required this.id,
-//     required this.applicationId,
-//     required this.clientId,
-//     required this.activationCode,
-//     required this.status,
-//     required this.startDate,
-//     required this.finalDate,
-//     required this.createdAt,
-//     required this.updatedAt,
-//   });
-
-//   int id;
-//   int applicationId;
-//   int clientId;
-//   String activationCode;
-//   int status;
-//   String startDate;
-//   String finalDate;
-//   String createdAt;
-//   String updatedAt;
-
-//   factory License.fromJson(String str) => License.fromMap(json.decode(str));
-
-//   String toJson() => json.encode(toMap());
-
-//   factory License.fromMap(Map<String, dynamic> json) => License(
-//         id: json["id"],
-//         applicationId: json["application_id"],
-//         clientId: json["client_id"],
-//         activationCode: json["activation_code"],
-//         status: json["status"],
-//         startDate: json["start_date"],
-//         finalDate: json["final_date"],
-//         createdAt: json["created_at"],
-//         updatedAt: json["updated_at"],
-//       );
-
-//   Map<String, dynamic> toMap() => {
-//         "id": id,
-//         "application_id": applicationId,
-//         "client_id": clientId,
-//         "activation_code": activationCode,
-//         "status": status,
-//         "start_date": startDate,
-//         "final_date": finalDate,
-//         "created_at": createdAt,
-//         "updated_at": updatedAt,
-//       };
-
-//   // factory License.fromMap(Map<String, dynamic> json) => License(
-//   //       id: json["id"],
-//   //       applicationId: json["application_id"],
-//   //       clientId: json["client_id"],
-//   //       activationCode: json["activation_code"],
-//   //       status: json["status"],
-//   //       startDate: json["start_date"],
-//   //       finalDate: json["final_date"],
-//   //       createdAt: json["created_at"],
-//   //       updatedAt: json["updated_at"],
-//   //     );
-
-//   // Map<String, dynamic> toMap() => {
-//   //       "id": id,
-//   //       "application_id": applicationId,
-//   //       "client_id": clientId,
-//   //       "activation_code": activationCode,
-//   //       "status": status,
-//   //       "start_date": startDate,
-//   //       "final_date": finalDate,
-//   //       "created_at": createdAt,
-//   //       "updated_at": updatedAt,
-//   //     };
-// }
-
-// class Url {
-//   Url({
-//     required this.dominio,
-//     required this.path,
-//   });
-
-//   String dominio;
-//   String path;
-
-//   factory Url.fromMap(Map<String, dynamic> json) => Url(
-//         dominio: json["dominio"],
-//         path: json["path"],
-//       );
-
-//   Map<String, dynamic> toMap() => {
-//         "dominio": dominio,
-//         "path": path,
-//       };
-// }
-
 ActivationResponse activationResponseFromMap(String str) =>
     ActivationResponse.fromMap(json.decode(str));
 
@@ -148,14 +18,14 @@ class ActivationResponse {
     required this.status,
     required this.message,
     required this.license,
-    required this.url,
+    required this.clientImage,
   });
 
   int code;
   String status;
   String message;
   License license;
-  Url url;
+  String clientImage;
 
   factory ActivationResponse.fromMap(Map<String, dynamic> json) =>
       ActivationResponse(
@@ -163,7 +33,7 @@ class ActivationResponse {
         status: json["status"],
         message: json["message"],
         license: License.fromMap(json["license"]),
-        url: Url.fromMap(json["url"]),
+        clientImage: json["client_image"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -171,7 +41,7 @@ class ActivationResponse {
         "status": status,
         "message": message,
         "license": license.toMap(),
-        "url": url.toMap(),
+        "client_image": clientImage,
       };
 }
 
@@ -181,6 +51,7 @@ class License {
     required this.applicationId,
     required this.clientId,
     required this.activationCode,
+    this.urlApi,
     required this.status,
     required this.startDate,
     required this.finalDate,
@@ -192,6 +63,7 @@ class License {
   int applicationId;
   int clientId;
   String activationCode;
+  dynamic urlApi;
   int status;
   String startDate;
   String finalDate;
@@ -203,6 +75,7 @@ class License {
         applicationId: json["application_id"],
         clientId: json["client_id"],
         activationCode: json["activation_code"],
+        urlApi: json["url_api"],
         status: json["status"],
         startDate: json["start_date"],
         finalDate: json["final_date"],
@@ -215,30 +88,11 @@ class License {
         "application_id": applicationId,
         "client_id": clientId,
         "activation_code": activationCode,
+        "url_api": urlApi,
         "status": status,
         "start_date": startDate,
         "final_date": finalDate,
         "created_at": createdAt,
         "updated_at": updatedAt,
-      };
-}
-
-class Url {
-  Url({
-    required this.dominio,
-    required this.path,
-  });
-
-  String dominio;
-  String path;
-
-  factory Url.fromMap(Map<String, dynamic> json) => Url(
-        dominio: json["dominio"],
-        path: json["path"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "dominio": dominio,
-        "path": path,
       };
 }

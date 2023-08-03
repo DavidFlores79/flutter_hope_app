@@ -23,19 +23,29 @@ class ActivationService extends ChangeNotifier {
     try {
       final response = await http
           .post(url, body: json.encode(activationData))
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 30));
 
       final Map<String, dynamic> decodedResp = json.decode(response.body);
+
+      print('response $decodedResp');
 
       if (response.statusCode == 200) {
         result = true;
         final activationResponse = ActivationResponse.fromMap(decodedResp);
         print('activationResponse = $activationResponse');
 
+        //guardar el servidor (Solo el host sin http o https)
+        if (activationResponse.license.urlApi != null) {
+          Preferences.apiServer =
+              Uri.parse(activationResponse.license.urlApi).host;
+        }
+
+        if (activationResponse.clientImage != '') {
+          Preferences.clientImage = activationResponse.clientImage;
+        }
+
         //guardar la fecha de vencimiento de licencia
         Preferences.licenseExp = activationResponse.license.finalDate;
-        //guardar el servidor (Solo el host sin http o https)
-        Preferences.apiServer = Uri.parse(activationResponse.url.dominio).host;
 
         Notifications.showSnackBar(
             '${activationResponse.message} \n Guardando configuracion...');

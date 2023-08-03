@@ -88,3 +88,25 @@ class Errors {
         "proveedor": List<dynamic>.from(proveedor!.map((x) => x)),
       };
 }
+
+class UnauthenticatedResponse {
+  UnauthenticatedResponse({
+    required this.message,
+  });
+
+  String message;
+
+  factory UnauthenticatedResponse.fromJson(String str) =>
+      UnauthenticatedResponse.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory UnauthenticatedResponse.fromMap(Map<String, dynamic> json) =>
+      UnauthenticatedResponse(
+        message: json["message"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "message": message,
+      };
+}

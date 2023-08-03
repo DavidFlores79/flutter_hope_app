@@ -28,6 +28,7 @@ class AuthService extends ChangeNotifier {
 
       if (decodedResp['code'] == 200) {
         //guardar el token y la info del usuario
+        print("token ${decodedResp['jwt']}");
         await storage.write(key: 'jwtToken', value: decodedResp['jwt']);
         Preferences.apiUser = jsonEncode(decodedResp['user']);
         Preferences.expirationDate =

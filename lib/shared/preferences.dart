@@ -5,10 +5,10 @@ class Preferences {
   static late SharedPreferences _prefs;
 
   static String _apiUser = '';
-  static String _activacionServer = '205.251.136.75';
-  static String _activacionRoute = '/HopeConfiguraciones';
-  static String _apiServer = '205.251.136.75';
-  static String _projectName = '/HopeV200';
+  static String _activacionServer = '172.17.1.45';
+  static String _activacionRoute = '/hopeConfiguraciones/public_html';
+  static String _apiServer = '172.17.1.45';
+  static String _projectName = '/hopesucursales/public_html';
   static bool _isActive = false;
   static String _expirationDate = '1979-04-10 00:00:00';
   static String _licenseExp = '1979-04-10 00:00:00';
@@ -16,6 +16,7 @@ class Preferences {
   static bool _isModulesActive = true;
   static String _oneSignalAppId = '7edc135c-d979-4e44-b761-4e523d31f65b';
   static String _onesignalUserId = '';
+  static String _clientImage = '';
 
   static String get activacionServer {
     return _prefs.getString('activacionServer') ?? _activacionServer;
@@ -123,6 +124,15 @@ class Preferences {
   static set onesignalUserId(String value) {
     _onesignalUserId = value;
     _prefs.setString('onesignalUserId', value);
+  }
+
+  static String get clientImage {
+    return _prefs.getString('clientImage') ?? _clientImage;
+  }
+
+  static set clientImage(String value) {
+    _clientImage = value;
+    _prefs.setString('clientImage', value);
   }
 
   static Future init() async {
