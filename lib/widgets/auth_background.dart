@@ -42,13 +42,13 @@ class AuthBackground extends StatelessWidget {
 }
 
 class _BackgroundImage extends StatelessWidget {
-  const _BackgroundImage({super.key});
+  const _BackgroundImage();
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: size.height - 90,
       child: const Image(
@@ -64,10 +64,10 @@ class LogoBrand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return const SizedBox(
       width: 150,
       height: 50,
-      child: const Image(image: AssetImage('assets/hope-logo.png')),
+      child: Image(image: AssetImage('assets/hope-logo.png')),
     );
   }
 }

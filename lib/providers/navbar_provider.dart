@@ -7,17 +7,17 @@ class NavbarProvider extends ChangeNotifier {
     NavbarDTO(
       label: 'Modulos',
       iconData: const FaIcon(FontAwesomeIcons.tableCellsLarge),
-      widget: ModulesScreen(),
+      widget: const ModulesScreen(),
     ),
     NavbarDTO(
       label: 'Ordenes',
       iconData: const FaIcon(FontAwesomeIcons.newspaper),
-      widget: PedidosScreen(),
+      widget: const PedidosScreen(),
     ),
     NavbarDTO(
       label: 'Acerca de',
       iconData: const FaIcon(FontAwesomeIcons.question),
-      widget: AboutScreen(),
+      widget: const AboutScreen(),
     ),
   ];
 

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
-import 'package:hope_app/shared/preferences.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/widgets.dart';
@@ -29,7 +27,7 @@ class ActivationScreen extends StatelessWidget {
         child: FutureBuilder(
           future: activationService.isLicenseExpired(),
           builder: ((context, snapshot) {
-            if (!snapshot.hasData) return CircularProgressIndicator.adaptive();
+            if (!snapshot.hasData) return const CircularProgressIndicator.adaptive();
             final isLicenseExpired = snapshot.data ?? true;
 
             if (isLicenseExpired) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
@@ -6,6 +7,8 @@ import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const String routeName = 'profile';
+
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -27,12 +30,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
-          child: Container(
+          child: SizedBox(
             width: double.infinity,
             height: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                SvgPicture.asset(
+                  'assets/ADMON.svg',
+                  width: 50,
+                  height: 50,
+                ),
                 const CircleAvatar(
                   radius: 70,
                   backgroundImage: AssetImage('assets/user1.png'),

@@ -46,7 +46,7 @@ class OneSignalProvider extends ChangeNotifier {
     /// Calls when the notification opens the app.
     OneSignal.shared
         .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
-      print('&&&&&&&&& Notificacion Abierta: ${result}');
+      print('&&&&&&&&& Notificacion Abierta: $result');
     });
   }
 

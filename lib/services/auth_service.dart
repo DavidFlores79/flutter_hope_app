@@ -42,6 +42,7 @@ class AuthService extends ChangeNotifier {
         Notifications.showSnackBar('Tiempo de espera agotado');
       }
     }
+    return null;
 
     //print(decodedResp);
   }

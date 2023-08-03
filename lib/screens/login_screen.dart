@@ -12,6 +12,8 @@ import 'package:provider/provider.dart';
 class LoginScreen extends StatelessWidget {
   static const String routeName = 'login';
 
+  const LoginScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
@@ -79,7 +81,7 @@ class _newAccountButton extends StatelessWidget {
 }
 
 class _LoginForm extends StatelessWidget {
-  const _LoginForm({super.key});
+  const _LoginForm();
 
   @override
   Widget build(BuildContext context) {

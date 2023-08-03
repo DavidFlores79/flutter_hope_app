@@ -72,14 +72,14 @@ class _signInButton extends StatelessWidget {
 }
 
 class _RegisterForm extends StatelessWidget {
-  const _RegisterForm({super.key});
+  const _RegisterForm();
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final width80 = (size.width * 0.15);
     final loginForm = Provider.of<LoginFormProvider>(context);
-    final Color myColor = Color.fromARGB(255, 17, 92, 153);
+    const Color myColor = Color.fromARGB(255, 17, 92, 153);
 
     return Container(
       child: Form(

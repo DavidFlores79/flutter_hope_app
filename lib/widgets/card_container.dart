@@ -13,8 +13,8 @@ class CardContainer extends StatelessWidget {
       child: Container(
         width: double.infinity,
         decoration: _CardShape(),
-        child: child,
         padding: const EdgeInsets.all(20),
+        child: child,
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/locator.dart';
-import 'package:hope_app/providers/navbar_provider.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
@@ -47,7 +46,7 @@ class AppState extends StatelessWidget {
           create: (context) => PedidosProvider(),
         ),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     );
   }
 }
@@ -66,15 +65,15 @@ class MyApp extends StatelessWidget {
       title: 'Hope Móvil',
       initialRoute: ActivationScreen.routeName,
       routes: {
-        LoginScreen.routeName: (context) => LoginScreen(),
+        LoginScreen.routeName: (context) => const LoginScreen(),
         RegisterScreen.routeName: (context) => const RegisterScreen(),
-        HomeScreen.routeName: (context) => HomeScreen(),
+        HomeScreen.routeName: (context) => const HomeScreen(),
         AuthTokenScreen.routeName: (context) => const AuthTokenScreen(),
-        PedidosScreen.routeName: (context) => PedidosScreen(),
-        ModulesScreen.routeName: (context) => ModulesScreen(),
-        AboutScreen.routeName: (context) => AboutScreen(),
-        SettingsScreen.routeName: (context) => SettingsScreen(),
-        ProfileScreen.routeName: (context) => ProfileScreen(),
+        PedidosScreen.routeName: (context) => const PedidosScreen(),
+        ModulesScreen.routeName: (context) => const ModulesScreen(),
+        AboutScreen.routeName: (context) => const AboutScreen(),
+        SettingsScreen.routeName: (context) => const SettingsScreen(),
+        ProfileScreen.routeName: (context) => const ProfileScreen(),
         ActivationScreen.routeName: (context) => const ActivationScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,

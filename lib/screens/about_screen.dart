@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 class AboutScreen extends StatelessWidget {
   static const String routeName = 'acerca-de';
 
+  const AboutScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Image(
               image: AssetImage('assets/itsoft.png'),
               height: 100,

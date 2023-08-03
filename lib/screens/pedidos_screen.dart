@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 class PedidosScreen extends StatelessWidget {
   static const String routeName = 'ordenes';
 
+  const PedidosScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final orderProvider = Provider.of<PedidosProvider>(context);

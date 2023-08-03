@@ -67,7 +67,7 @@ class PedidosProvider extends ChangeNotifier {
             Notifications.showSnackBar(
                 "No se encontraron ordenes para mostrar");
           }
-          print('200: ${pedidosXProv}');
+          print('200: $pedidosXProv');
           break;
         case 401:
           if (response.body.contains('code')) {

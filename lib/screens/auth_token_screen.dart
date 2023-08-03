@@ -22,7 +22,7 @@ class AuthTokenScreen extends StatelessWidget {
         child: FutureBuilder(
           future: authService.getToken(),
           builder: ((context, snapshot) {
-            if (!snapshot.hasData) return CircularProgressIndicator.adaptive();
+            if (!snapshot.hasData) return const CircularProgressIndicator.adaptive();
 
             if (snapshot.data == '') {
               if (Preferences.apiUser == '') {
@@ -36,7 +36,7 @@ class AuthTokenScreen extends StatelessWidget {
                       PageRouteBuilder(
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
-                                  LoginScreen(),
+                                  const LoginScreen(),
                           transitionDuration: const Duration(seconds: 0)));
                 },
               );
@@ -50,7 +50,7 @@ class AuthTokenScreen extends StatelessWidget {
                       PageRouteBuilder(
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
-                                  HomeScreen(),
+                                  const HomeScreen(),
                           transitionDuration: const Duration(seconds: 0)));
                 },
               );

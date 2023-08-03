@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 class ModulesScreen extends StatelessWidget {
   static const String routeName = 'modulos';
 
+  const ModulesScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,6 +19,8 @@ class ModulesScreen extends StatelessWidget {
 
 class ModulesBody extends StatelessWidget {
   final List<CategoriasModulo> categorias = [];
+
+  ModulesBody({super.key});
 
   @override
   Widget build(BuildContext context) {
