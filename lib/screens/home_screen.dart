@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
@@ -160,15 +161,32 @@ class _categoriasModulos extends StatelessWidget {
                 primary: false, //sin scroll en los modulos
                 itemCount: modulos.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 15),
-                    child: Text(
-                      modulos[index].nombre,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.bold),
+                  return GestureDetector(
+                    onTap: () {
+                      print(modulos[index].nombre);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 25),
+                      child: Row(
+                        children: [
+                          SvgPicture.network(
+                            'http://172.17.1.45/hopesucursales/public_html/images/modules/${modulos[index].icono}',
+                            width: 25,
+                            height: 25,
+                          ),
+                          const SizedBox(width: 5),
+                          Expanded(
+                            child: Text(
+                              modulos[index].nombre,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },

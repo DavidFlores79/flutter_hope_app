@@ -51,6 +51,7 @@ android {
         targetSdkVersion 28
         versionCode 1 //incrementar cada vez que se cambie en la PlayStore
         versionName "1.0.0"
+        multiDexEnabled true
     }
 
     buildTypes {
