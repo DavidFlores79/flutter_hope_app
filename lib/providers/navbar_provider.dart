@@ -7,7 +7,7 @@ class NavbarProvider extends ChangeNotifier {
     NavbarDTO(
       label: 'Modulos',
       iconData: const FaIcon(FontAwesomeIcons.tableCellsLarge),
-      widget: const ModulesScreen(),
+      widget: const MenuModulesScreen(),
     ),
     NavbarDTO(
       label: 'Ordenes',
@@ -21,7 +21,7 @@ class NavbarProvider extends ChangeNotifier {
     ),
   ];
 
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   int get selectedIndex => _selectedIndex;
 

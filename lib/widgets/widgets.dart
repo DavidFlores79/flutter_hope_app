@@ -1,6 +1,10 @@
 export 'package:hope_app/widgets/auth_background.dart';
 export 'package:hope_app/widgets/bottom_navigation_bar.dart';
 export 'package:hope_app/widgets/card_container.dart';
+export 'package:hope_app/widgets/custom_drawer.dart';
 export 'package:hope_app/widgets/custom_input_field.dart';
+export 'package:hope_app/widgets/menu_categories.dart';
+export 'package:hope_app/widgets/menu_module.dart';
+export 'package:hope_app/widgets/module_card.dart';
 export 'package:hope_app/widgets/module_category.dart';
 export 'package:hope_app/widgets/popup_menu.dart';

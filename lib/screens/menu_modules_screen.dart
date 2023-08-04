@@ -4,10 +4,10 @@ import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
-class ModulesScreen extends StatelessWidget {
+class MenuModulesScreen extends StatelessWidget {
   static const String routeName = 'modulos';
 
-  const ModulesScreen({super.key});
+  const MenuModulesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

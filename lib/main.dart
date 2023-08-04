@@ -40,7 +40,10 @@ class AppState extends StatelessWidget {
         ),
         ChangeNotifierProvider<ModulosProvider>(
           create: (context) => ModulosProvider(),
-          lazy: false,
+          // lazy: false,
+        ),
+        ChangeNotifierProvider<ModuleScreenProvider>(
+          create: (context) => ModuleScreenProvider(),
         ),
         ChangeNotifierProvider<PedidosProvider>(
           create: (context) => PedidosProvider(),
@@ -70,11 +73,19 @@ class MyApp extends StatelessWidget {
         HomeScreen.routeName: (context) => const HomeScreen(),
         AuthTokenScreen.routeName: (context) => const AuthTokenScreen(),
         PedidosScreen.routeName: (context) => const PedidosScreen(),
-        ModulesScreen.routeName: (context) => const ModulesScreen(),
+        ModuleScreen.routeName: (context) => const ModuleScreen(),
+        MenuModulesScreen.routeName: (context) => const MenuModulesScreen(),
         AboutScreen.routeName: (context) => const AboutScreen(),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
         ProfileScreen.routeName: (context) => const ProfileScreen(),
         ActivationScreen.routeName: (context) => const ActivationScreen(),
+        NotificationScreen.routeName: (context) => NotificationScreen(),
+        SolpedScreen.routeName: (context) => const SolpedScreen(),
+        MigoScreen.routeName: (context) => const MigoScreen(),
+        MonitorSolpedScreen.routeName: (context) => const MonitorSolpedScreen(),
+        ME21NScreen.routeName: (context) => const ME21NScreen(),
+        UnderConstructionScreen.routeName: (context) =>
+            const UnderConstructionScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );
