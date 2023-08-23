@@ -78,7 +78,6 @@ class MigoProvider extends ChangeNotifier {
           print('200: Pedido ${response.body}');
           migoResponse = MigoOrderResponse.fromJson(response.body);
           pedido = PedidoMigo.fromMap(migoResponse.pedidoMigo.toMap());
-
           notifyListeners();
           break;
         case 401:

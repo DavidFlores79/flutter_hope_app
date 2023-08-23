@@ -86,56 +86,57 @@ class _MigoScreenState extends State<MigoScreen> {
                     ),
                     onChanged: (value) => migoProvider.numero_pedido = value,
                     validator: (value) {
-                      return (value != null && value.length >= 10)
+                      return (value != null && value.length == 10)
                           ? null
                           : 'Debe contener 10 numeros.';
                     },
                   ),
                   const SizedBox(height: 35),
-                  MaterialButton(
-                    onPressed: migoProvider.isLoading
-                        ? null
-                        : () async {
-                            if (!migoProvider.isValidForm()) return;
-                            FocusScope.of(context).unfocus();
+                  (migoProvider.isLoading)
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: ThemeProvider.blueColor,
+                          ),
+                        )
+                      : MaterialButton(
+                          onPressed: migoProvider.isLoading
+                              ? null
+                              : () async {
+                                  if (!migoProvider.isValidForm()) return;
+                                  FocusScope.of(context).unfocus();
 
-                            //hacer la peticion al backend
-                            print('Peticion al backend!!');
-                            //DEV: 4500002493
-                            //QA: 4500087697
-                            response = await migoProvider
-                                .getPedido(migoProvider.numero_pedido);
-                            print(response);
-                          },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    disabledColor: ThemeProvider.lightColor,
-                    elevation: 0,
-                    color: myColor,
-                    minWidth: double.infinity,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: (migoProvider.isLoading) ? 8 : 15),
-                      child: migoProvider.isLoading
-                          ? CircularProgressIndicator(
-                              color: ThemeProvider.blueColor,
-                            )
-                          : const Text(
-                              'Buscar Pedido',
-                              style: TextStyle(
+                                  //hacer la peticion al backend
+                                  //DEV: 4500002493
+                                  //QA: 4500087697
+                                  response = await migoProvider
+                                      .getPedido(migoProvider.numero_pedido);
+                                },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          disabledColor: Colors.grey[500],
+                          elevation: 0,
+                          color: myColor,
+                          minWidth: double.infinity,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 15),
+                            child: Text(
+                              migoProvider.isLoading
+                                  ? 'Espere'
+                                  : 'Buscar Pedido',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontFamily: 'Roboto',
                                 fontSize: 18,
                               ),
                             ),
-                    ),
-                  ),
+                          ),
+                        ),
                 ],
               ),
             ),
             (migoProvider.result)
-                ? PedidoContainer(
+                ? PedidoBox(
                     pedido: migoProvider.pedido,
                   )
                 : Container(),
@@ -146,10 +147,10 @@ class _MigoScreenState extends State<MigoScreen> {
   }
 }
 
-class PedidoContainer extends StatelessWidget {
+class PedidoBox extends StatelessWidget {
   PedidoMigo pedido;
 
-  PedidoContainer({required this.pedido});
+  PedidoBox({required this.pedido});
 
   @override
   Widget build(BuildContext context) {
@@ -159,6 +160,8 @@ class PedidoContainer extends StatelessWidget {
         Text(pedido.cabeceraPedido.numeroPedido),
         const SizedBox(height: 25),
         Text(pedido.cabeceraPedido.numeroPedido),
+        const SizedBox(height: 25),
+        Text('${pedido.posiciones.length.toString()} Posicion(es)'),
       ],
     );
   }
