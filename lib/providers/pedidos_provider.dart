@@ -177,7 +177,6 @@ class PedidosProvider extends ChangeNotifier {
           print(response.body);
       }
       //getOrdenes();
-
     } catch (e) {
       print('Error $e');
       Notifications.showSnackBar(e.toString());

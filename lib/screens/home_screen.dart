@@ -15,6 +15,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mp = Provider.of<NavbarProvider>(context);
+    final modulosProvider =
+        Provider.of<ModulosProvider>(context, listen: false);
+    modulosProvider.getModulosApp();
 
     return Scaffold(
       drawer: const CustomDrawer(),

@@ -124,7 +124,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             onPressed: () async {
                               await const FlutterSecureStorage().deleteAll();
                               Preferences.apiUser = '';
-                              Preferences.apiServer = '205.251.136.75';
+                              Preferences.apiServer = '172.17.1.45';
                               Preferences.expirationDate =
                                   '1979-04-10 00:00:00';
                               Preferences.licenseExp = '1979-04-10 00:00:00';

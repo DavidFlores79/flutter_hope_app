@@ -48,6 +48,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<PedidosProvider>(
           create: (context) => PedidosProvider(),
         ),
+        ChangeNotifierProvider<MigoProvider>(
+          create: (context) => MigoProvider(),
+        ),
       ],
       child: const MyApp(),
     );
@@ -81,7 +84,7 @@ class MyApp extends StatelessWidget {
         ActivationScreen.routeName: (context) => const ActivationScreen(),
         NotificationScreen.routeName: (context) => NotificationScreen(),
         SolpedScreen.routeName: (context) => const SolpedScreen(),
-        MigoScreen.routeName: (context) => const MigoScreen(),
+        MigoScreen.routeName: (context) => MigoScreen(),
         MonitorSolpedScreen.routeName: (context) => const MonitorSolpedScreen(),
         ME21NScreen.routeName: (context) => const ME21NScreen(),
         UnderConstructionScreen.routeName: (context) =>

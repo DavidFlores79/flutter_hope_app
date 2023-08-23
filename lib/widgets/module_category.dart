@@ -15,12 +15,17 @@ class ModuleCategory extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 20),
-          Text(
-            categoria.descripcionCorta,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              categoria.descripcionLarga,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           const SizedBox(height: 10),

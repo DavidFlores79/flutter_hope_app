@@ -11,13 +11,13 @@ class ServerResponse {
     required this.code,
     required this.status,
     this.message,
-    required this.success,
+    this.success,
   });
 
   int code;
   String status;
   String? message;
-  bool success;
+  bool? success;
 
   factory ServerResponse.fromJson(String str) =>
       ServerResponse.fromMap(json.decode(str));

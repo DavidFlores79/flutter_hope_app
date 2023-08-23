@@ -11,7 +11,7 @@ class ModuleScreenProvider extends ChangeNotifier {
     ModuleScreenDTO(
       label: 'MIGO',
       route: 'entrada-mercancia',
-      widget: const MigoScreen(),
+      widget: MigoScreen(),
     ),
     ModuleScreenDTO(
       label: 'Monitor Solped',

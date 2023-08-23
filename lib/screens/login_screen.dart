@@ -98,93 +98,95 @@ class _LoginForm extends StatelessWidget {
 
     return Container(
       child: Form(
-          key: loginForm.formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: Column(
-            children: [
-              TextFormField(
-                textCapitalization: TextCapitalization.none,
-                autocorrect: false,
-                keyboardType: TextInputType.text,
-                decoration: InputDecorations.authInputDecoration(
-                    color: myColor,
-                    hintText: 'john.doe',
-                    labelText: 'Nickname',
-                    prefixIcon: Icons.person_outline),
-                onChanged: (value) => loginForm.email = value,
-                validator: (value) {
-                  return (value != null) ? null : 'Nickname inválido.';
-                },
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              TextFormField(
-                autocorrect: false,
-                keyboardType: TextInputType.visiblePassword,
-                obscureText: true,
-                decoration: InputDecorations.authInputDecoration(
-                    color: myColor,
-                    hintText: 'Mínimo 8 caracteres',
-                    labelText: 'Contraseña',
-                    prefixIcon: Icons.lock_outlined),
-                onChanged: (value) => loginForm.password = value,
-                validator: (value) {
-                  return (value != null && value.length >= 8)
-                      ? null
-                      : 'Contraseña inválida.';
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              MaterialButton(
-                onPressed: loginForm.isLoading
+        key: loginForm.formKey,
+        child: Column(
+          children: [
+            TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              textCapitalization: TextCapitalization.none,
+              autocorrect: false,
+              keyboardType: TextInputType.text,
+              decoration: InputDecorations.authInputDecoration(
+                  color: myColor,
+                  hintText: 'john.doe',
+                  labelText: 'Nickname',
+                  prefixIcon: Icons.person_outline),
+              onChanged: (value) => loginForm.email = value,
+              validator: (value) {
+                return (value != null) ? null : 'Nickname inválido.';
+              },
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              autocorrect: false,
+              keyboardType: TextInputType.visiblePassword,
+              obscureText: true,
+              decoration: InputDecorations.authInputDecoration(
+                  color: myColor,
+                  hintText: 'Mínimo 8 caracteres',
+                  labelText: 'Contraseña',
+                  prefixIcon: Icons.lock_outlined),
+              onChanged: (value) => loginForm.password = value,
+              validator: (value) {
+                return (value != null && value.length >= 8)
                     ? null
-                    : () async {
-                        if (!loginForm.isValidForm()) return;
-                        loginForm.isLoading = true;
-                        FocusScope.of(context).unfocus();
+                    : 'Contraseña inválida.';
+              },
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            MaterialButton(
+              onPressed: loginForm.isLoading
+                  ? null
+                  : () async {
+                      if (!loginForm.isValidForm()) return;
+                      loginForm.isLoading = true;
+                      FocusScope.of(context).unfocus();
 
-                        //hacer la peticion al backend para validar usuario
-                        final authService =
-                            Provider.of<AuthService>(context, listen: false);
-                        final String? loginMessage = await authService
-                            .loginUser(loginForm.email, loginForm.password);
+                      //hacer la peticion al backend para validar usuario
+                      final authService =
+                          Provider.of<AuthService>(context, listen: false);
+                      final String? loginMessage = await authService.loginUser(
+                          loginForm.email, loginForm.password);
 
-                        if (loginMessage == 'true') {
-                          oneSignalProvider.saveUpdateId();
-                          loginForm.isLoading = false;
-                          // ignore: use_build_context_synchronously
-                          Provider.of<PedidosProvider>(context, listen: false)
-                              .getOrdenes();
+                      if (loginMessage == 'true') {
+                        oneSignalProvider.saveUpdateId();
+                        loginForm.isLoading = false;
+                        // ignore: use_build_context_synchronously
+                        Provider.of<PedidosProvider>(context, listen: false)
+                            .getOrdenes();
 
-                          // ignore: use_build_context_synchronously
-                          Navigator.pushReplacementNamed(
-                            context,
-                            HomeScreen.routeName,
-                          );
-                        } else {
-                          Notifications.showSnackBar(loginMessage.toString());
-                          loginForm.isLoading = false;
-                        }
-                      },
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                disabledColor: Colors.grey,
-                elevation: 0,
-                color: myColor,
-                child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: width80, vertical: 15),
-                  child: Text(
-                    loginForm.isLoading ? 'Espere' : 'Iniciar Sesión',
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushReplacementNamed(
+                          context,
+                          HomeScreen.routeName,
+                        );
+                      } else {
+                        Notifications.showSnackBar(loginMessage.toString());
+                        loginForm.isLoading = false;
+                      }
+                    },
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              disabledColor: Colors.grey,
+              elevation: 0,
+              color: myColor,
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: width80, vertical: 15),
+                child: Text(
+                  loginForm.isLoading ? 'Espere' : 'Iniciar Sesión',
+                  style: const TextStyle(color: Colors.white),
                 ),
-              )
-            ],
-          )),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

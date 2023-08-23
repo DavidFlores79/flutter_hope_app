@@ -10,6 +10,7 @@ class LoginResponse {
     required this.success,
     required this.user,
     required this.exp,
+    required this.jwt,
   });
 
   int code;
@@ -17,6 +18,7 @@ class LoginResponse {
   bool success;
   User user;
   int exp;
+  String jwt;
 
   factory LoginResponse.fromJson(String str) =>
       LoginResponse.fromMap(json.decode(str));
@@ -29,6 +31,7 @@ class LoginResponse {
         success: json["success"],
         user: User.fromMap(json["user"]),
         exp: json["exp"],
+        jwt: json["jwt"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -37,6 +40,7 @@ class LoginResponse {
         "success": success,
         "user": user.toMap(),
         "exp": exp,
+        "jwt": jwt,
       };
 }
 
