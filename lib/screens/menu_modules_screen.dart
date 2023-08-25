@@ -25,6 +25,7 @@ class ModulesBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final modulosProvider = Provider.of<ModulosProvider>(context);
+    final migoProvider = Provider.of<MigoProvider>(context);
     List<CategoriasModulo> categorias = modulosProvider.categorias;
 
     return ListView.builder(

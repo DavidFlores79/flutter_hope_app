@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hope_app/models/models.dart';
+import 'package:hope_app/providers/migo_provider.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:provider/provider.dart';
 
 class ModuleCard extends StatelessWidget {
   final List<Modulo> modulos;
@@ -21,8 +23,12 @@ class ModuleCard extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
           onTap: () {
-            print(modulos[index].ruta);
-            Navigator.pushReplacementNamed(context, ModuleScreen.routeName,
+            print('Ruta ${modulos[index].ruta}');
+            final migoProvider =
+                Provider.of<MigoProvider>(context, listen: false);
+            migoProvider.isLoading = false;
+            migoProvider.result = false;
+            Navigator.pushNamed(context, ModuleScreen.routeName,
                 arguments: modulos[index]);
           },
           child: Card(

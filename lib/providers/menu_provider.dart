@@ -82,7 +82,9 @@ class ModulosProvider extends ChangeNotifier {
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
-          print(response.body);
+          print('Default: ${response.body}');
+          isLoading = false;
+          result = false;
       }
       notifyListeners();
     } catch (e) {

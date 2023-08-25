@@ -18,13 +18,13 @@ class ModuleScreen extends StatelessWidget {
         orElse: () => screenProvider.selectedScreen);
 
     return Scaffold(
-      drawer: const CustomDrawer(),
+      // drawer: const CustomDrawer(),
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
         title: Text(moduleScreen.label!),
         actions: const [
-          PopupMenuList(),
+          // PopupMenuList(),
         ],
       ),
       body: moduleScreen.widget,

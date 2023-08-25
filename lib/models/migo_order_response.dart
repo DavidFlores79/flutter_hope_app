@@ -7,14 +7,14 @@ class MigoOrderResponse {
   int code;
   String message;
   String status;
-  PedidoMigo pedidoMigo;
+  PedidoMigo? pedidoMigo;
   String userlog;
 
   MigoOrderResponse({
     required this.code,
     required this.message,
     required this.status,
-    required this.pedidoMigo,
+    this.pedidoMigo,
     required this.userlog,
   });
 
@@ -36,7 +36,7 @@ class MigoOrderResponse {
         "code": code,
         "message": message,
         "status": status,
-        "pedido_migo": pedidoMigo.toMap(),
+        "pedido_migo": pedidoMigo!.toMap(),
         "userlog": userlog,
       };
 }
