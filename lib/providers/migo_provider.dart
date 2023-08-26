@@ -177,7 +177,6 @@ class MigoProvider extends ChangeNotifier {
     // return false;
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
-
     try {
       final response = await http
           .post(url, headers: headers, body: pedidoContabilizar.toJson())
@@ -188,6 +187,7 @@ class MigoProvider extends ChangeNotifier {
           isLoading = false;
           contabilizarResult = true;
           result = false;
+          formKey.currentState!.reset();
           print('200: Pedido Contabilizado ${response.body}');
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(serverResponse?.message ??
@@ -271,6 +271,7 @@ class MigoProvider extends ChangeNotifier {
   updatePosQty(Posicione posicion) {
     final val = newValue;
     posicion.cantidadRecibida = val;
+    posicion.indicadorEntregaFinal = finalDeliveryPos;
     int index = posicionesSelected
         .indexWhere((pos) => pos.numeroMaterial == posicion.numeroMaterial);
     if (index != -1) {

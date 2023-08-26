@@ -143,7 +143,17 @@ class _MigoScreenState extends State<MigoScreen> {
                         pedido: migoProvider.migoResponse.pedidoMigo!,
                         posiciones: [],
                       )
-                    : Container(),
+                    : const SizedBox(
+                        width: 300,
+                        height: 300,
+                        child: Center(
+                          child: Image(
+                            width: double.infinity,
+                            height: double.infinity,
+                            image: AssetImage('assets/images/icons/migo.png'),
+                          ),
+                        ),
+                      ),
           ),
         ],
       ),
@@ -263,8 +273,7 @@ class ContabilizarButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () => validateSelectedPos(migoProvider),
         style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all(const Color.fromARGB(255, 17, 92, 153)),
+          backgroundColor: MaterialStateProperty.all(ThemeProvider.blueColor),
         ),
         child: Text(
           'Contabilizar',
@@ -361,16 +370,36 @@ class _PosicionItemState extends State<_PosicionItem> {
                           ? showError = true
                           : showError = false;
                     }),
-                    if (double.parse(migoProvider.newValue) <=
+                    if (double.parse(migoProvider.newValue) ==
+                        double.parse(posicion.cantidadRecibida))
+                      {
+                        print('es igual'),
+                        Navigator.pop(context),
+                      }
+                    else if (double.parse(migoProvider.newValue) <
                         double.parse(posicion.cantidadFaltante))
                       {
-                        // migoProvider.validatePosQty(posicion),
-                        // migoProvider.updatePosQty(posicion),
                         if (migoProvider.validatePosQty(posicion))
                           {
                             Navigator.pop(context),
-                            showConfirmPartial(context),
+                            showConfirmPartial(context, migoProvider, posicion),
+                            // migoProvider.updatePosQty(posicion)
                           },
+                      }
+                    else if (double.parse(migoProvider.newValue) ==
+                        double.parse(posicion.cantidadFaltante))
+                      {
+                        print('es igual al total'),
+                        migoProvider.finalDeliveryPos = true,
+                        migoProvider.updatePosQty(posicion),
+                        Navigator.pop(context),
+                      }
+                    else
+                      {
+                        print('newVal ${migoProvider.newValue}'),
+                        print('cantidad ${posicion.cantidad}'),
+                        print('cantidadFaltante ${posicion.cantidadFaltante}'),
+                        print('cantidadRecibida ${posicion.cantidadRecibida}'),
                       }
                   },
                   style: ButtonStyle(
@@ -437,7 +466,8 @@ class _PosicionItemState extends State<_PosicionItem> {
   }
 }
 
-showConfirmPartial(BuildContext context) {
+showConfirmPartial(
+    BuildContext context, MigoProvider migoProvider, Posicione posicion) {
   return showDialog(
     context: context,
     barrierDismissible: false,
@@ -475,6 +505,8 @@ showConfirmPartial(BuildContext context) {
         actions: <Widget>[
           ElevatedButton(
             onPressed: () => {
+              migoProvider.finalDeliveryPos = true,
+              migoProvider.updatePosQty(posicion),
               Navigator.pop(context),
             },
             style: ButtonStyle(
@@ -492,6 +524,8 @@ showConfirmPartial(BuildContext context) {
           ),
           ElevatedButton(
             onPressed: () => {
+              migoProvider.finalDeliveryPos = false,
+              migoProvider.updatePosQty(posicion),
               Navigator.pop(context),
             },
             style: ButtonStyle(
