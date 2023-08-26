@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/locator.dart';
@@ -25,10 +23,11 @@ class MigoProvider extends ChangeNotifier {
   String documentoSelected = '';
   String claseSelected = '';
   String numeroPedido = '';
-  String newValue = '99';
+  String newValue = '';
   late MigoOrderResponse migoResponse;
-  late PedidoMigo pedido;
   List<Posicione> posicionesSelected = [];
+  bool _maxQty = false;
+  bool _finalDeliveryPos = true;
 
   final NavigationService _navigationService = locator<NavigationService>();
 
@@ -42,6 +41,17 @@ class MigoProvider extends ChangeNotifier {
   set isLoading(value) {
     _isLoading = value;
     notifyListeners();
+  }
+
+  bool get maxQty => _maxQty;
+  set maxQty(bool value) {
+    _maxQty = value;
+    notifyListeners();
+  }
+
+  bool get finalDeliveryPos => _finalDeliveryPos;
+  set finalDeliveryPos(bool value) {
+    _finalDeliveryPos = value;
   }
 
   bool isValidForm() {
@@ -82,7 +92,6 @@ class MigoProvider extends ChangeNotifier {
           isLoading = false;
           print('200: Pedido ${response.body}');
           migoResponse = MigoOrderResponse.fromJson(response.body);
-          pedido = PedidoMigo.fromMap(migoResponse.pedidoMigo!.toMap());
           notifyListeners();
           break;
         case 401:
@@ -151,19 +160,21 @@ class MigoProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    final Map<String, dynamic> authData = {
-      'nickname': 'David Flores',
-      'password': '123456'
-    };
-
     final MigoEntrada101 pedidoContabilizar = MigoEntrada101(
-      cabeceraPedido: pedido.cabeceraPedido,
-      documentoPedido: pedido.documentoPedido,
+      cabeceraPedido: migoResponse.pedidoMigo!.cabeceraPedido,
+      documentoPedido: migoResponse.pedidoMigo!.documentoPedido,
       claseMovimiento: '101',
-      posiciones: pedido.posiciones,
+      posiciones: posicionesSelected,
       fechaDoc: DateTime.now(),
       fechaCont: DateTime.now(),
     );
+
+    print('''
+      cantidad: ${posicionesSelected[0].cantidad},
+      cantidadRecidida: ${posicionesSelected[0].cantidadRecibida},
+      cantidadFaltante: ${posicionesSelected[0].cantidadFaltante},
+    ''');
+    // return false;
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
@@ -180,7 +191,8 @@ class MigoProvider extends ChangeNotifier {
           print('200: Pedido Contabilizado ${response.body}');
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(serverResponse?.message ??
-              'Pedido ${pedido.documentoPedido} Contabilizado.');
+              'Pedido ${migoResponse.pedidoMigo!.documentoPedido} Contabilizado.');
+          notifyListeners();
           break;
         case 401:
           if (!response.body.contains('code')) {
@@ -201,7 +213,7 @@ class MigoProvider extends ChangeNotifier {
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido.');
           notifyListeners();
-          print(serverResponse);
+          print('404 - $serverResponse');
           break;
         case 422:
           isLoading = false;
@@ -209,7 +221,7 @@ class MigoProvider extends ChangeNotifier {
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido.');
           notifyListeners();
-          print(serverResponse);
+          print('422 - $serverResponse');
           break;
         case 500:
           isLoading = false;
@@ -240,8 +252,30 @@ class MigoProvider extends ChangeNotifier {
     _navigationService.navigateTo(LoginScreen.routeName);
   }
 
+  bool validatePosQty(Posicione posicion) {
+    bool isValid = false;
+
+    if (newValue != '') {
+      final val = double.parse(newValue);
+      print('val $val');
+      if (val > double.parse(posicion.cantidadFaltante)) {
+        Notifications.showSnackBar(
+            'La cantidad recibida no puede ser mayor a la del Pedido.');
+        return isValid;
+      }
+      isValid = true;
+    }
+    return isValid;
+  }
+
   updatePosQty(Posicione posicion) {
-    posicion.cantidad = int.parse(newValue);
+    final val = newValue;
+    posicion.cantidadRecibida = val;
+    int index = posicionesSelected
+        .indexWhere((pos) => pos.numeroMaterial == posicion.numeroMaterial);
+    if (index != -1) {
+      posicionesSelected[index] = posicion;
+    }
     notifyListeners();
   }
 }

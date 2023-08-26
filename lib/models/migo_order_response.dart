@@ -186,8 +186,8 @@ class Posicione {
   dynamic documentoMaterial;
   dynamic documentoAnio;
   dynamic documentoPos;
-  int cantidad;
-  int cantidadRecibida;
+  String cantidad;
+  String cantidadRecibida;
   dynamic importe;
   dynamic importeRecibido;
   String unidadMedida;
@@ -199,7 +199,7 @@ class Posicione {
   bool esDevolucion;
   String solicitante;
   List<dynamic> series;
-  int cantidadFaltante;
+  String cantidadFaltante;
 
   Posicione({
     required this.umeSap,

@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:hope_app/ui/notifications.dart';
 import 'package:provider/provider.dart';
 
 class MigoScreen extends StatefulWidget {
@@ -139,7 +140,7 @@ class _MigoScreenState extends State<MigoScreen> {
                   )
                 : (migoProvider.result)
                     ? PedidoBox(
-                        pedido: migoProvider.pedido,
+                        pedido: migoProvider.migoResponse.pedidoMigo!,
                         posiciones: [],
                       )
                     : Container(),
@@ -243,37 +244,45 @@ class PedidoBox extends StatelessWidget {
             }).toList(),
           ),
         ),
-        buildContabilizarButton(context),
+        ContabilizarButton(),
       ],
     );
   }
 }
 
-buildContabilizarButton(BuildContext context) {
-  final migoProvider = Provider.of<MigoProvider>(context);
+class ContabilizarButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final migoProvider = Provider.of<MigoProvider>(context);
 
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 15),
-    margin: const EdgeInsets.only(bottom: 10),
-    width: double.infinity,
-    height: 50,
-    child: ElevatedButton(
-      onPressed: () {
-        migoProvider.contabilizarEntrada();
-      },
-      style: ButtonStyle(
-        backgroundColor:
-            MaterialStateProperty.all(const Color.fromARGB(255, 17, 92, 153)),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      margin: const EdgeInsets.only(bottom: 10),
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: () => validateSelectedPos(migoProvider),
+        style: ButtonStyle(
+          backgroundColor:
+              MaterialStateProperty.all(const Color.fromARGB(255, 17, 92, 153)),
+        ),
+        child: Text(
+          'Contabilizar',
+          style: TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 16,
+              color: ThemeProvider.whiteColor),
+        ),
       ),
-      child: Text(
-        'Contabilizar',
-        style: TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 16,
-            color: ThemeProvider.whiteColor),
-      ),
-    ),
-  );
+    );
+  }
+}
+
+validateSelectedPos(MigoProvider migoProvider) {
+  (migoProvider.posicionesSelected.isNotEmpty)
+      ? migoProvider.contabilizarEntrada()
+      : Notifications.showSnackBar(
+          "No se tienen posiciones seleccionadas para contabilizar.");
 }
 
 class _PosicionItem extends StatefulWidget {
@@ -284,7 +293,7 @@ class _PosicionItem extends StatefulWidget {
 
   @override
   State<_PosicionItem> createState() =>
-      _PosicionItemState(isSelected: this.isSelected, posicion: this.posicion);
+      _PosicionItemState(isSelected: isSelected, posicion: posicion);
 }
 
 class _PosicionItemState extends State<_PosicionItem> {
@@ -296,7 +305,6 @@ class _PosicionItemState extends State<_PosicionItem> {
   @override
   Widget build(BuildContext context) {
     final migoProvider = Provider.of<MigoProvider>(context);
-
     return Slidable(
       key: const ValueKey(0),
       // The end action pane is the one at the right or the bottom side.
@@ -333,106 +341,175 @@ class _PosicionItemState extends State<_PosicionItem> {
     );
   }
 
-  Future<dynamic> modalEditPos(
-      BuildContext context, MigoProvider migoProvider) {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        actions: [
-          TextButton(
-            onPressed: () => {
-              print('Nuevo valor ${migoProvider.newValue}'),
-              migoProvider.updatePosQty(posicion),
-              Navigator.pop(context),
-            },
-            child: const Text('Guardar'),
-          )
-        ],
-        alignment: Alignment.topCenter,
-        title: const Text(
-          'Editar Posición',
-          textAlign: TextAlign.center,
-        ),
-        content: TextField(
-          controller: TextEditingController()
-            ..text = posicion.cantidad.toString(),
-          autofocus: true,
-          autocorrect: false,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.allow(
-              RegExp(r'[0-9]+[,.]{0,1}[0-9]*'),
-            ),
-          ],
-          textAlign: TextAlign.center,
-          onChanged: (value) => {
-            if (value != null)
-              {
-                print(value),
-                migoProvider.newValue = value,
-              }
-          },
-          decoration: const InputDecoration(
-            hintText: 'Cantidad',
-          ),
-        ),
-      ),
-    );
-  }
-
-  showEditPos(BuildContext context) {
-    final migoProvider = Provider.of<MigoProvider>(context, listen: false);
+  modalEditPos(BuildContext context, MigoProvider migoProvider) {
+    migoProvider.newValue = posicion.cantidadRecibida.toString();
+    bool showError = false;
+    var _textController = TextEditingController();
 
     return showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        actions: [
-          TextButton(
-            onPressed: () => {
-              print('Nuevo valor ${migoProvider.newValue}'),
-              migoProvider.updatePosQty(posicion),
-              // migoProvider.pedido.posiciones.map(
-              //   (pos) => {
-              //     if (pos.numeroMaterial == posicion.numeroMaterial)
-              //       {pos.cantidad = migoProvider.newValue as int}
-              //   },
-              // ),
-              Navigator.pop(context),
-            },
-            child: const Text('Guardar'),
-          )
-        ],
-        alignment: Alignment.topCenter,
-        title: const Text(
-          'Editar Posición',
-          textAlign: TextAlign.center,
-        ),
-        content: TextField(
-          controller: TextEditingController()
-            ..text = posicion.cantidad.toString(),
-          autofocus: true,
-          autocorrect: false,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.allow(
-              RegExp(r'[0-9]+[,.]{0,1}[0-9]*'),
-            ),
-          ],
-          textAlign: TextAlign.center,
-          onChanged: (value) => {
-            if (value != null)
-              {
-                print(value),
-                migoProvider.newValue = value,
-              }
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              actions: [
+                ElevatedButton(
+                  onPressed: () => {
+                    setState(() {
+                      (double.parse(migoProvider.newValue) >
+                              double.parse(posicion.cantidadFaltante))
+                          ? showError = true
+                          : showError = false;
+                    }),
+                    if (double.parse(migoProvider.newValue) <=
+                        double.parse(posicion.cantidadFaltante))
+                      {
+                        // migoProvider.validatePosQty(posicion),
+                        // migoProvider.updatePosQty(posicion),
+                        if (migoProvider.validatePosQty(posicion))
+                          {
+                            Navigator.pop(context),
+                            showConfirmPartial(context),
+                          },
+                      }
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(ThemeProvider.blueColor),
+                  ),
+                  child: Text(
+                    'Actualizar',
+                    style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 16,
+                        color: ThemeProvider.whiteColor),
+                  ),
+                ),
+              ],
+              alignment: Alignment.center,
+              title: Text(
+                'Editar Posición',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: ThemeProvider.blueColor,
+                  fontFamily: 'Roboto',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              content: TextField(
+                controller: _textController
+                  ..text = migoProvider.newValue.toString(),
+                autofocus: true,
+                autocorrect: false,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'[0-9]+[,.]{0,1}[0-9]*'),
+                  ),
+                ],
+                textAlign: TextAlign.center,
+                onChanged: (value) => {
+                  if (value != '')
+                    {
+                      print('Value: $value'),
+                      migoProvider.newValue = value,
+                    }
+                },
+                decoration: InputDecoration(
+                  hintText: 'Cantidad',
+                  errorText: showError
+                      ? 'No se permite mayor a ${posicion.cantidadFaltante} ${posicion.umeComercial}'
+                      : null,
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: ThemeProvider.lightColor,
+                    ),
+                  ),
+                ),
+              ),
+            );
           },
-          decoration: const InputDecoration(
-            hintText: 'Cantidad',
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
+}
+
+showConfirmPartial(BuildContext context) {
+  return showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Center(
+          child: Text(
+            'Confirmar Parciales',
+            style: TextStyle(
+              color: ThemeProvider.blueColor,
+              fontFamily: 'Roboto',
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                '¿Esta es una entrada parcial o final?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: ThemeProvider.lightColor,
+                  fontFamily: 'Roboto',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            )
+          ],
+        ),
+        actions: <Widget>[
+          ElevatedButton(
+            onPressed: () => {
+              Navigator.pop(context),
+            },
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all(ThemeProvider.aquaBlueColor),
+            ),
+            child: Text(
+              'Final',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 16,
+                color: ThemeProvider.whiteColor,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => {
+              Navigator.pop(context),
+            },
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all(ThemeProvider.blueColor),
+            ),
+            child: Text(
+              'Parcial',
+              style: TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: 16,
+                  color: ThemeProvider.whiteColor),
+            ),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class _PosicionItemRow extends StatelessWidget {
@@ -468,7 +545,7 @@ class _PosicionItemRow extends StatelessWidget {
         Expanded(
           flex: 2,
           child: Text(
-            posicion.cantidad.toString(),
+            posicion.cantidadRecibida.toString(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Roboto',

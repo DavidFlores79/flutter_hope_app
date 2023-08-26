@@ -8,14 +8,14 @@ import 'dart:convert';
 
 class ServerResponse {
   ServerResponse({
-    required this.code,
-    required this.status,
+    this.code,
+    this.status,
     this.message,
     this.success,
   });
 
-  int code;
-  String status;
+  int? code;
+  String? status;
   String? message;
   bool? success;
 
