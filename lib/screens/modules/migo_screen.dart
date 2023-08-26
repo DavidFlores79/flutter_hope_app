@@ -177,7 +177,7 @@ class PedidoBox extends StatelessWidget {
       children: [
         const SizedBox(height: 25),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           // margin: const EdgeInsets.symmetric(horizontal: 15),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
@@ -195,17 +195,17 @@ class PedidoBox extends StatelessWidget {
           width: double.infinity,
           child: Column(
             children: [
-              _MigoOrderRow(
+              _MigoOrderHeaders(
                 fontSize: fontSize,
                 title: 'Clase Doc.:',
                 value: pedido.cabeceraPedido.claseDocumento,
               ),
-              _MigoOrderRow(
+              _MigoOrderHeaders(
                 fontSize: fontSize,
                 title: 'Num. Pedido:',
                 value: pedido.cabeceraPedido.numeroPedido,
               ),
-              _MigoOrderRow(
+              _MigoOrderHeaders(
                 fontSize: fontSize,
                 title: 'Proveedor:',
                 value: pedido.cabeceraPedido.cuentaProveedor,
@@ -426,42 +426,125 @@ class _PosicionItemState extends State<_PosicionItem> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              content: TextField(
-                controller: _textController
-                  ..text = migoProvider.newValue.toString(),
-                autofocus: true,
-                autocorrect: false,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(
-                    RegExp(r'[0-9]+[,.]{0,1}[0-9]*'),
-                  ),
-                ],
-                textAlign: TextAlign.center,
-                onChanged: (value) => {
-                  if (value != '')
-                    {
-                      print('Value: $value'),
-                      migoProvider.newValue = value,
-                    }
-                },
-                decoration: InputDecoration(
-                  hintText: 'Cantidad',
-                  errorText: showError
-                      ? 'No se permite mayor a ${posicion.cantidadFaltante} ${posicion.umeComercial}'
-                      : null,
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: ThemeProvider.lightColor,
+              content: Container(
+                height: 230,
+                child: Column(
+                  children: [
+                    _PosicionDetails(
+                      value: posicion.numeroMaterial,
+                      title: 'Material: ',
                     ),
-                  ),
+                    const SizedBox(height: 10),
+                    _PosicionDetails(
+                      value: posicion.descripcionMaterial,
+                      title: 'Desc: ',
+                    ),
+                    const SizedBox(height: 10),
+                    _PosicionDetails(
+                      value: posicion.umeComercial,
+                      title: 'UM: ',
+                    ),
+                    const SizedBox(height: 10),
+                    _PosicionDetails(
+                      value: posicion.cantidad,
+                      title: 'Pedido: ',
+                    ),
+                    const SizedBox(height: 10),
+                    _PosicionDetails(
+                      value: posicion.cantidadFaltante,
+                      title: 'Faltante: ',
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Cantidad Recibida',
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    TextField(
+                      controller: _textController
+                        ..text = migoProvider.newValue.toString(),
+                      autofocus: true,
+                      autocorrect: false,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[0-9]+[,.]{0,1}[0-9]*'),
+                        ),
+                      ],
+                      textAlign: TextAlign.center,
+                      onChanged: (value) => {
+                        if (value != '')
+                          {
+                            print('Value: $value'),
+                            migoProvider.newValue = value,
+                          }
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Cantidad',
+                        errorText: showError
+                            ? 'No se permite mayor a ${posicion.cantidadFaltante} ${posicion.umeComercial}'
+                            : null,
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: ThemeProvider.lightColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
           },
         );
       },
+    );
+  }
+}
+
+class _PosicionDetails extends StatelessWidget {
+  const _PosicionDetails({
+    super.key,
+    required this.title,
+    required this.value,
+  });
+
+  final String title;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          flex: 3,
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 5,
+          child: Text(
+            value,
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontWeight: FontWeight.w400,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.end,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -595,8 +678,8 @@ class _PosicionItemRow extends StatelessWidget {
   }
 }
 
-class _MigoOrderRow extends StatelessWidget {
-  _MigoOrderRow({
+class _MigoOrderHeaders extends StatelessWidget {
+  _MigoOrderHeaders({
     required this.fontSize,
     required this.title,
     required this.value,
@@ -610,28 +693,37 @@ class _MigoOrderRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title, //'Clase de Doc.: ',
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: fontSize,
-                fontWeight: FontWeight.bold,
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(150, 159, 213, 236),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title, //'Clase de Doc.: ',
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w500,
+                  color: ThemeProvider.lightColor,
+                ),
               ),
-            ),
-            Text(
-              value,
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: fontSize,
-                fontWeight: FontWeight.w400,
+              Text(
+                value,
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w400,
+                  color: ThemeProvider.lightColor,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-        const SizedBox(height: 25),
+        const SizedBox(height: 7),
       ],
     );
   }
