@@ -38,6 +38,8 @@ class ActivationService extends ChangeNotifier {
         if (activationResponse.license.urlApi != null) {
           Preferences.apiServer =
               Uri.parse(activationResponse.license.urlApi).host;
+          Preferences.projectName =
+              Uri.parse(activationResponse.license.urlApi).path;
         }
 
         if (activationResponse.clientImage != '') {

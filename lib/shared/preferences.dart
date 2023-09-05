@@ -5,10 +5,10 @@ class Preferences {
   static late SharedPreferences _prefs;
 
   static String _apiUser = '';
-  static String _activacionServer = '172.17.1.45';
-  static String _activacionRoute = '/hopeConfiguraciones/public_html';
+  static String _activacionServer = '154.56.46.97';
+  static String _activacionRoute = '/configuraciones/public_html';
   static String _apiServer = '172.17.1.45';
-  static String _projectName = '/hopesucursales/public_html';
+  static String _projectName = '/hopesucursales/public_html222';
   static bool _isActive = false;
   static String _expirationDate = '1979-04-10 00:00:00';
   static String _licenseExp = '1979-04-10 00:00:00';
