@@ -25,7 +25,8 @@ class MenuModule extends StatelessWidget {
           onTap: () {
             print(modulos[index].nombre);
             print(modulos[index].ruta);
-            Navigator.pushReplacementNamed(context, ModuleScreen.routeName,
+            Navigator.pop(context);
+            Navigator.pushNamed(context, ModuleScreen.routeName,
                 arguments: modulos[index]);
           },
           child: Padding(

@@ -93,12 +93,18 @@ class _LoginForm extends StatelessWidget {
     final width80 = (size.width * 0.15);
     final loginForm = Provider.of<LoginFormProvider>(context);
     final Color myColor = ThemeProvider.blueColor;
+    final mp = Provider.of<NavbarProvider>(context);
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final pedidosProvider =
+        Provider.of<PedidosProvider>(context, listen: false);
 
-    Timer(
-      const Duration(seconds: 10),
-      () => oneSignalProvider.setOneSignalId(),
-    );
+    if (!kIsWeb && !Platform.isWindows) {
+      Timer(
+        const Duration(seconds: 10),
+        () => oneSignalProvider.setOneSignalId(),
+      );
+    }
 
     return Container(
       child: Form(
@@ -152,22 +158,28 @@ class _LoginForm extends StatelessWidget {
                       FocusScope.of(context).unfocus();
 
                       //hacer la peticion al backend para validar usuario
-                      final authService =
-                          Provider.of<AuthService>(context, listen: false);
                       final String? loginMessage = await authService.loginUser(
                           loginForm.email, loginForm.password);
 
                       if (loginMessage == 'true') {
                         oneSignalProvider.saveUpdateId();
                         loginForm.isLoading = false;
-                        // ignore: use_build_context_synchronously
-                        Provider.of<PedidosProvider>(context, listen: false)
-                            .getOrdenes();
+                        final result = await pedidosProvider.getOrdenes();
+                        print('EL RESULTADO!!!!!!!!! $result');
+                        mp.items.elementAt(1).enabled = result;
 
-                        // ignore: use_build_context_synchronously
-                        Navigator.pushReplacementNamed(
-                          context,
-                          HomeScreen.routeName,
+                        Future.microtask(
+                          () {
+                            Navigator.pushReplacement(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        const HomeScreen(),
+                                transitionDuration: const Duration(seconds: 2),
+                              ),
+                            );
+                          },
                         );
                       } else {
                         Notifications.showSnackBar(loginMessage.toString());

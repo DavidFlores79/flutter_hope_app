@@ -22,7 +22,9 @@ class AuthTokenScreen extends StatelessWidget {
         child: FutureBuilder(
           future: authService.getToken(),
           builder: ((context, snapshot) {
-            if (!snapshot.hasData) return const CircularProgressIndicator.adaptive();
+            if (!snapshot.hasData) {
+              return const CircularProgressIndicator.adaptive();
+            }
 
             if (snapshot.data == '') {
               if (Preferences.apiUser == '') {

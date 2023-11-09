@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hope_app/providers/navbar_provider.dart';
+import 'package:hope_app/providers/providers.dart';
 import 'package:provider/provider.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
@@ -12,13 +12,17 @@ class CustomBottomNavigationBar extends StatelessWidget {
     return BottomNavigationBar(
         currentIndex: mp.selectedIndex,
         onTap: (value) {
-          mp.selectedIndex = value;
+          if (mp.items.elementAt(value).enabled) {
+            mp.selectedIndex = value;
+          }
         },
-        items: mp.items
-            .map((e) => BottomNavigationBarItem(
-                  label: e.label,
-                  icon: e.iconData!,
-                ))
-            .toList());
+        items: mp.items.map((e) {
+          if (e.enabled) {}
+
+          return BottomNavigationBarItem(
+            label: e.label,
+            icon: e.iconData!,
+          );
+        }).toList());
   }
 }
