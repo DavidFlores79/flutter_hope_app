@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
@@ -8,6 +9,7 @@ import 'package:hope_app/ui/input_decorations.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class LoginScreen extends StatelessWidget {
   static const String routeName = 'login';
@@ -17,7 +19,9 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
-    oneSignalProvider.initOneSignal(context);
+    if (!kIsWeb && !Platform.isWindows) {
+      oneSignalProvider.initOneSignal(context);
+    }
 
     return Scaffold(
       body: AuthBackground(

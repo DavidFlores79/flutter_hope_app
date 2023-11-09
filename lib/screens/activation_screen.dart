@@ -27,13 +27,17 @@ class ActivationScreen extends StatelessWidget {
         child: FutureBuilder(
           future: activationService.isLicenseExpired(),
           builder: ((context, snapshot) {
-            if (!snapshot.hasData) return const CircularProgressIndicator.adaptive();
+            final size = MediaQuery.of(context).size;
+
+            if (!snapshot.hasData)
+              return const CircularProgressIndicator.adaptive();
             final isLicenseExpired = snapshot.data ?? true;
 
             if (isLicenseExpired) {
               print('licencia vencida');
               return SingleChildScrollView(
-                  child: Padding(
+                  child: Container(
+                width: (size.width > 767) ? 400 : double.infinity,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
                 child: Column(

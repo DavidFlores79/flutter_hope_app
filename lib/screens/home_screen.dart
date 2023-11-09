@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
@@ -15,8 +14,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mp = Provider.of<NavbarProvider>(context);
-    final modulosProvider =
-        Provider.of<ModulosProvider>(context, listen: false);
+    final modulosProvider = Provider.of<ModulosProvider>(
+      context,
+      listen: false,
+    );
     modulosProvider.getModulosApp();
 
     return Scaffold(
@@ -25,12 +26,12 @@ class HomeScreen extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
         title: (Preferences.clientImage != '')
-            ? Image(
-                image: NetworkImage(Preferences.clientImage),
+            ? Image.network(
+                Preferences.clientImage,
                 height: 45,
               )
-            : const Image(
-                image: AssetImage('assets/hope-logo.png'),
+            : Image.asset(
+                'assets/hope-logo.png',
                 height: 45,
               ),
         actions: const [

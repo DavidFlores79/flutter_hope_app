@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
@@ -71,6 +73,10 @@ class CustomDrawer extends StatelessWidget {
 
   buildMenuItems(BuildContext context) {
     final mp = Provider.of<NavbarProvider>(context);
+    final authService = Provider.of<AuthService>(
+      context,
+      listen: false,
+    );
 
     return Column(
       children: [
@@ -95,6 +101,15 @@ class CustomDrawer extends StatelessWidget {
           title: const Text('Notificaciones', style: TextStyle(fontSize: 20)),
           onTap: () =>
               Navigator.pushNamed(context, NotificationScreen.routeName),
+        ),
+        ListTile(
+          leading: const Icon(FontAwesomeIcons.arrowRightFromBracket),
+          title: const Text('Logout', style: TextStyle(fontSize: 20)),
+          onTap: () async {
+            await authService.logout();
+            // ignore: use_build_context_synchronously
+            Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+          },
         ),
       ],
     );
