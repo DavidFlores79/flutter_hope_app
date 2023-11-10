@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "LaunchImage 2.png",
+      "filename" : "LaunchImage.png",
       "idiom" : "iphone",
       "scale" : "1x"
     },
     {
-      "filename" : "LaunchImage@2x 1.png",
+      "filename" : "LaunchImage@2x.png",
       "idiom" : "iphone",
       "scale" : "2x"
     },
     {
-      "filename" : "LaunchImage@3x 1.png",
+      "filename" : "LaunchImage@3x.png",
       "idiom" : "iphone",
       "scale" : "3x"
     },
@@ -29,5 +29,8 @@
   "info" : {
     "author" : "xcode",
     "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
   }
 }
