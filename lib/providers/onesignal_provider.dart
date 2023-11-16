@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -18,43 +19,63 @@ class OneSignalProvider extends ChangeNotifier {
   }
 
   Future<void> initOneSignal(BuildContext context) async {
-    OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+    OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+    OneSignal.Debug.setAlertLevel(OSLogLevel.none);
 
     /// Set App Id.
-    await OneSignal.shared.setAppId(Preferences.oneSignalAppId);
+    OneSignal.initialize(Preferences.oneSignalAppId);
 
     // The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
-    await OneSignal.shared
-        .promptUserForPushNotificationPermission()
-        .then((accepted) {
-      print("Accepted permission: $accepted");
+    OneSignal.Notifications.addPermissionObserver((state) {
+      print("Has permission " + state.toString());
     });
 
-    /// Calls when foreground notification arrives.
-    OneSignal.shared.setNotificationWillShowInForegroundHandler(
-        (OSNotificationReceivedEvent event) {
-      print(
-        '&&&&&&&&& Notificacion Recibida en Foreground: ${event.notification}',
+    OneSignal.Notifications.clearAll();
+    OneSignal.Notifications.requestPermission(true);
+
+    OneSignal.User.pushSubscription.addObserver((state) {
+      print(OneSignal.User.pushSubscription.optedIn);
+      print(OneSignal.User.pushSubscription.id);
+      print(OneSignal.User.pushSubscription.token);
+      print(state.current.jsonRepresentation());
+    });
+
+    OneSignal.Notifications.addPermissionObserver((state) {
+      print("Has permission " + state.toString());
+    });
+
+    OneSignal.Notifications.addClickListener((event) {
+      print("Clicked notification: \n${event.notification}");
+
+          Notifications.showSnackBar(
+        'Se hizo CLICK!!!! ${event.notification.body}',
       );
-      Notifications.showSnackBar(
-          event.notification.body ?? 'Se recibio una notificacion');
 
-      /// Display Notification, send null to not display
-      event.complete(null);
     });
 
-    /// Calls when the notification opens the app.
-    OneSignal.shared
-        .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
-      print('&&&&&&&&& Notificacion Abierta: $result');
+    OneSignal.Notifications.addForegroundWillDisplayListener((event) {
+      if (!Platform.isIOS) {
+        Notifications.showSnackBar(
+          'ForeGround ${event.notification.body} ',
+        );
+      }
+
+      /// Display Notification, preventDefault to not display
+      event.preventDefault();
+
+      /// Do async work
+
+      /// notification.display() to display after preventing default
+      event.notification.display();
+      print('*************** Notification received in FOREGROUND');
+      print(event.notification.body);
+      print('*************** Notification received in FOREGROUND');
     });
   }
 
   setOneSignalId() async {
-    await OneSignal.shared.getDeviceState().then((value) {
-      print('/*/*/*/*/*/*/*/*/ UserId: ${value!.userId} /*/*/*/*/*/*/*/*/');
-      Preferences.onesignalUserId = value.userId ?? '';
-    });
+    Preferences.onesignalUserId = OneSignal.User.pushSubscription.id ?? '';
+    print('userID: ${Preferences.onesignalUserId}');
   }
 
   Future<bool> saveUpdateId() async {
@@ -104,7 +125,7 @@ class OneSignalProvider extends ChangeNotifier {
     return result;
   }
 
-  disableNotifications() {
-    OneSignal.shared.disablePush(false);
+  disableNotifications({bool value = false}) {
+    OneSignal.consentGiven(value);
   }
 }
