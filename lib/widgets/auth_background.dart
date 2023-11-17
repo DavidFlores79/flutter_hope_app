@@ -78,7 +78,7 @@ class UserIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final distance = size.height - (size.height - 80);
+    final distance = size.height - ( size.height - ((size.height < 670) ? 50 : 80) );
 
     return SafeArea(
       child: Container(
