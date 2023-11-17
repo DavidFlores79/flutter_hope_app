@@ -23,7 +23,7 @@ class CardContainer extends StatelessWidget {
               ),
             )
           : Container(
-              width: (size.width > 767) ? 400 : double.infinity,
+              width: (size.width > 700) ? 400 : double.infinity,
               decoration: _CardShape(),
               padding: const EdgeInsets.all(20),
               child: child,
