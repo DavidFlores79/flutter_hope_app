@@ -7,8 +7,16 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        elevation: 0,
+        title: const Text('Acerca de'),
+        actions: const [
+          // PopupMenuList(),
+        ],
+      ),
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -6,20 +6,20 @@ class NavbarProvider extends ChangeNotifier {
   List<NavbarDTO> _items = [
     NavbarDTO(
       label: 'Modulos',
-      iconData: const FaIcon(FontAwesomeIcons.tableCellsLarge),
+      iconData: const Icon(FontAwesomeIcons.tableCellsLarge),
       widget: const MenuModulesScreen(),
       enabled: true,
     ),
     NavbarDTO(
       label: 'Ordenes',
-      iconData: const FaIcon(FontAwesomeIcons.newspaper),
+      iconData: const Icon(FontAwesomeIcons.newspaper),
       widget: const PedidosScreen(),
       enabled: true,
     ),
     NavbarDTO(
-      label: 'Acerca de',
-      iconData: const FaIcon(FontAwesomeIcons.question),
-      widget: const AboutScreen(),
+      label: 'Configuración',
+      iconData: const Icon(FontAwesomeIcons.gears),
+      widget: const SettingsScreen(),
       enabled: true,
     ),
   ];

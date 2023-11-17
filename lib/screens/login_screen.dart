@@ -89,8 +89,6 @@ class _LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final width80 = (size.width * 0.15);
     final loginForm = Provider.of<LoginFormProvider>(context);
     final Color myColor = ThemeProvider.blueColor;
     final mp = Provider.of<NavbarProvider>(context);
@@ -106,102 +104,97 @@ class _LoginForm extends StatelessWidget {
       );
     }
 
-    return Container(
-      child: Form(
-        key: loginForm.formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              textCapitalization: TextCapitalization.none,
-              autocorrect: false,
-              keyboardType: TextInputType.text,
-              decoration: InputDecorations.authInputDecoration(
-                  color: myColor,
-                  hintText: 'john.doe',
-                  labelText: 'Nickname',
-                  prefixIcon: Icons.person_outline),
-              onChanged: (value) => loginForm.email = value,
-              validator: (value) {
-                return (value != null) ? null : 'Nickname inválido.';
-              },
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              autocorrect: false,
-              keyboardType: TextInputType.visiblePassword,
-              obscureText: true,
-              decoration: InputDecorations.authInputDecoration(
-                  color: myColor,
-                  hintText: 'Mínimo 8 caracteres',
-                  labelText: 'Contraseña',
-                  prefixIcon: Icons.lock_outlined),
-              onChanged: (value) => loginForm.password = value,
-              validator: (value) {
-                return (value != null && value.length >= 8)
-                    ? null
-                    : 'Contraseña inválida.';
-              },
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            MaterialButton(
-              onPressed: loginForm.isLoading
+    return Form(
+      key: loginForm.formKey,
+      child: Column(
+        children: [
+          TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            textCapitalization: TextCapitalization.none,
+            autocorrect: false,
+            keyboardType: TextInputType.text,
+            decoration: InputDecorations.authInputDecoration(
+                color: myColor,
+                hintText: 'john.doe',
+                labelText: 'Nickname',
+                prefixIcon: Icons.person_outline),
+            onChanged: (value) => loginForm.email = value,
+            validator: (value) {
+              return (value != null) ? null : 'Nickname inválido.';
+            },
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            autocorrect: false,
+            keyboardType: TextInputType.visiblePassword,
+            obscureText: true,
+            decoration: InputDecorations.authInputDecoration(
+                color: myColor,
+                hintText: 'Mínimo 8 caracteres',
+                labelText: 'Contraseña',
+                prefixIcon: Icons.lock_outlined),
+            onChanged: (value) => loginForm.password = value,
+            validator: (value) {
+              return (value != null && value.length >= 8)
                   ? null
-                  : () async {
-                      if (!loginForm.isValidForm()) return;
-                      loginForm.isLoading = true;
-                      FocusScope.of(context).unfocus();
+                  : 'Contraseña inválida.';
+            },
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          MaterialButton(
+            onPressed: loginForm.isLoading
+                ? null
+                : () async {
+                    if (!loginForm.isValidForm()) return;
+                    loginForm.isLoading = true;
+                    FocusScope.of(context).unfocus();
 
-                      //hacer la peticion al backend para validar usuario
-                      final String? loginMessage = await authService.loginUser(
-                          loginForm.email, loginForm.password);
+                    //hacer la peticion al backend para validar usuario
+                    final String? loginMessage = await authService.loginUser(
+                        loginForm.email, loginForm.password);
 
-                      if (loginMessage == 'true') {
-                        oneSignalProvider.saveUpdateId();
-                        loginForm.isLoading = false;
-                        final result = await pedidosProvider.getOrdenes();
-                        print('EL RESULTADO!!!!!!!!! $result');
-                        mp.items.elementAt(1).enabled = result;
-
-                        Future.microtask(
-                          () {
-                            Navigator.pushReplacement(
-                              context,
-                              PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        const HomeScreen(),
-                                transitionDuration: const Duration(seconds: 2),
-                              ),
-                            );
-                          },
-                        );
-                      } else {
-                        Notifications.showSnackBar(loginMessage.toString());
-                        loginForm.isLoading = false;
-                      }
-                    },
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              disabledColor: Colors.grey,
-              elevation: 0,
-              color: myColor,
-              child: Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-                child: Text(
-                  loginForm.isLoading ? 'Espere' : 'Iniciar Sesión',
-                  style: const TextStyle(color: Colors.white),
-                ),
+                    if (loginMessage == 'true') {
+                      oneSignalProvider.saveUpdateId();
+                      final result = await pedidosProvider.getOrdenes();
+                      print('EL RESULTADO!!!!!!!!! $result');
+                      mp.items.elementAt(1).enabled = result;
+                      Future.microtask(
+                        () {
+                          Navigator.pushReplacement(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      const HomeScreen(),
+                              transitionDuration: const Duration(seconds: 0),
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      Notifications.showSnackBar(loginMessage.toString());
+                      loginForm.isLoading = false;
+                    }
+                  },
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10)),
+            disabledColor: Colors.grey,
+            elevation: 0,
+            color: myColor,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+              child: Text(
+                loginForm.isLoading ? 'Espere' : 'Iniciar Sesión',
+                style: const TextStyle(color: Colors.white),
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }

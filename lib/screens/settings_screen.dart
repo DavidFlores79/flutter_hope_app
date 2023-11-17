@@ -32,14 +32,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         getFormatedDate(Preferences.licenseExp, 'MMMM dd, yyyy');
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        title: const Text('Configuración'),
-        actions: const [
-          // PopupMenuList(),
-        ],
-      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),

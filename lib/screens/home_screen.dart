@@ -41,13 +41,13 @@ class HomeScreen extends StatelessWidget {
       body: mp.items[mp.selectedIndex].widget,
       bottomNavigationBar: const CustomBottomNavigationBar(),
       floatingActionButton:
-          (mp.items[mp.selectedIndex].label!.contains('Acerca'))
+          (mp.items[mp.selectedIndex].label!.contains('Configuración'))
               ? FloatingActionButton(
                   child: const FaIcon(
-                    FontAwesomeIcons.gear,
+                    FontAwesomeIcons.question,
                   ),
                   onPressed: () =>
-                      Navigator.pushNamed(context, SettingsScreen.routeName),
+                      Navigator.pushNamed(context, AboutScreen.routeName),
                 )
               : null,
     );
