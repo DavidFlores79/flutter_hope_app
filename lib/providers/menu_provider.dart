@@ -69,13 +69,10 @@ class ModulosProvider extends ChangeNotifier {
           break;
         case 404:
           isLoading = false;
-          // moduleResponse = ServerResponse.fromJson(response.body);
-          // Notifications.showSnackBar(
-          //     moduleResponse?.message ?? 'Error Desconocido.');
-          // pedidos = [];
-          // pedidosXProv = [];
-          // notifyListeners();
-          // print(moduleResponse);
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          categorias = [];
           break;
         case 500:
           isLoading = false;
