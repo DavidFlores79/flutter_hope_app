@@ -125,7 +125,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               Navigator.pushReplacementNamed(
                                   context, ActivationScreen.routeName);
                             },
-                            child: const Text('Borrar Licencia')),
+                            child: Text(
+                              'Borrar Licencia',
+                              style: TextStyle(
+                                color: Preferences.isDarkMode
+                                    ? ThemeProvider.whiteColor
+                                    : ThemeProvider.whiteColor,
+                              ),
+                            )),
                       )
                     ],
                   ),

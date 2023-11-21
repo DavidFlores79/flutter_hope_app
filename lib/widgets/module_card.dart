@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hope_app/models/models.dart';
-import 'package:hope_app/providers/migo_provider.dart';
+import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:provider/provider.dart';
@@ -32,8 +32,12 @@ class ModuleCard extends StatelessWidget {
                 arguments: modulos[index]);
           },
           child: Card(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            color: Preferences.isDarkMode
+                ? ThemeProvider.lightColor
+                : ThemeProvider.whiteColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
             margin: const EdgeInsets.all(10),
             elevation: 5,
             child: Container(

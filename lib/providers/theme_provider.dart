@@ -15,10 +15,17 @@ class ThemeProvider extends ChangeNotifier {
   }) : currentTheme = isDarkmode
             ? ThemeData.dark().copyWith(
                 appBarTheme: AppBarTheme(
+                  titleTextStyle: TextStyle(
+                    color: ThemeProvider.whiteColor,
+                    fontSize: 20,
+                  ),
                   backgroundColor: lightColor,
+                  iconTheme: IconThemeData(color: whiteColor),
                 ),
-                floatingActionButtonTheme:
-                    FloatingActionButtonThemeData(backgroundColor: darkColor),
+                floatingActionButtonTheme: FloatingActionButtonThemeData(
+                  backgroundColor: darkColor,
+                  foregroundColor: whiteColor,
+                ),
                 bottomNavigationBarTheme:
                     BottomNavigationBarThemeData(selectedItemColor: darkColor),
                 switchTheme: SwitchThemeData(
@@ -37,9 +44,18 @@ class ThemeProvider extends ChangeNotifier {
                 // ),
               )
             : ThemeData.light().copyWith(
-                appBarTheme: AppBarTheme(backgroundColor: lightColor),
-                floatingActionButtonTheme:
-                    FloatingActionButtonThemeData(backgroundColor: lightColor),
+                appBarTheme: AppBarTheme(
+                  titleTextStyle: TextStyle(
+                    color: ThemeProvider.whiteColor,
+                    fontSize: 20,
+                  ),
+                  backgroundColor: lightColor,
+                  iconTheme: IconThemeData(color: whiteColor),
+                ),
+                floatingActionButtonTheme: FloatingActionButtonThemeData(
+                  backgroundColor: lightColor,
+                  foregroundColor: whiteColor,
+                ),
                 bottomNavigationBarTheme: BottomNavigationBarThemeData(
                   selectedItemColor: lightColor,
                   unselectedItemColor: Colors.grey,
@@ -61,9 +77,18 @@ class ThemeProvider extends ChangeNotifier {
 
   setLightMode() {
     currentTheme = ThemeData.light().copyWith(
-      appBarTheme: AppBarTheme(backgroundColor: lightColor),
-      floatingActionButtonTheme:
-          FloatingActionButtonThemeData(backgroundColor: lightColor),
+      appBarTheme: AppBarTheme(
+        titleTextStyle: TextStyle(
+          color: ThemeProvider.whiteColor,
+          fontSize: 20,
+        ),
+        backgroundColor: lightColor,
+        iconTheme: IconThemeData(color: whiteColor),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: lightColor,
+        foregroundColor: whiteColor,
+      ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         selectedItemColor: lightColor,
         unselectedItemColor: Colors.grey,
@@ -88,10 +113,17 @@ class ThemeProvider extends ChangeNotifier {
   setDarkMode() {
     currentTheme = ThemeData.dark().copyWith(
       appBarTheme: AppBarTheme(
+        titleTextStyle: TextStyle(
+          color: ThemeProvider.whiteColor,
+          fontSize: 20,
+        ),
         backgroundColor: lightColor,
+        iconTheme: IconThemeData(color: whiteColor),
       ),
-      floatingActionButtonTheme:
-          FloatingActionButtonThemeData(backgroundColor: darkColor),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: darkColor,
+        foregroundColor: whiteColor,
+      ),
       bottomNavigationBarTheme:
           BottomNavigationBarThemeData(selectedItemColor: darkColor),
       switchTheme: SwitchThemeData(
