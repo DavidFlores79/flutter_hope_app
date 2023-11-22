@@ -56,7 +56,7 @@ class ModulosProvider extends ChangeNotifier {
           final moduleResponse = ModuleResponse.fromJson(response.body);
           categorias = moduleResponse.categoriasModulos;
           notifyListeners();
-          print(categorias);
+          print('Categorias: $categorias');
           break;
         case 401:
           print('401 ${response.body.toString()}');
@@ -69,6 +69,7 @@ class ModulosProvider extends ChangeNotifier {
           break;
         case 404:
           isLoading = false;
+          result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido.');
@@ -76,6 +77,7 @@ class ModulosProvider extends ChangeNotifier {
           break;
         case 500:
           isLoading = false;
+          result = false;
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:

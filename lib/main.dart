@@ -89,8 +89,8 @@ class MyApp extends StatelessWidget {
         ProfileScreen.routeName: (context) => const ProfileScreen(),
         ActivationScreen.routeName: (context) => const ActivationScreen(),
         NotificationScreen.routeName: (context) => NotificationScreen(),
-        SolpedScreen.routeName: (context) => const SolpedScreen(),
-        MigoScreen.routeName: (context) => MigoScreen(),
+        SolpedScreen.routeName: (context) => SolpedScreen(),
+        MigoScreen.routeName: (context) => const MigoScreen(),
         MonitorSolpedScreen.routeName: (context) => const MonitorSolpedScreen(),
         ME21NScreen.routeName: (context) => const ME21NScreen(),
         UnderConstructionScreen.routeName: (context) =>

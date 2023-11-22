@@ -9,12 +9,14 @@ import 'dart:convert';
 class SolpedResponse {
   int? code;
   String? status;
+  String? message;
   List<Centros>? centrosUsuario;
   List<Posicion>? posiciones;
 
   SolpedResponse({
     this.code,
     this.status,
+    this.message,
     this.centrosUsuario,
     this.posiciones,
   });
@@ -27,6 +29,7 @@ class SolpedResponse {
   factory SolpedResponse.fromMap(Map<String, dynamic> json) => SolpedResponse(
         code: json["code"],
         status: json["status"],
+        message: json["message"],
         centrosUsuario: json["centros_usuario"] == null
             ? []
             : List<Centros>.from(
@@ -40,6 +43,7 @@ class SolpedResponse {
   Map<String, dynamic> toMap() => {
         "code": code,
         "status": status,
+        "message": message,
         "centros_usuario": centrosUsuario == null
             ? []
             : List<dynamic>.from(centrosUsuario!.map((x) => x.toMap())),

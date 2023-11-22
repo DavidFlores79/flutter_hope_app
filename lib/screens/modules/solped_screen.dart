@@ -29,6 +29,15 @@ class _SolpedScreenState extends State<SolpedScreen> {
     final solpedProvider = Provider.of<SolpedProvider>(context);
     final posiciones = solpedProvider.posiciones;
 
+    // if(tipo_material === "ZACT"){
+    //   if (isNaN(activo_fijo)) {
+    //     return swal( solped.titulo, 'El activo fijo debe ser numérico', tiposDeMensaje.error );
+    //   }
+    //   if (activo_fijo === null || activo_fijo === null || activo_fijo.trim() === '') {
+    //     return swal( solped.titulo, 'Ingresa el activo fijo', tiposDeMensaje.error );
+    //   }
+    // }
+
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () => solpedProvider.getCatalogs(),
@@ -42,7 +51,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 15),
+                        horizontal: 20, vertical: 25),
                     child: Form(
                         key: solpedProvider.formKey,
                         child: Column(
@@ -93,7 +102,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           const Text(
-                                            'Descripcion: ',
+                                            'Descripción: ',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -106,7 +115,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                       const SizedBox(height: 20),
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Column(
                                             crossAxisAlignment:
@@ -153,7 +162,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 35),
+                                      const SizedBox(height: 15),
                                       TextFormField(
                                         autovalidateMode:
                                             AutovalidateMode.onUserInteraction,
@@ -171,6 +180,10 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                               ? null
                                               : 'Por favor agrega la cantidad.';
                                         },
+                                        onChanged: (value) {
+                                          print(value);
+                                          solpedProvider.quantity = value;
+                                        },
                                         decoration: InputDecorations
                                             .authInputDecoration(
                                           color: ThemeProvider.blueColor,
@@ -184,8 +197,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                   ),
                             const SizedBox(height: 35),
                             MaterialButton(
-                              onPressed: (solpedProvider.isLoading ||
-                                      !solpedProvider.isValidForm())
+                              onPressed: (solpedProvider.isLoading)
                                   ? null
                                   : () async {
                                       if (!solpedProvider.isValidForm()) return;
@@ -242,6 +254,17 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                 ),
                               ),
                             ),
+                            (solpedProvider.materialSelected.textoBreve == null)
+                                ? const Column(
+                                    children: [
+                                      SizedBox(height: 15),
+                                      Text(
+                                        'Para crear una Solicitud de Pedido seleccione el material y agregue la cantidad que desea pedir.',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  )
+                                : Container(),
                           ],
                         )),
                   ),
@@ -276,10 +299,6 @@ class _SolpedScreenState extends State<SolpedScreen> {
                   ),
                 ],
               ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(FontAwesomeIcons.plus),
-        onPressed: () => crearSolped(context),
       ),
     );
   }
@@ -336,42 +355,6 @@ class _SolpedScreenState extends State<SolpedScreen> {
               },
               child: const Text(
                 "Confirmar Eliminar",
-                style: TextStyle(
-                  color: Colors.blue,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  crearSolped(context) {
-    print('Crear Solped');
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          title: const Text(
-            "Crear Pedido",
-            textAlign: TextAlign.center,
-          ),
-          content: const Text('Crear Solped'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text(
-                "Cancelar",
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-            TextButton(
-              onPressed: () async {},
-              child: const Text(
-                "Guardar",
                 style: TextStyle(
                   color: Colors.blue,
                 ),
