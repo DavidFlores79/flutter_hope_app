@@ -25,7 +25,7 @@ class PedidosScreen extends StatelessWidget {
         child: (!isLoading)
             ? PedidosList(pedidosProv: orderProvider.pedidosXProv)
             : Center(
-                child: SpinKitSpinningLines(
+                child: SpinKitCubeGrid(
                   color: ThemeProvider.darkColor,
                 ),
               ),

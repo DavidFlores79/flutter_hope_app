@@ -91,11 +91,11 @@ class CustomDrawer extends StatelessWidget {
         MenuCategories(),
         // const SizedBox(height: 12),
         // const Divider(color: Colors.black12),
-        ListTile(
-          leading: const Icon(Icons.favorite_outline),
-          title: const Text('Favoritos', style: TextStyle(fontSize: 20)),
-          onTap: () {},
-        ),
+        // ListTile(
+        //   leading: const Icon(Icons.favorite_outline),
+        //   title: const Text('Favoritos', style: TextStyle(fontSize: 20)),
+        //   onTap: () {},
+        // ),
         ListTile(
           leading: const Icon(Icons.notifications_outlined),
           title: const Text('Notificaciones', style: TextStyle(fontSize: 20)),

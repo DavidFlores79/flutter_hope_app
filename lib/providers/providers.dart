@@ -1,3 +1,5 @@
+export 'package:hope_app/providers/solped_provider.dart';
+
 export 'package:hope_app/providers/login_form_provider.dart';
 export 'package:hope_app/providers/menu_provider.dart';
 export 'package:hope_app/providers/migo_provider.dart';

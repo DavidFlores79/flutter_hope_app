@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hope_app/widgets/widgets.dart';
 
 class NotificationScreen extends StatelessWidget {
   static const String routeName = 'notifications';

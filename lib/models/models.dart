@@ -1,3 +1,6 @@
+export 'package:hope_app/models/material_response.dart';
+export 'package:hope_app/models/solped_response.dart';
+
 export 'package:hope_app/models/activation_response.dart';
 export 'package:hope_app/models/liberar_multiple_request.dart';
 export 'package:hope_app/models/liberar_multiple_response.dart';

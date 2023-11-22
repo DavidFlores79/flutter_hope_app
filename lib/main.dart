@@ -54,6 +54,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<MigoProvider>(
           create: (context) => MigoProvider(),
         ),
+        ChangeNotifierProvider<SolpedProvider>(
+          create: (context) => SolpedProvider(),
+        ),
       ],
       child: const MyApp(),
     );

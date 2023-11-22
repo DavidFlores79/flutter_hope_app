@@ -5,6 +5,7 @@ class InputDecorations {
     required String hintText,
     required String labelText,
     IconData? prefixIcon,
+    IconData? suffixIcon,
     required Color color,
   }) {
     return InputDecoration(
@@ -12,15 +13,22 @@ class InputDecorations {
       focusedBorder:
           UnderlineInputBorder(borderSide: BorderSide(color: color, width: 2)),
       hintText: hintText,
-      hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+      hintStyle: TextStyle(color: Colors.grey[350], fontSize: 14),
       labelText: labelText,
-      labelStyle: TextStyle(color: color),
+      labelStyle: TextStyle(color: color, fontSize: 14),
       focusColor: color,
       prefixIcon: prefixIcon != null
           ? Icon(
               prefixIcon,
               color: color,
-              size: 20,
+              size: 21,
+            )
+          : null,
+      suffixIcon: suffixIcon != null
+          ? Icon(
+              suffixIcon,
+              color: color,
+              size: 21,
             )
           : null,
     );

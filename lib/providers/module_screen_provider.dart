@@ -4,23 +4,23 @@ import 'package:hope_app/screens/screens.dart';
 class ModuleScreenProvider extends ChangeNotifier {
   List<ModuleScreenDTO> items = [
     ModuleScreenDTO(
-      label: 'Solped',
+      label: 'Solicitud de Pedidos',
       route: SolpedScreen.routeName,
       widget: const SolpedScreen(),
     ),
     ModuleScreenDTO(
       label: 'MIGO',
-      route: 'entrada-mercancia',
-      widget: MigoScreen(),
+      route: MigoScreen.routeName,
+      widget: const MigoScreen(),
     ),
     ModuleScreenDTO(
       label: 'Monitor Solped',
-      route: 'monitor-solped',
+      route: MonitorSolpedScreen.routeName,
       widget: const MonitorSolpedScreen(),
     ),
     ModuleScreenDTO(
       label: 'Creación de Pedidos',
-      route: 'me21n',
+      route: ME21NScreen.routeName,
       widget: const ME21NScreen(),
     ),
   ];
