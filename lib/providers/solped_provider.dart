@@ -25,10 +25,19 @@ class SolpedProvider extends ChangeNotifier {
   MaterialResponse? materialResponse;
   List<Centros>? centrosUsuario = [];
   String centroDefault = '';
+  String claseDocumento = 'ZADQ';
   List<Posicion>? posiciones = [];
   List<Posicione> posicionesSelected = [];
   List<Materials>? materials = [];
-  Materials materialSelected = Materials();
+  Materials _materialSelected = Materials();
+  String quantity = '';
+
+  Materials get materialSelected => _materialSelected;
+
+  set materialSelected(Materials value) {
+    _materialSelected = value;
+    notifyListeners();
+  }
 
   final debouncer = Debouncer(duration: const Duration(milliseconds: 700));
 
@@ -89,7 +98,6 @@ class SolpedProvider extends ChangeNotifier {
           centrosUsuario = solpedResponse?.centrosUsuario;
           if (centrosUsuario != null) {
             centroDefault = centrosUsuario![0].idcentro!;
-            print('Centro: $centroDefault');
           }
           notifyListeners();
           break;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
@@ -21,6 +22,7 @@ class SolpedScreen extends StatefulWidget {
 
 class _SolpedScreenState extends State<SolpedScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _qtyController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +46,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                     child: Form(
                         key: solpedProvider.formKey,
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TextFormField(
                               readOnly: true,
@@ -51,10 +54,11 @@ class _SolpedScreenState extends State<SolpedScreen> {
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               decoration: InputDecorations.authInputDecoration(
-                                  color: ThemeProvider.blueColor,
-                                  hintText: '904001526',
-                                  labelText: 'Material',
-                                  suffixIcon: Icons.search_outlined),
+                                color: ThemeProvider.blueColor,
+                                hintText: '904001526',
+                                labelText: 'Material',
+                                suffixIcon: FontAwesomeIcons.magnifyingGlass,
+                              ),
                               onTap: () async {
                                 await showSearch(
                                   context: context,
@@ -62,22 +66,126 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                 );
 
                                 if (solpedProvider
-                                        .materialSelected.textoBreve !=
+                                        .materialSelected.numeroMaterial !=
                                     '') {
                                   _searchController.text = solpedProvider
-                                          .materialSelected.textoBreve ??
+                                          .materialSelected.numeroMaterial ??
                                       '';
+                                } else {
+                                  _searchController.clear();
                                 }
                               },
                               validator: (value) {
                                 return (value != null && value.length >= 3)
                                     ? null
-                                    : 'Paciente debe contener más de 3 caracteres.';
+                                    : 'Por favor agrega un material para crear el Pedido.';
                               },
                             ),
+                            const SizedBox(height: 20),
+                            (solpedProvider.materialSelected.textoBreve == null)
+                                ? Container()
+                                : Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'Descripcion: ',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            '${solpedProvider.materialSelected.textoBreve}',
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 20),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              const Text(
+                                                'UME: ',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(
+                                                '${solpedProvider.materialSelected.umeComercial}',
+                                              ),
+                                            ],
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              const Text(
+                                                'Centro: ',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(
+                                                  solpedProvider.centroDefault),
+                                            ],
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              const Text(
+                                                'Clase Doc.: ',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(solpedProvider
+                                                  .claseDocumento),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 35),
+                                      TextFormField(
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
+                                        controller: _qtyController,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: <TextInputFormatter>[
+                                          // for below version 2 use this
+                                          FilteringTextInputFormatter.allow(
+                                              RegExp(r'[0-9]')),
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
+                                        validator: (value) {
+                                          return (value != null &&
+                                                  value.isNotEmpty)
+                                              ? null
+                                              : 'Por favor agrega la cantidad.';
+                                        },
+                                        decoration: InputDecorations
+                                            .authInputDecoration(
+                                          color: ThemeProvider.blueColor,
+                                          hintText: '0',
+                                          labelText: 'Cantidad',
+                                          suffixIcon:
+                                              FontAwesomeIcons.cartArrowDown,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                             const SizedBox(height: 35),
                             MaterialButton(
-                              onPressed: (solpedProvider.isLoading)
+                              onPressed: (solpedProvider.isLoading ||
+                                      !solpedProvider.isValidForm())
                                   ? null
                                   : () async {
                                       if (!solpedProvider.isValidForm()) return;
@@ -90,11 +198,23 @@ class _SolpedScreenState extends State<SolpedScreen> {
 
                                       print('Result $result');
                                       if (!result) {
-                                        setState(() {});
-                                        _searchController.clear();
+                                        setState(() {
+                                          solpedProvider.formKey.currentState
+                                              ?.reset();
+                                          solpedProvider.materialSelected =
+                                              Materials();
+                                          _searchController.clear();
+                                          _qtyController.clear();
+                                        });
                                       } else {
-                                        setState(() {});
-                                        _searchController.clear();
+                                        setState(() {
+                                          solpedProvider.formKey.currentState
+                                              ?.reset();
+                                          solpedProvider.materialSelected =
+                                              Materials();
+                                          _searchController.clear();
+                                          _qtyController.clear();
+                                        });
 
                                         Notifications.showSnackBar(
                                             'Pedido creado correctamente.');
