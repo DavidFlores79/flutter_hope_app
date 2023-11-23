@@ -1,8 +1,3 @@
-export 'package:hope_app/widgets/position_selected_card.dart';
-export 'package:hope_app/widgets/solped_update_content.dart';
-export 'package:hope_app/widgets/status_label.dart';
-export 'package:hope_app/widgets/position_card.dart';
-
 export 'package:hope_app/widgets/auth_background.dart';
 export 'package:hope_app/widgets/bottom_navigation_bar.dart';
 export 'package:hope_app/widgets/card_container.dart';
@@ -13,3 +8,8 @@ export 'package:hope_app/widgets/menu_module.dart';
 export 'package:hope_app/widgets/module_card.dart';
 export 'package:hope_app/widgets/module_category.dart';
 export 'package:hope_app/widgets/popup_menu.dart';
+export 'package:hope_app/widgets/position_card.dart';
+export 'package:hope_app/widgets/position_selected_card.dart';
+export 'package:hope_app/widgets/solped_info.dart';
+export 'package:hope_app/widgets/solped_update_content.dart';
+export 'package:hope_app/widgets/status_label.dart';
