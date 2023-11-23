@@ -5,11 +5,12 @@ import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:provider/provider.dart';
-
+import 'package:intl/date_symbol_data_local.dart'; // Importa este paquete
 import 'services/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('es');
   await Preferences.init();
   setupLocator();
   runApp(const AppState());
@@ -57,6 +58,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<SolpedProvider>(
           create: (context) => SolpedProvider(),
         ),
+        ChangeNotifierProvider<LiberarSolpedProvider>(
+          create: (context) => LiberarSolpedProvider(),
+        ),
       ],
       child: const MyApp(),
     );
@@ -90,6 +94,7 @@ class MyApp extends StatelessWidget {
         ActivationScreen.routeName: (context) => const ActivationScreen(),
         NotificationScreen.routeName: (context) => NotificationScreen(),
         SolpedScreen.routeName: (context) => SolpedScreen(),
+        LiberarSolpedScreen.routeName: (context) => LiberarSolpedScreen(),
         MigoScreen.routeName: (context) => const MigoScreen(),
         MonitorSolpedScreen.routeName: (context) => const MonitorSolpedScreen(),
         ME21NScreen.routeName: (context) => const ME21NScreen(),

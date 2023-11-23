@@ -169,4 +169,43 @@ class Preferences {
 
     return time;
   }
+
+  static String formatScheduledTime(String inputTime) {
+    List<String> parts = inputTime.split(":"); // Dividir el string en partes
+
+    if (parts.length >= 2) {
+      String hour = parts[0]; // Obtener la hora
+      String minute = parts[1]; // Obtener los minutos
+
+      String formattedTime = "$hour:$minute"; // Crear el string de hora:minutos
+
+      return formattedTime;
+    } else {
+      return inputTime;
+    }
+  }
+
+  static String getInitials({required String string, required int limitTo}) {
+    var buffer = StringBuffer();
+    var split = string.split(' ');
+    for (var i = 0; i < (limitTo); i++) {
+      if (split[i].isNotEmpty) {
+        buffer.write(split[i][0]);
+      }
+    }
+
+    return buffer.toString();
+  }
+
+  static String formatDate(String fechaSolicitud) {
+    // Convierte la cadena de fecha a un objeto DateTime
+    DateTime fecha = DateTime.parse(fechaSolicitud);
+
+    // Formatea la fecha según el formato deseado
+    String fechaFormateada = DateFormat('dd-MMM-yyyy', 'es').format(
+      fecha.toLocal(),
+    );
+
+    return fechaFormateada;
+  }
 }

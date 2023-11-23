@@ -9,6 +9,11 @@ class ModuleScreenProvider extends ChangeNotifier {
       widget: SolpedScreen(),
     ),
     ModuleScreenDTO(
+      label: 'Liberar Solicitud de Pedidos',
+      route: LiberarSolpedScreen.routeName,
+      widget: LiberarSolpedScreen(),
+    ),
+    ModuleScreenDTO(
       label: 'MIGO',
       route: MigoScreen.routeName,
       widget: const MigoScreen(),

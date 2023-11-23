@@ -1,3 +1,4 @@
+export 'package:hope_app/models/buscar_solpeds_response.dart';
 export 'package:hope_app/models/material_response.dart';
 export 'package:hope_app/models/solped_response.dart';
 

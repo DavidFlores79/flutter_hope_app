@@ -52,7 +52,7 @@ class SolpedProvider extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
 
   SolpedProvider() {
-    print('Migo provider inicializado');
+    print('Solped provider inicializado');
     getCatalogs();
   }
 

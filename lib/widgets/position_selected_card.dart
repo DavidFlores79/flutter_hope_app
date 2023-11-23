@@ -1,28 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/shared/preferences.dart';
-import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
-class PositionCard extends StatelessWidget {
+class PositionSelectedCard extends StatefulWidget {
   final Posicion material;
-  const PositionCard({super.key, required this.material});
+  bool isSelected;
+
+  PositionSelectedCard(
+      {super.key, required this.material, required this.isSelected});
 
   @override
-  Widget build(BuildContext context) {
-    final fechaSolicitud = Preferences.formatDate(material.fechaSolicitud!);
+  State<PositionSelectedCard> createState() => _PositionSelectedCardState();
+}
 
-    return GestureDetector(
-      onTap: () => editarSolped(context, material),
-      child: ListTile(
-        minVerticalPadding: 20,
+class _PositionSelectedCardState extends State<PositionSelectedCard> {
+  @override
+  Widget build(BuildContext context) {
+    final liberarSolpedProvider = Provider.of<LiberarSolpedProvider>(context);
+    final fechaSolicitud =
+        Preferences.formatDate(widget.material.fechaSolicitud!);
+
+    return Dismissible(
+      key: UniqueKey(),
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 25),
+        child: const FaIcon(
+          FontAwesomeIcons.trash,
+          color: Colors.white,
+        ),
+      ),
+      direction: DismissDirection.startToEnd,
+      confirmDismiss: (DismissDirection direction) async {
+        return null;
+        // return await confirmarEliminar(context, solpedProvider, posicion);
+      },
+      onDismissed: (DismissDirection direction) {
+        print('Eliminado ${widget.material.id}');
+      },
+      child: CheckboxListTile(
+        activeColor: ThemeProvider.blueColor,
+        controlAffinity: ListTileControlAffinity.leading,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              material.material!,
+              widget.material.material!,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -33,7 +61,7 @@ class PositionCard extends StatelessWidget {
                   'Cant. ',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text('${material.cantidad}'),
+                Text('${widget.material.cantidad}'),
               ],
             ),
           ],
@@ -41,7 +69,7 @@ class PositionCard extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(material.textoBreve!),
+            Text(widget.material.textoBreve!),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -51,7 +79,7 @@ class PositionCard extends StatelessWidget {
                       'Centro: ',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Text('${material.centros?.idcentro}'),
+                    Text('${widget.material.centros?.idcentro}'),
                   ],
                 ),
                 Row(
@@ -60,13 +88,14 @@ class PositionCard extends StatelessWidget {
                       'Gpo.Compras: ',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Text('${material.gpoCompras}'),
+                    Text('${widget.material.gpoCompras}'),
                   ],
                 ),
                 StatusLabel(
-                  status: material.estatus!,
-                  color:
-                      (material.estatus!.id != 1) ? Colors.red : Colors.green,
+                  status: widget.material.estatus!,
+                  color: (widget.material.estatus!.id != 1)
+                      ? Colors.red
+                      : Colors.green,
                 ),
               ],
             ),
@@ -83,13 +112,30 @@ class PositionCard extends StatelessWidget {
             ),
           ],
         ),
+        value: widget.isSelected,
+        onChanged: (value) {
+          setState(() {
+            widget.isSelected = value!;
+            final posicionExiste = liberarSolpedProvider.posicionesSelected
+                .contains(widget.material.id);
+
+            posicionExiste
+                ? liberarSolpedProvider.posicionesSelected
+                    .remove(widget.material.id)
+                : liberarSolpedProvider.posicionesSelected
+                    .add(widget.material.id!);
+          });
+          print(
+              '***************** Cuantos ${liberarSolpedProvider.posicionesSelected.length}');
+        },
       ),
     );
   }
 }
 
-editarSolped(context, Posicion material) {
-  final solpedProvider = Provider.of<SolpedProvider>(context, listen: false);
+editarPosicion(context, Posicion material) {
+  final liberarSolpedProvider =
+      Provider.of<LiberarSolpedProvider>(context, listen: false);
 
   return showDialog(
     context: context,
@@ -104,7 +150,7 @@ editarSolped(context, Posicion material) {
         ),
         contentPadding:
             const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        content: UpdateContent(material: material),
+        content: Container(),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -115,13 +161,13 @@ editarSolped(context, Posicion material) {
           ),
           TextButton(
             onPressed: () async {
-              final result = await solpedProvider.updateSolped(material);
-              if (result) {
-                Notifications.showSnackBar(
-                  solpedProvider.solpedResponse!.message ??
-                      'Solped Actualizado',
-                );
-              }
+              // final result = await liberarSolpedProvider.updateSolped(material);
+              // if (result) {
+              //   Notifications.showSnackBar(
+              //     liberarSolpedProvider.solpedResponse!.message ??
+              //         'Solped Actualizado',
+              //   );
+              // }
 
               Future.microtask(
                 () => Navigator.pop(context),

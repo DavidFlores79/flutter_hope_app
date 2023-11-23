@@ -1,3 +1,4 @@
+export 'package:hope_app/widgets/position_selected_card.dart';
 export 'package:hope_app/widgets/solped_update_content.dart';
 export 'package:hope_app/widgets/status_label.dart';
 export 'package:hope_app/widgets/position_card.dart';
