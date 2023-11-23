@@ -121,7 +121,10 @@ class ActivationScreen extends StatelessWidget {
                             child: const SizedBox(
                               width: double.infinity,
                               child: Center(
-                                child: Text('Activar'),
+                                child: Text(
+                                  'Activar',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ),
                           )
