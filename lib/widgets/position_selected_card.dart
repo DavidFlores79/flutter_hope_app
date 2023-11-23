@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
@@ -24,25 +25,22 @@ class _PositionSelectedCardState extends State<PositionSelectedCard> {
     final fechaSolicitud =
         Preferences.formatDate(widget.material.fechaSolicitud!);
 
-    return Dismissible(
-      key: UniqueKey(),
-      background: Container(
-        color: Colors.red,
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 25),
-        child: const FaIcon(
-          FontAwesomeIcons.trash,
-          color: Colors.white,
-        ),
+    return Slidable(
+      key: const ValueKey(0),
+      // The end action pane is the one at the right or the bottom side.
+      startActionPane: ActionPane(
+        motion: const ScrollMotion(),
+        children: [
+          SlidableAction(
+            spacing: 7,
+            onPressed: (context) => showPosicion(context, widget.material),
+            backgroundColor: ThemeProvider.blueColor,
+            foregroundColor: ThemeProvider.whiteColor,
+            icon: Icons.remove_red_eye_outlined,
+            label: 'Mostrar',
+          ),
+        ],
       ),
-      direction: DismissDirection.startToEnd,
-      confirmDismiss: (DismissDirection direction) async {
-        return null;
-        // return await confirmarEliminar(context, solpedProvider, posicion);
-      },
-      onDismissed: (DismissDirection direction) {
-        print('Eliminado ${widget.material.id}');
-      },
       child: CheckboxListTile(
         activeColor: ThemeProvider.blueColor,
         controlAffinity: ListTileControlAffinity.leading,
@@ -133,54 +131,21 @@ class _PositionSelectedCardState extends State<PositionSelectedCard> {
   }
 }
 
-editarPosicion(context, Posicion material) {
-  final liberarSolpedProvider =
-      Provider.of<LiberarSolpedProvider>(context, listen: false);
-
+showPosicion(context, Posicion material) {
   return showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20.0))),
-        title: const Text(
-          "Editar Pedido",
+        title: Text(
+          "Pedido ${material.id}",
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
         ),
         contentPadding:
-            const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        content: Container(),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text(
-              "Cancelar",
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-          TextButton(
-            onPressed: () async {
-              // final result = await liberarSolpedProvider.updateSolped(material);
-              // if (result) {
-              //   Notifications.showSnackBar(
-              //     liberarSolpedProvider.solpedResponse!.message ??
-              //         'Solped Actualizado',
-              //   );
-              // }
-
-              Future.microtask(
-                () => Navigator.pop(context),
-              );
-            },
-            child: const Text(
-              "Actualizar",
-              style: TextStyle(
-                color: Colors.blue,
-              ),
-            ),
-          ),
-        ],
+            const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+        content: SolpedInfo(material: material),
       );
     },
   );
