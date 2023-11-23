@@ -1,4 +1,4 @@
-export 'package:hope_app/screens/modules/liberar_solped.dart';
+export 'package:hope_app/screens/modules/liberar_solped_screen.dart';
 
 export 'package:hope_app/screens/about_screen.dart';
 export 'package:hope_app/screens/activation_screen.dart';

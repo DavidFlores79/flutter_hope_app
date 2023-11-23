@@ -66,26 +66,26 @@ class ValidatorResponse {
 }
 
 class Errors {
-  Errors({
-    this.pedidos,
-    this.proveedor,
-  });
+  List<String>? motivoRechazo;
 
-  List<String>? pedidos;
-  List<String>? proveedor;
+  Errors({
+    this.motivoRechazo,
+  });
 
   factory Errors.fromJson(String str) => Errors.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory Errors.fromMap(Map<String, dynamic> json) => Errors(
-        pedidos: List<String>.from(json["pedidos"].map((x) => x)),
-        proveedor: List<String>.from(json["proveedor"].map((x) => x)),
+        motivoRechazo: json["motivo_rechazo"] == null
+            ? []
+            : List<String>.from(json["motivo_rechazo"]!.map((x) => x)),
       );
 
   Map<String, dynamic> toMap() => {
-        "pedidos": List<dynamic>.from(pedidos!.map((x) => x)),
-        "proveedor": List<dynamic>.from(proveedor!.map((x) => x)),
+        "motivo_rechazo": motivoRechazo == null
+            ? []
+            : List<dynamic>.from(motivoRechazo!.map((x) => x)),
       };
 }
 

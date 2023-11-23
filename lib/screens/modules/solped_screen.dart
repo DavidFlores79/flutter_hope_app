@@ -27,6 +27,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
   @override
   Widget build(BuildContext context) {
     final solpedProvider = Provider.of<SolpedProvider>(context);
+    final liberarsolpedProvider = Provider.of<LiberarSolpedProvider>(context);
     final posiciones = solpedProvider.posiciones;
 
     // if(tipo_material === "ZACT"){
@@ -50,6 +51,19 @@ class _SolpedScreenState extends State<SolpedScreen> {
             : Column(
                 children: [
                   Container(
+                    decoration: BoxDecoration(
+                      color: (Preferences.isDarkMode)
+                          ? ThemeProvider.lightColor
+                          : ThemeProvider.whiteColor,
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 4,
+                          spreadRadius: 1,
+                          offset: Offset(0, 4),
+                        )
+                      ],
+                    ),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 25),
                     child: Form(
@@ -227,7 +241,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                           _searchController.clear();
                                           _qtyController.clear();
                                         });
-
+                                        liberarsolpedProvider.searchByDates();
                                         Notifications.showSnackBar(
                                             'Pedido creado correctamente.');
                                       }
