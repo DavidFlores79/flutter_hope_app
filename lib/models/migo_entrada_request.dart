@@ -9,7 +9,7 @@ class MigoEntrada101 {
   CabeceraPedido cabeceraPedido;
   String documentoPedido;
   String claseMovimiento;
-  List<Posicione> posiciones;
+  List<Posiciones> posiciones;
   DateTime fechaDoc;
   DateTime fechaCont;
 
@@ -31,8 +31,8 @@ class MigoEntrada101 {
         cabeceraPedido: CabeceraPedido.fromMap(json["cabeceraPedido"]),
         documentoPedido: json["documento_pedido"],
         claseMovimiento: json["clase_movimiento"],
-        posiciones: List<Posicione>.from(
-            json["posiciones"].map((x) => Posicione.fromMap(x))),
+        posiciones: List<Posiciones>.from(
+            json["posiciones"].map((x) => Posiciones.fromMap(x))),
         fechaDoc: DateTime.parse(json["fecha_doc"]),
         fechaCont: DateTime.parse(json["fecha_cont"]),
       );

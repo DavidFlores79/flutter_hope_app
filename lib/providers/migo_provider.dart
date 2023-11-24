@@ -25,7 +25,7 @@ class MigoProvider extends ChangeNotifier {
   String numeroPedido = '';
   String newValue = '';
   late MigoOrderResponse migoResponse;
-  List<Posicione> posicionesSelected = [];
+  List<Posiciones> posicionesSelected = [];
   bool _maxQty = false;
   bool _finalDeliveryPos = true;
 
@@ -252,7 +252,7 @@ class MigoProvider extends ChangeNotifier {
     _navigationService.navigateTo(LoginScreen.routeName);
   }
 
-  bool validatePosQty(Posicione posicion) {
+  bool validatePosQty(Posiciones posicion) {
     bool isValid = false;
 
     if (newValue != '') {
@@ -268,7 +268,7 @@ class MigoProvider extends ChangeNotifier {
     return isValid;
   }
 
-  updatePosQty(Posicione posicion) {
+  updatePosQty(Posiciones posicion) {
     final val = newValue;
     posicion.cantidadRecibida = val;
     posicion.indicadorEntregaFinal = finalDeliveryPos;

@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/helpers/debouncer.dart';
@@ -23,6 +21,7 @@ class ME21NProvider extends ChangeNotifier {
   bool result = false;
   MaterialResponse? materialResponse;
   ME21NResponse? me21nResponse;
+  CreateOrderResponse? createOrderResponse;
   List<Centros>? centrosUsuario = [];
   List<PedidoPos>? _posiciones = [];
   List<Materials>? materials = [];
@@ -187,12 +186,23 @@ class ME21NProvider extends ChangeNotifier {
         case 422:
           isLoading = false;
           result = false;
-          serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido.');
-          notifyListeners();
           print('422: ${response.body}');
-          logout();
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
+
+          Notifications.showSnackBar(messages);
+          notifyListeners();
           break;
         case 500:
           isLoading = false;
@@ -377,8 +387,10 @@ class ME21NProvider extends ChangeNotifier {
           result = true;
           isLoading = false;
           print('200: Create ME21N ${response.body}');
-          // solpedResponse = ME21NResponse.fromJson(response.body);
-          // posiciones = solpedResponse!.posiciones;
+          createOrderResponse = CreateOrderResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+            createOrderResponse!.trace ?? 'Creacion Satisfactoria.',
+          );
           notifyListeners();
           break;
         case 401:
@@ -403,11 +415,24 @@ class ME21NProvider extends ChangeNotifier {
           break;
         case 422:
           isLoading = false;
-          serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido.');
-          notifyListeners();
+          result = false;
           print('422: ${response.body}');
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
+
+          Notifications.showSnackBar(messages);
+          notifyListeners();
           break;
         case 500:
           isLoading = false;

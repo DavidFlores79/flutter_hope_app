@@ -164,7 +164,7 @@ class _MigoScreenState extends State<MigoScreen> {
 class PedidoBox extends StatelessWidget {
   PedidoMigo pedido;
   double fontSize = 18;
-  List<Posicione> posiciones;
+  List<Posiciones> posiciones;
 
   PedidoBox({required this.pedido, required this.posiciones});
 
@@ -295,7 +295,7 @@ validateSelectedPos(MigoProvider migoProvider) {
 }
 
 class _PosicionItem extends StatefulWidget {
-  Posicione posicion;
+  Posiciones posicion;
   bool isSelected;
 
   _PosicionItem({required this.posicion, required this.isSelected});
@@ -306,7 +306,7 @@ class _PosicionItem extends StatefulWidget {
 }
 
 class _PosicionItemState extends State<_PosicionItem> {
-  Posicione posicion;
+  Posiciones posicion;
   bool isSelected;
 
   _PosicionItemState({required this.posicion, required this.isSelected});
@@ -550,7 +550,7 @@ class _PosicionDetails extends StatelessWidget {
 }
 
 showConfirmPartial(
-    BuildContext context, MigoProvider migoProvider, Posicione posicion) {
+    BuildContext context, MigoProvider migoProvider, Posiciones posicion) {
   return showDialog(
     context: context,
     barrierDismissible: false,
@@ -636,7 +636,7 @@ class _PosicionItemRow extends StatelessWidget {
     required this.isSelected,
   });
 
-  final Posicione posicion;
+  final Posiciones posicion;
   final bool isSelected;
 
   @override

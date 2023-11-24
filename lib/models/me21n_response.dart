@@ -129,3 +129,86 @@ class OrgCompras {
         "status": status,
       };
 }
+
+/////////////////////////*************** RESPONSE DE CREACION DE PEDIDO ZSTT****************////////////////////////
+
+class CreateOrderResponse {
+  bool? estatus;
+  String? trace;
+  DateTime? timestamp;
+  String? code;
+  String? documentoPedido;
+  CabeceraPedido? cabeceraPedido;
+  List<Posicion>? posiciones;
+  List<dynamic>? historial;
+  List<dynamic>? retenciones;
+  List<Mensaje>? mensajes;
+
+  CreateOrderResponse({
+    this.estatus,
+    this.trace,
+    this.timestamp,
+    this.code,
+    this.documentoPedido,
+    this.cabeceraPedido,
+    this.posiciones,
+    this.historial,
+    this.retenciones,
+    this.mensajes,
+  });
+
+  factory CreateOrderResponse.fromJson(String str) =>
+      CreateOrderResponse.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory CreateOrderResponse.fromMap(Map<String, dynamic> json) =>
+      CreateOrderResponse(
+        estatus: json["estatus"],
+        trace: json["trace"],
+        timestamp: json["timestamp"] == null
+            ? null
+            : DateTime.parse(json["timestamp"]),
+        code: json["code"],
+        documentoPedido: json["documento_pedido"],
+        cabeceraPedido: json["cabeceraPedido"] == null
+            ? null
+            : CabeceraPedido.fromMap(json["cabeceraPedido"]),
+        posiciones: json["posiciones"] == null
+            ? []
+            : List<Posicion>.from(
+                json["posiciones"]!.map((x) => Posicion.fromMap(x))),
+        historial: json["historial"] == null
+            ? []
+            : List<dynamic>.from(json["historial"]!.map((x) => x)),
+        retenciones: json["retenciones"] == null
+            ? []
+            : List<dynamic>.from(json["retenciones"]!.map((x) => x)),
+        mensajes: json["mensajes"] == null
+            ? []
+            : List<Mensaje>.from(
+                json["mensajes"]!.map((x) => Mensaje.fromMap(x))),
+      );
+
+  Map<String, dynamic> toMap() => {
+        "estatus": estatus,
+        "trace": trace,
+        "timestamp":
+            "${timestamp!.year.toString().padLeft(4, '0')}-${timestamp!.month.toString().padLeft(2, '0')}-${timestamp!.day.toString().padLeft(2, '0')}",
+        "code": code,
+        "documento_pedido": documentoPedido,
+        "cabeceraPedido": cabeceraPedido?.toMap(),
+        "posiciones": posiciones == null
+            ? []
+            : List<dynamic>.from(posiciones!.map((x) => x.toMap())),
+        "historial": historial == null
+            ? []
+            : List<dynamic>.from(historial!.map((x) => x)),
+        "retenciones": retenciones == null
+            ? []
+            : List<dynamic>.from(retenciones!.map((x) => x)),
+        "mensajes": mensajes == null
+            ? []
+            : List<dynamic>.from(mensajes!.map((x) => x.toMap())),
+      };
+}

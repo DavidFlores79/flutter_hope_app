@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
-import 'package:hope_app/shared/preferences.dart';
-import 'package:hope_app/ui/notifications.dart';
-import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class ME21NPositionCard extends StatelessWidget {

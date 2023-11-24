@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:hope_app/models/models.dart';
+
 /// Creado por: David Amilcar Flores Castillo
 /// el 23/08/2023
 
@@ -47,7 +49,7 @@ class PedidoMigo {
   bool estatus;
   List<dynamic> mensajes;
   String trace;
-  List<Posicione> posiciones;
+  List<Posiciones> posiciones;
 
   PedidoMigo({
     required this.cabeceraPedido,
@@ -69,8 +71,8 @@ class PedidoMigo {
         estatus: json["estatus"],
         mensajes: List<dynamic>.from(json["mensajes"].map((x) => x)),
         trace: json["trace"],
-        posiciones: List<Posicione>.from(
-            json["posiciones"].map((x) => Posicione.fromMap(x))),
+        posiciones: List<Posiciones>.from(
+            json["posiciones"].map((x) => Posiciones.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -171,121 +173,5 @@ class CabeceraPedido {
         "se_verifica": seVerifica,
         "nuestra_referencia": nuestraReferencia,
         "clase_documento": claseDocumento,
-      };
-}
-
-class Posicione {
-  String umeSap;
-  String umeComercial;
-  String umeDescripcion;
-  int posicion;
-  String deleteIndicador;
-  String numeroPedido;
-  String numeroMaterial;
-  String descripcionMaterial;
-  dynamic documentoMaterial;
-  dynamic documentoAnio;
-  dynamic documentoPos;
-  String cantidad;
-  String cantidadRecibida;
-  dynamic importe;
-  dynamic importeRecibido;
-  String unidadMedida;
-  String centroReceptor;
-  String almacen;
-  bool indicadorEntregaFinal;
-  String indicadorImpuesto;
-  bool esSerealizado;
-  bool esDevolucion;
-  String solicitante;
-  List<dynamic> series;
-  String cantidadFaltante;
-
-  Posicione({
-    required this.umeSap,
-    required this.umeComercial,
-    required this.umeDescripcion,
-    required this.posicion,
-    required this.deleteIndicador,
-    required this.numeroPedido,
-    required this.numeroMaterial,
-    required this.descripcionMaterial,
-    required this.documentoMaterial,
-    required this.documentoAnio,
-    required this.documentoPos,
-    required this.cantidad,
-    required this.cantidadRecibida,
-    required this.importe,
-    required this.importeRecibido,
-    required this.unidadMedida,
-    required this.centroReceptor,
-    required this.almacen,
-    required this.indicadorEntregaFinal,
-    required this.indicadorImpuesto,
-    required this.esSerealizado,
-    required this.esDevolucion,
-    required this.solicitante,
-    required this.series,
-    required this.cantidadFaltante,
-  });
-
-  factory Posicione.fromJson(String str) => Posicione.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Posicione.fromMap(Map<String, dynamic> json) => Posicione(
-        umeSap: json["umeSAP"],
-        umeComercial: json["umeComercial"],
-        umeDescripcion: json["umeDescripcion"],
-        posicion: json["posicion"],
-        deleteIndicador: json["delete_indicador"],
-        numeroPedido: json["numero_pedido"],
-        numeroMaterial: json["numero_material"],
-        descripcionMaterial: json["descripcion_material"],
-        documentoMaterial: json["documento_material"],
-        documentoAnio: json["documento_anio"],
-        documentoPos: json["documento_pos"],
-        cantidad: json["cantidad"],
-        cantidadRecibida: json["cantidad_recibida"],
-        importe: json["importe"],
-        importeRecibido: json["importe_recibido"],
-        unidadMedida: json["unidad_medida"],
-        centroReceptor: json["centro_receptor"],
-        almacen: json["almacen"],
-        indicadorEntregaFinal: json["indicador_entrega_final"],
-        indicadorImpuesto: json["indicador_impuesto"],
-        esSerealizado: json["es_serealizado"],
-        esDevolucion: json["es_devolucion"],
-        solicitante: json["solicitante"],
-        series: List<dynamic>.from(json["series"].map((x) => x)),
-        cantidadFaltante: json["cantidad_faltante"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "umeSAP": umeSap,
-        "umeComercial": umeComercial,
-        "umeDescripcion": umeDescripcion,
-        "posicion": posicion,
-        "delete_indicador": deleteIndicador,
-        "numero_pedido": numeroPedido,
-        "numero_material": numeroMaterial,
-        "descripcion_material": descripcionMaterial,
-        "documento_material": documentoMaterial,
-        "documento_anio": documentoAnio,
-        "documento_pos": documentoPos,
-        "cantidad": cantidad,
-        "cantidad_recibida": cantidadRecibida,
-        "importe": importe,
-        "importe_recibido": importeRecibido,
-        "unidad_medida": unidadMedida,
-        "centro_receptor": centroReceptor,
-        "almacen": almacen,
-        "indicador_entrega_final": indicadorEntregaFinal,
-        "indicador_impuesto": indicadorImpuesto,
-        "es_serealizado": esSerealizado,
-        "es_devolucion": esDevolucion,
-        "solicitante": solicitante,
-        "series": List<dynamic>.from(series.map((x) => x)),
-        "cantidad_faltante": cantidadFaltante,
       };
 }
