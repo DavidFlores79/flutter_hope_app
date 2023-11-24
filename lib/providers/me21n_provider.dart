@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -25,7 +26,7 @@ class ME21NProvider extends ChangeNotifier {
   ME21NResponse? me21nResponse;
   List<Centros>? centrosUsuario = [];
   // String claseDocumento = 'ZADQ';
-  List<Posicion>? posiciones = [];
+  List<Materials>? posiciones = [];
   List<Posicione> posicionesSelected = [];
   List<Materials>? materials = [];
   Materials _materialSelected = Materials();
@@ -320,6 +321,104 @@ class ME21NProvider extends ChangeNotifier {
     Future.delayed(const Duration(milliseconds: 301)).then(
       (value) => timer.cancel(),
     );
+  }
+
+  Future<bool> createOrder() async {
+    isLoading = true;
+    result = false;
+    print('Peticion Solped - Create');
+    _endPoint = '/api/v1/me21n';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    Map<String, dynamic> dataRaw = {
+      'centro': centroDefault,
+      'clase_doc': claseDocumentoSelected,
+      'cuenta_mayor': materialSelected.cuentamayor,
+      'texto_breve': materialSelected.textoBreve,
+      'gpo_articulo': materialSelected.grupoArticulo,
+      'gpo_compras': materialSelected.grupoCompras,
+      'material': materialSelected.numeroMaterial,
+      'tipo_material': materialSelected.tipoMaterial,
+      'unidad_medida': materialSelected.unidadMedidaTexto,
+      'cantidad': quantity,
+      'activo_fijo': null,
+      'comentarios': null,
+    };
+
+    print(dataRaw);
+
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+
+    try {
+      final response = await http
+          .post(url, headers: headers, body: jsonEncode(dataRaw))
+          .timeout(const Duration(seconds: 20));
+
+      switch (response.statusCode) {
+        case 200:
+          result = true;
+          isLoading = false;
+          print('200: Create Solped ${response.body}');
+          // solpedResponse = SolpedResponse.fromJson(response.body);
+          // posiciones = solpedResponse!.posiciones;
+          notifyListeners();
+          break;
+        case 401:
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          isLoading = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print('404: ${response.body}');
+          break;
+        case 422:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print('422: ${response.body}');
+          break;
+        case 500:
+          isLoading = false;
+          print('500: ${response.body}');
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          result = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return result;
   }
 
   bool queryHasNumbers(String query) {

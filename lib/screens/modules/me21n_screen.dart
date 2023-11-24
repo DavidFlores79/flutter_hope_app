@@ -5,7 +5,10 @@ import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/search/me21n_material_search_delegate.dart';
 import 'package:hope_app/ui/input_decorations.dart';
+import 'package:hope_app/ui/notifications.dart';
 import 'package:provider/provider.dart';
+
+import '../../widgets/widgets.dart';
 
 class ME21NScreen extends StatelessWidget {
   static const String routeName = 'me21n';
@@ -51,67 +54,196 @@ class _CreateOrderState extends State<CreateOrder> {
   Widget build(BuildContext context) {
     final me21nProvider = Provider.of<ME21NProvider>(context);
 
-    return SingleChildScrollView(
-      child: Container(
-        padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: 15,
-          vertical: 20,
-        ),
-        child: Form(
-          key: me21nProvider.formKey,
-          child: Column(
-            children: [
-              ClasesDocumentoDropdownList(me21nProvider: me21nProvider),
-              const SizedBox(height: 25),
-              OrgComprasDropdown(me21nProvider: me21nProvider),
-              const SizedBox(height: 25),
-              CentrosUsuarioDropdown(me21nProvider: me21nProvider),
-              const SizedBox(height: 25),
-              TextFormField(
-                readOnly: true,
-                controller: _searchController,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: InputDecorations.authInputDecoration(
-                  color: ThemeProvider.blueColor,
-                  hintText: '904001526',
-                  labelText: 'Material',
-                  suffixIcon: FontAwesomeIcons.magnifyingGlass,
-                ),
-                onTap: () async {
-                  await showSearch(
-                    context: context,
-                    delegate: ME21NMaterialSearchDelegate(),
-                  );
+    return Container(
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: 15,
+        vertical: 20,
+      ),
+      child: Form(
+        key: me21nProvider.formKey,
+        child: Column(
+          children: [
+            ClasesDocumentoDropdownList(me21nProvider: me21nProvider),
+            const SizedBox(height: 15),
+            OrgComprasDropdown(me21nProvider: me21nProvider),
+            const SizedBox(height: 15),
+            CentrosUsuarioDropdown(me21nProvider: me21nProvider),
+            const SizedBox(height: 15),
+            Row(
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: TextFormField(
+                    readOnly: true,
+                    controller: _searchController,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    decoration: InputDecoration(
+                      suffixIcon: const Icon(FontAwesomeIcons.magnifyingGlass),
+                      labelText: 'Material',
+                      labelStyle: TextStyle(
+                        color: ThemeProvider.lightColor,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: ThemeProvider.blueColor,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: ThemeProvider.blueColor,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: ThemeProvider.blueColor,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    onTap: () async {
+                      await showSearch(
+                        context: context,
+                        delegate: ME21NMaterialSearchDelegate(),
+                      );
 
-                  if (me21nProvider.materialSelected.numeroMaterial != '') {
-                    print('se asigno el valor');
-                    _searchController.text =
-                        me21nProvider.materialSelected.numeroMaterial ?? '';
-                  } else {
-                    _searchController.clear();
-                  }
-                },
-                validator: (value) {
-                  return (value != null && value.length >= 3)
-                      ? null
-                      : 'Por favor agrega un material para crear el Pedido.';
-                },
-              ),
-              const SizedBox(height: 25),
-              Center(
-                child: Column(
-                  children: [
-                    Text(
-                      'Valor del Material: ${me21nProvider.materialSelected.numeroMaterial}',
-                    ),
-                    Text(
-                      'Valor del Dropdown: ${me21nProvider.claseDocumentoSelected}',
-                    ),
-                  ],
+                      if (me21nProvider.materialSelected.numeroMaterial != '') {
+                        print('se asigno el valor');
+                        _searchController.text =
+                            me21nProvider.materialSelected.numeroMaterial ?? '';
+                      } else {
+                        _searchController.clear();
+                      }
+                    },
+                    validator: (value) {
+                      return (value != null && value.length >= 3)
+                          ? null
+                          : 'Por favor agrega un material para crear el Pedido.';
+                    },
+                  ),
                 ),
-              )
-            ],
-          ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: MaterialButton(
+                    onPressed: me21nProvider.isLoading
+                        ? null
+                        : () async {
+                            if (!me21nProvider.isValidForm()) return;
+                            me21nProvider.isLoading = true;
+                            me21nProvider.posiciones?.add(
+                              me21nProvider.materialSelected,
+                            );
+                            Notifications.showSnackBar(
+                                'Posicion agregada correctamente.');
+                            setState(() {});
+                            me21nProvider.isLoading = false;
+                          },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    disabledColor: Colors.grey[500],
+                    elevation: 0,
+                    color: ThemeProvider.blueColor,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 17),
+                      child: Icon(
+                        FontAwesomeIcons.plus,
+                        color: ThemeProvider.whiteColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // const SizedBox(height: 15),
+            // MaterialButton(
+            //   onPressed: (me21nProvider.isLoading)
+            //       ? null
+            //       : () async {
+            //           if (!me21nProvider.isValidForm()) return;
+            //           me21nProvider.isLoading = true;
+            //           me21nProvider.posiciones?.add(
+            //             me21nProvider.materialSelected,
+            //           );
+            //           FocusScope.of(context).unfocus();
+
+            //           // //hacer la peticion al backend
+            //           // final result = await me21nProvider.createOrder();
+
+            //           // print('Result $result');
+            //           // if (!result) {
+            //           //   setState(() {
+            //           //     me21nProvider.formKey.currentState?.reset();
+            //           //     me21nProvider.materialSelected = Materials();
+            //           //     _searchController.clear();
+            //           //     _qtyController.clear();
+            //           //   });
+            //           // } else {
+            //           //   setState(() {
+            //           //     me21nProvider.formKey.currentState?.reset();
+            //           //     me21nProvider.materialSelected = Materials();
+            //           //     _searchController.clear();
+            //           //     _qtyController.clear();
+            //           //   });
+
+            //           Notifications.showSnackBar(
+            //               'Posicion agregada correctamente.');
+            //           // }
+
+            //           me21nProvider.isLoading = false;
+            //         },
+            //   shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(10)),
+            //   disabledColor: Colors.grey,
+            //   elevation: 0,
+            //   color: ThemeProvider.blueColor,
+            //   minWidth: double.infinity,
+            //   child: Padding(
+            //     padding:
+            //         const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+            //     child: Text(
+            //       me21nProvider.isLoading ? 'Espere' : 'Agregar Posicion',
+            //       style: const TextStyle(
+            //         color: Colors.white,
+            //         fontSize: 18,
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            Expanded(
+              child: ListView.builder(
+                  itemCount: me21nProvider.posiciones?.length,
+                  itemBuilder: (context, index) {
+                    final posicion = me21nProvider.posiciones![index];
+
+                    return Dismissible(
+                      key: UniqueKey(),
+                      background: Container(
+                        color: Colors.red,
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.only(left: 25),
+                        child: const FaIcon(
+                          FontAwesomeIcons.trash,
+                          color: Colors.white,
+                        ),
+                      ),
+                      direction: DismissDirection.startToEnd,
+                      confirmDismiss: (DismissDirection direction) async {
+                        return null;
+                        // return await confirmarEliminar(
+                        //     context, solpedProvider, posicion);
+                      },
+                      onDismissed: (DismissDirection direction) {
+                        print('Eliminado ${index}');
+                      },
+                      child: ListTile(
+                        title: Text(posicion.numeroMaterial!),
+                        subtitle: Text(posicion.textoBreve!),
+                      ),
+                    );
+                  }),
+            ),
+          ],
         ),
       ),
     );
