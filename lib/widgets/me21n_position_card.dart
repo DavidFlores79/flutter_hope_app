@@ -63,11 +63,6 @@ class ME21NPositionCard extends StatelessWidget {
                     Text('${material.grupoCompras}'),
                   ],
                 ),
-                // StatusLabel(
-                //   status: material.estatus!,
-                //   color:
-                //       (material.estatus!.id != 1) ? Colors.red : Colors.green,
-                // ),
               ],
             ),
           ],
@@ -93,36 +88,36 @@ class ME21NPositionCard extends StatelessWidget {
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
           // content: UpdateContent(material: material),
-          // actions: <Widget>[
-          //   TextButton(
-          //     onPressed: () => Navigator.of(context).pop(false),
-          //     child: const Text(
-          //       "Cancelar",
-          //       style: TextStyle(color: Colors.red),
-          //     ),
-          //   ),
-          //   TextButton(
-          //     onPressed: () async {
-          //       final result = await solpedProvider.updateSolped(material);
-          //       if (result) {
-          //         Notifications.showSnackBar(
-          //           solpedProvider.solpedResponse!.message ??
-          //               'Solped Actualizado',
-          //         );
-          //       }
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text(
+                "Cancelar",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                // final result = await solpedProvider.updateSolped(material);
+                // if (result) {
+                //   Notifications.showSnackBar(
+                //     solpedProvider.solpedResponse!.message ??
+                //         'Solped Actualizado',
+                //   );
+                // }
 
-          //       Future.microtask(
-          //         () => Navigator.pop(context),
-          //       );
-          //     },
-          //     child: const Text(
-          //       "Actualizar",
-          //       style: TextStyle(
-          //         color: Colors.blue,
-          //       ),
-          //     ),
-          //   ),
-          // ],
+                Future.microtask(
+                  () => Navigator.pop(context),
+                );
+              },
+              child: const Text(
+                "Actualizar",
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          ],
         );
       },
     );

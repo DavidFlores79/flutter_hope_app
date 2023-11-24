@@ -7,6 +7,7 @@ import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/search/me21n_material_search_delegate.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations_rounded.dart';
+import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -53,11 +54,11 @@ class _CreateOrderState extends State<CreateOrder> {
   Widget build(BuildContext context) {
     final me21nProvider = Provider.of<ME21NProvider>(context);
 
-    return Form(
-      key: me21nProvider.formKey,
-      child: Column(
-        children: [
-          Container(
+    return Column(
+      children: [
+        Form(
+          key: me21nProvider.formKey,
+          child: Container(
             padding: const EdgeInsetsDirectional.symmetric(
               horizontal: 15,
               vertical: 20,
@@ -106,40 +107,80 @@ class _CreateOrderState extends State<CreateOrder> {
               ],
             ),
           ),
-          const SizedBox(height: 15),
-          Expanded(
-            child: ListView.builder(
-                itemCount: me21nProvider.posiciones?.length,
-                itemBuilder: (context, index) {
-                  final posicion = me21nProvider.posiciones![index];
+        ),
+        const SizedBox(height: 15),
+        Expanded(
+          child: ListView.builder(
+              padding: const EdgeInsetsDirectional.only(
+                bottom: 150,
+              ),
+              itemCount: me21nProvider.posiciones?.length,
+              itemBuilder: (context, index) {
+                final posicion = me21nProvider.posiciones![index];
 
-                  return Dismissible(
-                    key: UniqueKey(),
-                    background: Container(
-                      color: Colors.red,
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.only(left: 25),
-                      child: const FaIcon(
-                        FontAwesomeIcons.trash,
-                        color: Colors.white,
-                      ),
+                return Dismissible(
+                  key: UniqueKey(),
+                  background: Container(
+                    color: Colors.red,
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.only(left: 25),
+                    child: const FaIcon(
+                      FontAwesomeIcons.trash,
+                      color: Colors.white,
                     ),
-                    direction: DismissDirection.startToEnd,
-                    confirmDismiss: (DismissDirection direction) async {
-                      return true;
-                    },
-                    onDismissed: (DismissDirection direction) {
-                      print('Eliminado ${index}');
-                      setState(() {
-                        me21nProvider.posiciones?.remove(posicion);
-                      });
-                    },
-                    child: ME21NPositionCard(material: posicion),
-                  );
-                }),
-          )
-        ],
-      ),
+                  ),
+                  direction: DismissDirection.startToEnd,
+                  confirmDismiss: (DismissDirection direction) async {
+                    return true;
+                  },
+                  onDismissed: (DismissDirection direction) {
+                    print('Eliminado ${index}');
+                    setState(() {
+                      me21nProvider.posiciones?.remove(posicion);
+                    });
+                  },
+                  child: ME21NPositionCard(material: posicion),
+                );
+              }),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+          child: MaterialButton(
+            onPressed: (me21nProvider.isLoading)
+                ? null
+                : () async {
+                    me21nProvider.isLoading = true;
+                    FocusScope.of(context).unfocus();
+
+                    //hacer la peticion al backend
+                    final result = await me21nProvider.createOrder();
+                    if (result) {
+                      Notifications.showSnackBar('Todo bien!!');
+                    } else {
+                      Notifications.showSnackBar('Todo mal!!');
+                    }
+
+                    me21nProvider.isLoading = false;
+                  },
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            disabledColor: Colors.grey,
+            elevation: 0,
+            color: ThemeProvider.blueColor,
+            minWidth: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+              child: Text(
+                me21nProvider.isLoading ? 'Espere' : 'Crear Pedido',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -546,6 +587,7 @@ class __addPositionButtonState extends State<_addPositionButton> {
             : () async {
                 if (!me21nProvider.isValidForm()) return;
                 me21nProvider.isLoading = true;
+                FocusScope.of(context).unfocus();
 
                 if (!me21nProvider.posiciones!
                     .contains(me21nProvider.materialSelected)) {

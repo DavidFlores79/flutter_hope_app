@@ -1,12 +1,10 @@
 import 'dart:convert';
 
 class CreateZstsRequest {
-  Cabecera? cabeceraPedido;
-  List<PedidoPos>? posiciones;
+  PedidoME21N? pedido;
 
   CreateZstsRequest({
-    this.cabeceraPedido,
-    this.posiciones,
+    this.pedido,
   });
 
   factory CreateZstsRequest.fromJson(String str) =>
@@ -16,13 +14,37 @@ class CreateZstsRequest {
 
   factory CreateZstsRequest.fromMap(Map<String, dynamic> json) =>
       CreateZstsRequest(
+        pedido:
+            json["pedido"] == null ? null : PedidoME21N.fromMap(json["pedido"]),
+      );
+
+  Map<String, dynamic> toMap() => {
+        "pedido": pedido?.toMap(),
+      };
+}
+
+class PedidoME21N {
+  Cabecera? cabeceraPedido;
+  List<PosicionZSTT>? posiciones;
+
+  PedidoME21N({
+    this.cabeceraPedido,
+    this.posiciones,
+  });
+
+  factory PedidoME21N.fromJson(String str) =>
+      PedidoME21N.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory PedidoME21N.fromMap(Map<String, dynamic> json) => PedidoME21N(
         cabeceraPedido: json["cabeceraPedido"] == null
             ? null
             : Cabecera.fromMap(json["cabeceraPedido"]),
         posiciones: json["posiciones"] == null
             ? []
-            : List<PedidoPos>.from(
-                json["posiciones"]!.map((x) => PedidoPos.fromMap(x))),
+            : List<PosicionZSTT>.from(
+                json["posiciones"]!.map((x) => PosicionZSTT.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -34,7 +56,7 @@ class CreateZstsRequest {
 }
 
 class Cabecera {
-  int? gpoCompras;
+  String? gpoCompras;
   String? tipoPedido;
 
   Cabecera({
@@ -60,20 +82,20 @@ class Cabecera {
 class PedidoPos {
   String? cantidad;
   String? numeroMaterial;
-  String? textoBreve;
-  String? grupoCompras;
   String? centroReceptor;
   String? unidadMedida;
+  String? textoBreve;
+  String? grupoCompras;
   String? claseDocumento;
   bool? esDevolucion;
 
   PedidoPos({
     this.cantidad,
     this.numeroMaterial,
-    this.textoBreve,
-    this.grupoCompras,
     this.centroReceptor,
     this.unidadMedida,
+    this.textoBreve,
+    this.grupoCompras,
     this.claseDocumento,
     this.esDevolucion,
   });
@@ -85,10 +107,10 @@ class PedidoPos {
   factory PedidoPos.fromMap(Map<String, dynamic> json) => PedidoPos(
         cantidad: json["cantidad"],
         numeroMaterial: json["numero_material"],
-        textoBreve: json["texto_breve"],
-        grupoCompras: json["grupo_compras"],
         centroReceptor: json["centro_receptor"],
         unidadMedida: json["unidad_medida"],
+        textoBreve: json["texto_breve"],
+        grupoCompras: json["grupo_compras"],
         claseDocumento: json["clase_documento"],
         esDevolucion: json["es_devolucion"],
       );
@@ -96,11 +118,48 @@ class PedidoPos {
   Map<String, dynamic> toMap() => {
         "cantidad": cantidad,
         "numero_material": numeroMaterial,
-        "texto_breve": textoBreve,
-        "grupo_compras": grupoCompras,
         "centro_receptor": centroReceptor,
         "unidad_medida": unidadMedida,
+        "texto_breve": textoBreve,
+        "grupo_compras": grupoCompras,
         "clase_documento": claseDocumento,
+        "es_devolucion": esDevolucion,
+      };
+}
+
+class PosicionZSTT {
+  String? cantidad;
+  String? numeroMaterial;
+  String? centroReceptor;
+  String? unidadMedida;
+  bool? esDevolucion;
+
+  PosicionZSTT({
+    this.cantidad,
+    this.numeroMaterial,
+    this.centroReceptor,
+    this.unidadMedida,
+    this.esDevolucion,
+  });
+
+  factory PosicionZSTT.fromJson(String str) =>
+      PosicionZSTT.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory PosicionZSTT.fromMap(Map<String, dynamic> json) => PosicionZSTT(
+        cantidad: json["cantidad"],
+        numeroMaterial: json["numero_material"],
+        centroReceptor: json["centro_receptor"],
+        unidadMedida: json["unidad_medida"],
+        esDevolucion: json["es_devolucion"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "cantidad": cantidad,
+        "numero_material": numeroMaterial,
+        "centro_receptor": centroReceptor,
+        "unidad_medida": unidadMedida,
         "es_devolucion": esDevolucion,
       };
 }

@@ -21,13 +21,10 @@ class ME21NProvider extends ChangeNotifier {
   String jwtToken = '';
   ServerResponse? serverResponse;
   bool result = false;
-  // SolpedResponse? solpedResponse;
   MaterialResponse? materialResponse;
   ME21NResponse? me21nResponse;
   List<Centros>? centrosUsuario = [];
-  // String claseDocumento = 'ZADQ';
   List<PedidoPos>? _posiciones = [];
-  // List<Posicione> posicionesSelected = [];
   List<Materials>? materials = [];
   Materials _materialSelected = Materials();
   String quantity = '';
@@ -127,7 +124,7 @@ class ME21NProvider extends ChangeNotifier {
   Future<bool> getCatalogs() async {
     isLoading = true;
     result = false;
-    print('Peticion Solped - Get Catalogs');
+    print('Peticion ME21N - Get Catalogs');
     _endPoint = '/api/v1/me21n';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
@@ -222,7 +219,7 @@ class ME21NProvider extends ChangeNotifier {
 
   Future<List<Materials>> searchMaterials(String query) async {
     print('Peticion API Search');
-    _endPoint = '/api/v1/solped/search';
+    _endPoint = '/api/v1/me21n/search';
     String numeroMaterial = '';
     String textoBreve = '';
 
@@ -335,7 +332,7 @@ class ME21NProvider extends ChangeNotifier {
   Future<bool> createOrder() async {
     isLoading = true;
     result = false;
-    print('Peticion Solped - Create');
+    print('Peticion ME21N - Create');
     _endPoint = '/api/v1/me21n';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
@@ -346,36 +343,41 @@ class ME21NProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    Map<String, dynamic> dataRaw = {
-      'centro': centroDefault,
-      'clase_doc': claseDocumentoSelected,
-      // 'cuenta_mayor': materialSelected.cuentamayor,
-      // 'texto_breve': materialSelected.textoBreve,
-      // 'gpo_articulo': materialSelected.grupoArticulo,
-      // 'gpo_compras': materialSelected.grupoCompras,
-      // 'material': materialSelected.numeroMaterial,
-      // 'tipo_material': materialSelected.tipoMaterial,
-      // 'unidad_medida': materialSelected.unidadMedidaTexto,
-      // 'cantidad': quantity,
-      // 'activo_fijo': null,
-      // 'comentarios': null,
-    };
+    // Modificar la lista antes de enviarla al backend
+    List<PosicionZSTT> listaModificada = posiciones!.map((posicion) {
+      return PosicionZSTT(
+          cantidad: posicion.cantidad,
+          numeroMaterial: posicion.numeroMaterial,
+          centroReceptor: posicion.centroReceptor,
+          unidadMedida: posicion.unidadMedida,
+          esDevolucion: posicion.esDevolucion);
+    }).toList();
 
-    print(dataRaw);
+    final CreateZstsRequest pedido = CreateZstsRequest(
+      pedido: PedidoME21N(
+        cabeceraPedido: Cabecera(
+          gpoCompras: gpoCompras,
+          tipoPedido: claseDocumentoSelected,
+        ),
+        posiciones: listaModificada,
+      ),
+    );
+
+    print(pedido.toJson());
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
     try {
       final response = await http
-          .post(url, headers: headers, body: jsonEncode(dataRaw))
+          .post(url, headers: headers, body: pedido.toJson())
           .timeout(const Duration(seconds: 20));
 
       switch (response.statusCode) {
         case 200:
           result = true;
           isLoading = false;
-          print('200: Create Solped ${response.body}');
-          // solpedResponse = SolpedResponse.fromJson(response.body);
+          print('200: Create ME21N ${response.body}');
+          // solpedResponse = ME21NResponse.fromJson(response.body);
           // posiciones = solpedResponse!.posiciones;
           notifyListeners();
           break;
