@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/ui/input_decorations.dart';
+import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:provider/provider.dart';
 
 class ME21NPositionCard extends StatelessWidget {
@@ -84,7 +88,43 @@ class ME21NPositionCard extends StatelessWidget {
           ),
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-          // content: UpdateContent(material: material),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                textAlign: TextAlign.center,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                initialValue: double.parse(material.cantidad!).toString(),
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                  TextInputFormatter.withFunction((oldValue, newValue) {
+                    final text = newValue.text;
+                    return text.isEmpty
+                        ? newValue
+                        : double.tryParse(text) == null
+                            ? oldValue
+                            : newValue;
+                  }),
+                ],
+                validator: (value) {
+                  return (value != null && value.isNotEmpty)
+                      ? null
+                      : 'Por favor agrega la cantidad.';
+                },
+                onChanged: (value) {
+                  print(value);
+                  material.cantidad = value;
+                },
+                decoration: InputDecorationsRounded.authInputDecorationRounded(
+                  color: ThemeProvider.blueColor,
+                  hintText: '0',
+                  labelText: 'Cantidad',
+                  suffixIcon: FontAwesomeIcons.cartArrowDown,
+                ),
+              )
+            ],
+          ),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -95,6 +135,7 @@ class ME21NPositionCard extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
+                print('Material!!   => ${material.cantidad}');
                 // final result = await solpedProvider.updateSolped(material);
                 // if (result) {
                 //   Notifications.showSnackBar(

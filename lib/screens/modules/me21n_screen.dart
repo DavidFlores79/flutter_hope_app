@@ -146,22 +146,28 @@ class _CreateOrderState extends State<CreateOrder> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
           child: MaterialButton(
-            onPressed: (me21nProvider.isLoading)
-                ? null
-                : () async {
-                    me21nProvider.isLoading = true;
-                    FocusScope.of(context).unfocus();
+            onPressed:
+                (me21nProvider.isLoading || me21nProvider.posiciones!.isEmpty)
+                    ? null
+                    : () async {
+                        me21nProvider.isLoading = true;
+                        FocusScope.of(context).unfocus();
 
-                    //hacer la peticion al backend
-                    final result = await me21nProvider.createOrder();
-                    if (result) {
-                      Notifications.showSnackBar('Todo bien!!');
-                    } else {
-                      Notifications.showSnackBar('Todo mal!!');
-                    }
+                        if (me21nProvider.posiciones!.isEmpty) {
+                          Notifications.showSnackBar(
+                            'Debe agregar al menos un material para crear el Pedido.',
+                          );
+                          me21nProvider.isLoading = false;
+                          return;
+                        }
 
-                    me21nProvider.isLoading = false;
-                  },
+                        //hacer la peticion al backend
+                        final result = await me21nProvider.createOrder();
+                        if (result) {
+                          me21nProvider.posiciones = [];
+                        }
+                        me21nProvider.isLoading = false;
+                      },
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             disabledColor: Colors.grey,
@@ -541,9 +547,15 @@ class __QuantityState extends State<_Quantity> {
         controller: _qtyController,
         keyboardType: TextInputType.number,
         inputFormatters: <TextInputFormatter>[
-          // for below version 2 use this
-          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-          FilteringTextInputFormatter.digitsOnly
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+          TextInputFormatter.withFunction((oldValue, newValue) {
+            final text = newValue.text;
+            return text.isEmpty
+                ? newValue
+                : double.tryParse(text) == null
+                    ? oldValue
+                    : newValue;
+          }),
         ],
         validator: (value) {
           return (value != null && value.isNotEmpty)

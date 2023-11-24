@@ -138,8 +138,8 @@ class CreateOrderResponse {
   DateTime? timestamp;
   String? code;
   String? documentoPedido;
-  CabeceraPedido? cabeceraPedido;
-  List<Posicion>? posiciones;
+  // CabeceraPedido? cabeceraPedido;
+  List<Posiciones>? posiciones;
   List<dynamic>? historial;
   List<dynamic>? retenciones;
   List<Mensaje>? mensajes;
@@ -150,8 +150,8 @@ class CreateOrderResponse {
     this.timestamp,
     this.code,
     this.documentoPedido,
-    this.cabeceraPedido,
-    this.posiciones,
+    // this.cabeceraPedido,
+    // this.posiciones,
     this.historial,
     this.retenciones,
     this.mensajes,
@@ -171,13 +171,13 @@ class CreateOrderResponse {
             : DateTime.parse(json["timestamp"]),
         code: json["code"],
         documentoPedido: json["documento_pedido"],
-        cabeceraPedido: json["cabeceraPedido"] == null
-            ? null
-            : CabeceraPedido.fromMap(json["cabeceraPedido"]),
-        posiciones: json["posiciones"] == null
-            ? []
-            : List<Posicion>.from(
-                json["posiciones"]!.map((x) => Posicion.fromMap(x))),
+        // cabeceraPedido: json["cabeceraPedido"] == null
+        //     ? null
+        //     : CabeceraPedido.fromMap(json["cabeceraPedido"]),
+        // posiciones: json["posiciones"] == null
+        //     ? []
+        //     : List<Posiciones>.from(
+        //         json["posiciones"]!.map((x) => Posiciones.fromMap(x))),
         historial: json["historial"] == null
             ? []
             : List<dynamic>.from(json["historial"]!.map((x) => x)),
@@ -197,10 +197,10 @@ class CreateOrderResponse {
             "${timestamp!.year.toString().padLeft(4, '0')}-${timestamp!.month.toString().padLeft(2, '0')}-${timestamp!.day.toString().padLeft(2, '0')}",
         "code": code,
         "documento_pedido": documentoPedido,
-        "cabeceraPedido": cabeceraPedido?.toMap(),
-        "posiciones": posiciones == null
-            ? []
-            : List<dynamic>.from(posiciones!.map((x) => x.toMap())),
+        // "cabeceraPedido": cabeceraPedido?.toMap(),
+        // "posiciones": posiciones == null
+        //     ? []
+        //     : List<dynamic>.from(posiciones!.map((x) => x.toMap())),
         "historial": historial == null
             ? []
             : List<dynamic>.from(historial!.map((x) => x)),

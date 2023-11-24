@@ -7,6 +7,7 @@ import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/search/material_search_delegate.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations.dart';
+import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
@@ -76,7 +77,8 @@ class _SolpedScreenState extends State<SolpedScreen> {
                               controller: _searchController,
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
-                              decoration: InputDecorations.authInputDecoration(
+                              decoration: InputDecorationsRounded
+                                  .authInputDecorationRounded(
                                 color: ThemeProvider.blueColor,
                                 hintText: '904001526',
                                 labelText: 'Material',
@@ -178,15 +180,23 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                       ),
                                       const SizedBox(height: 15),
                                       TextFormField(
+                                        textAlign: TextAlign.center,
                                         autovalidateMode:
                                             AutovalidateMode.onUserInteraction,
                                         controller: _qtyController,
                                         keyboardType: TextInputType.number,
                                         inputFormatters: <TextInputFormatter>[
-                                          // for below version 2 use this
                                           FilteringTextInputFormatter.allow(
-                                              RegExp(r'[0-9]')),
-                                          FilteringTextInputFormatter.digitsOnly
+                                              RegExp(r'[0-9.]')),
+                                          TextInputFormatter.withFunction(
+                                              (oldValue, newValue) {
+                                            final text = newValue.text;
+                                            return text.isEmpty
+                                                ? newValue
+                                                : double.tryParse(text) == null
+                                                    ? oldValue
+                                                    : newValue;
+                                          }),
                                         ],
                                         validator: (value) {
                                           return (value != null &&
@@ -198,8 +208,8 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                           print(value);
                                           solpedProvider.quantity = value;
                                         },
-                                        decoration: InputDecorations
-                                            .authInputDecoration(
+                                        decoration: InputDecorationsRounded
+                                            .authInputDecorationRounded(
                                           color: ThemeProvider.blueColor,
                                           hintText: '0',
                                           labelText: 'Cantidad',

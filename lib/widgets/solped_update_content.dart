@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/ui/input_decorations.dart';
+import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:provider/provider.dart';
 
 class UpdateContent extends StatelessWidget {
@@ -107,6 +108,7 @@ class UpdateContent extends StatelessWidget {
             ),
             const SizedBox(height: 35),
             TextFormField(
+              textAlign: TextAlign.center,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               initialValue: double.parse(material.cantidad!).toString(),
               keyboardType: TextInputType.number,
@@ -130,7 +132,7 @@ class UpdateContent extends StatelessWidget {
                 print(value);
                 solpedProvider.quantity = value;
               },
-              decoration: InputDecorations.authInputDecoration(
+              decoration: InputDecorationsRounded.authInputDecorationRounded(
                 color: ThemeProvider.blueColor,
                 hintText: '0',
                 labelText: 'Cantidad',
