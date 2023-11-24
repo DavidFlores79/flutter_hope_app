@@ -26,7 +26,7 @@ class ModuleScreenProvider extends ChangeNotifier {
     ModuleScreenDTO(
       label: 'Creación de Pedidos',
       route: ME21NScreen.routeName,
-      widget: const ME21NScreen(),
+      widget: ME21NScreen(),
     ),
   ];
 

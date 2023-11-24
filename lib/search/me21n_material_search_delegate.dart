@@ -4,7 +4,7 @@ import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
-class MaterialSearchDelegate extends SearchDelegate {
+class ME21NMaterialSearchDelegate extends SearchDelegate {
   @override
   String get searchFieldLabel => 'Buscar Material';
 
@@ -22,9 +22,9 @@ class MaterialSearchDelegate extends SearchDelegate {
   Widget? buildLeading(BuildContext context) {
     return IconButton(
       onPressed: () {
-        final solpedProvider =
-            Provider.of<SolpedProvider>(context, listen: false);
-        solpedProvider.materialSelected = Materials();
+        final me21nProvider =
+            Provider.of<ME21NProvider>(context, listen: false);
+        me21nProvider.materialSelected = Materials();
         close(context, null);
       },
       icon: const Icon(Icons.arrow_back),
@@ -39,16 +39,16 @@ class MaterialSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final solpedProvider = Provider.of<SolpedProvider>(context, listen: false);
+    final me21nProvider = Provider.of<ME21NProvider>(context, listen: false);
 
     if (query.isEmpty) {
       return const emptyContainer();
     }
 
-    solpedProvider.getMaterialsByQuery(query);
+    me21nProvider.getMaterialsByQuery(query);
 
     return StreamBuilder(
-      stream: solpedProvider.materialStream,
+      stream: me21nProvider.materialStream,
       builder: (context, AsyncSnapshot<List<Materials>> snapshot) {
         if (!snapshot.hasData) {
           return const emptyContainer();
