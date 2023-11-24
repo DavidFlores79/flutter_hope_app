@@ -87,6 +87,18 @@ class Materials {
     this.unidadMedidaVisual,
   });
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Materials &&
+        other.tipoMaterial == tipoMaterial &&
+        other.numeroMaterial == numeroMaterial;
+  }
+
+  @override
+  int get hashCode => tipoMaterial.hashCode ^ numeroMaterial.hashCode;
+
   factory Materials.fromJson(String str) => Materials.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());

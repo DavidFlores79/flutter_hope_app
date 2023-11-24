@@ -26,14 +26,22 @@ class ME21NProvider extends ChangeNotifier {
   ME21NResponse? me21nResponse;
   List<Centros>? centrosUsuario = [];
   // String claseDocumento = 'ZADQ';
-  List<Materials>? posiciones = [];
-  List<Posicione> posicionesSelected = [];
+  List<PedidoPos>? _posiciones = [];
+  // List<Posicione> posicionesSelected = [];
   List<Materials>? materials = [];
   Materials _materialSelected = Materials();
   String quantity = '';
   String _claseDocumentoSelected = '';
   String _orgComprasSelected = '';
   String _centroDefault = '';
+  String gpoCompras = '';
+
+  List<PedidoPos>? get posiciones => _posiciones;
+
+  set posiciones(List<PedidoPos>? value) {
+    _posiciones = value;
+    notifyListeners();
+  }
 
   String get centroDefault => _centroDefault;
 
@@ -138,7 +146,7 @@ class ME21NProvider extends ChangeNotifier {
           .timeout(const Duration(seconds: 30));
       // claseDocumentoSelected = clases.first.code;
       // orgComprasSelected = orgCompras.first.code;
-      posicionesSelected = [];
+      // posicionesSelected = [];
       posiciones = [];
 
       switch (response.statusCode) {
@@ -150,6 +158,7 @@ class ME21NProvider extends ChangeNotifier {
           centrosUsuario = me21nResponse!.centrosUsuario;
           clases = me21nResponse!.clasesDocumento!;
           orgCompras = me21nResponse!.orgCompras!;
+          gpoCompras = me21nResponse!.gpoCompras!;
           claseDocumentoSelected = clases.first.code!;
           orgComprasSelected = orgCompras.first.code!;
           centroDefault = centrosUsuario!.first.idcentro!;
@@ -340,16 +349,16 @@ class ME21NProvider extends ChangeNotifier {
     Map<String, dynamic> dataRaw = {
       'centro': centroDefault,
       'clase_doc': claseDocumentoSelected,
-      'cuenta_mayor': materialSelected.cuentamayor,
-      'texto_breve': materialSelected.textoBreve,
-      'gpo_articulo': materialSelected.grupoArticulo,
-      'gpo_compras': materialSelected.grupoCompras,
-      'material': materialSelected.numeroMaterial,
-      'tipo_material': materialSelected.tipoMaterial,
-      'unidad_medida': materialSelected.unidadMedidaTexto,
-      'cantidad': quantity,
-      'activo_fijo': null,
-      'comentarios': null,
+      // 'cuenta_mayor': materialSelected.cuentamayor,
+      // 'texto_breve': materialSelected.textoBreve,
+      // 'gpo_articulo': materialSelected.grupoArticulo,
+      // 'gpo_compras': materialSelected.grupoCompras,
+      // 'material': materialSelected.numeroMaterial,
+      // 'tipo_material': materialSelected.tipoMaterial,
+      // 'unidad_medida': materialSelected.unidadMedidaTexto,
+      // 'cantidad': quantity,
+      // 'activo_fijo': null,
+      // 'comentarios': null,
     };
 
     print(dataRaw);

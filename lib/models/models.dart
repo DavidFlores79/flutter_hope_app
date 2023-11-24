@@ -1,3 +1,5 @@
+export 'package:hope_app/models/orders/zsts_request.dart';
+
 export 'package:hope_app/models/activation_response.dart';
 export 'package:hope_app/models/buscar_solpeds_response.dart';
 export 'package:hope_app/models/liberar_multiple_request.dart';
