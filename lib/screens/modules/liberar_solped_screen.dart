@@ -85,11 +85,14 @@ class SolpedList extends StatelessWidget {
             }).toList(),
           ),
         ),
-        Row(
-          children: [
-            RejectSolpedButton(),
-            ReleaseSolpedButton(),
-          ],
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: Row(
+            children: [
+              RejectSolpedButton(),
+              ReleaseSolpedButton(),
+            ],
+          ),
         ),
       ],
     );

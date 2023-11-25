@@ -186,6 +186,7 @@ class _CreateOrderState extends State<CreateOrder> {
             ),
           ),
         ),
+        const SizedBox(height: 40),
       ],
     );
   }
