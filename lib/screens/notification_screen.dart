@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hope_app/widgets/widgets.dart';
 
 class NotificationScreen extends StatelessWidget {
   static const String routeName = 'notifications';
@@ -14,9 +15,7 @@ class NotificationScreen extends StatelessWidget {
           // PopupMenuList(),
         ],
       ),
-      body: const Center(
-        child: Text('Notificaciones'),
-      ),
+      body: EmptyContainer(assetImage: 'assets/images/icons/no-alarm.png', text: 'Sin notificaciones.'),
     );
   }
 }

@@ -101,7 +101,64 @@ class _CreateOrderState extends State<CreateOrder> {
                   children: [
                     const _Quantity(),
                     const SizedBox(width: 10),
-                    _addPositionButton(searchController: _searchController),
+                    //_addPositionButton(searchController: _searchController),
+                    Expanded(
+                      flex: 1,
+                      child: MaterialButton(
+                        onPressed: me21nProvider.isLoading
+                            ? null
+                            : () async {
+                                if (!me21nProvider.isValidForm()) return;
+                                me21nProvider.isLoading = true;
+                                FocusScope.of(context).unfocus();
+
+                                if (!me21nProvider.posiciones!
+                                    .contains(me21nProvider.materialSelected)) {
+                                  print(
+                                      'Cantidad vale: ${me21nProvider.quantity}');
+                                  setState(() {
+                                    me21nProvider.posiciones?.add(PedidoPos(
+                                      cantidad: me21nProvider.quantity,
+                                      numeroMaterial: me21nProvider
+                                          .materialSelected.numeroMaterial,
+                                      textoBreve: me21nProvider
+                                          .materialSelected.textoBreve,
+                                      grupoCompras: me21nProvider.gpoCompras,
+                                      centroReceptor:
+                                          me21nProvider.centroDefault,
+                                      unidadMedida: me21nProvider
+                                          .materialSelected.unidadMedida,
+                                      claseDocumento:
+                                          me21nProvider.claseDocumentoSelected,
+                                      esDevolucion: false,
+                                    ));
+                                  });
+                                  me21nProvider.formKey.currentState?.reset();
+                                  _searchController.clear();
+                                  setState(() {});
+                                } else {
+                                  await confirmDuplicate(
+                                      me21nProvider, _searchController);
+                                }
+
+                                me21nProvider.isLoading = false;
+                              },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        disabledColor: Colors.grey[500],
+                        elevation: 5,
+                        color: ThemeProvider.blueColor,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 12),
+                        child: Text(
+                          'Agregar',
+                          style: TextStyle(
+                            color: ThemeProvider.whiteColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ],
@@ -605,17 +662,19 @@ class __addPositionButtonState extends State<_addPositionButton> {
                 if (!me21nProvider.posiciones!
                     .contains(me21nProvider.materialSelected)) {
                   print('Cantidad vale: ${me21nProvider.quantity}');
-                  me21nProvider.posiciones?.add(PedidoPos(
-                    cantidad: me21nProvider.quantity,
-                    numeroMaterial:
-                        me21nProvider.materialSelected.numeroMaterial,
-                    textoBreve: me21nProvider.materialSelected.textoBreve,
-                    grupoCompras: me21nProvider.gpoCompras,
-                    centroReceptor: me21nProvider.centroDefault,
-                    unidadMedida: me21nProvider.materialSelected.unidadMedida,
-                    claseDocumento: me21nProvider.claseDocumentoSelected,
-                    esDevolucion: false,
-                  ));
+                  setState(() {
+                    me21nProvider.posiciones?.add(PedidoPos(
+                      cantidad: me21nProvider.quantity,
+                      numeroMaterial:
+                          me21nProvider.materialSelected.numeroMaterial,
+                      textoBreve: me21nProvider.materialSelected.textoBreve,
+                      grupoCompras: me21nProvider.gpoCompras,
+                      centroReceptor: me21nProvider.centroDefault,
+                      unidadMedida: me21nProvider.materialSelected.unidadMedida,
+                      claseDocumento: me21nProvider.claseDocumentoSelected,
+                      esDevolucion: false,
+                    ));
+                  });
                   me21nProvider.formKey.currentState?.reset();
                   widget.searchController.clear();
                   setState(() {});

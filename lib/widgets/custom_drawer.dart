@@ -14,16 +14,28 @@ class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     User apiUser = User.fromJson(Preferences.apiUser);
+    final mp = Provider.of<NavbarProvider>(context);
+    final authService = Provider.of<AuthService>(
+      context,
+      listen: false,
+    );
 
     return Drawer(
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            buildHeader(context, apiUser),
-            buildMenuItems(context),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          buildHeader(context, apiUser),
+          ListTile(
+            leading: const Icon(Icons.home_outlined),
+            title: const Text('Inicio', style: TextStyle(fontSize: 20)),
+            onTap: () {
+              mp.selectedIndex = 0;
+              Navigator.pushNamed(context, HomeScreen.routeName);
+            },
+          ),
+          buildMenuItems(context),
+          buildFooter(authService: authService),
+        ],
       ),
     );
   }
@@ -72,46 +84,54 @@ class CustomDrawer extends StatelessWidget {
       );
 
   buildMenuItems(BuildContext context) {
-    final mp = Provider.of<NavbarProvider>(context);
-    final authService = Provider.of<AuthService>(
-      context,
-      listen: false,
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            MenuCategories(),
+          ],
+        ),
+      ),
     );
+  }
+}
 
-    return Column(
-      children: [
-        ListTile(
-          leading: const Icon(Icons.home_outlined),
-          title: const Text('Inicio', style: TextStyle(fontSize: 20)),
-          onTap: () {
-            mp.selectedIndex = 0;
-            Navigator.pushNamed(context, HomeScreen.routeName);
-          },
+class buildFooter extends StatelessWidget {
+  const buildFooter({
+    super.key,
+    required this.authService,
+  });
+
+  final AuthService authService;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(bottom: 30),
+      child: Align(
+        alignment: FractionalOffset.bottomCenter,
+        child: Column(
+          children: <Widget>[
+            Divider(),
+            ListTile(
+              leading: const Icon(Icons.notifications_outlined),
+              title:
+                  const Text('Notificaciones', style: TextStyle(fontSize: 20)),
+              onTap: () =>
+                  Navigator.pushNamed(context, NotificationScreen.routeName),
+            ),
+            ListTile(
+              leading: const Icon(FontAwesomeIcons.arrowRightFromBracket),
+              title: const Text('Logout', style: TextStyle(fontSize: 20)),
+              onTap: () async {
+                await authService.logout();
+                // ignore: use_build_context_synchronously
+                Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+              },
+            ),
+          ],
         ),
-        MenuCategories(),
-        // const SizedBox(height: 12),
-        // const Divider(color: Colors.black12),
-        // ListTile(
-        //   leading: const Icon(Icons.favorite_outline),
-        //   title: const Text('Favoritos', style: TextStyle(fontSize: 20)),
-        //   onTap: () {},
-        // ),
-        ListTile(
-          leading: const Icon(Icons.notifications_outlined),
-          title: const Text('Notificaciones', style: TextStyle(fontSize: 20)),
-          onTap: () =>
-              Navigator.pushNamed(context, NotificationScreen.routeName),
-        ),
-        ListTile(
-          leading: const Icon(FontAwesomeIcons.arrowRightFromBracket),
-          title: const Text('Logout', style: TextStyle(fontSize: 20)),
-          onTap: () async {
-            await authService.logout();
-            // ignore: use_build_context_synchronously
-            Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-          },
-        ),
-      ],
+      ),
     );
   }
 }
