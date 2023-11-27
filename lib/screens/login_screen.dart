@@ -181,17 +181,22 @@ class _LoginForm extends StatelessWidget {
                       loginForm.isLoading = false;
                     }
                   },
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)),
-            disabledColor: Colors.grey,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            disabledColor: ThemeProvider.blueColor.withAlpha(150),
             elevation: 0,
             color: myColor,
+            minWidth: MediaQuery.of(context).size.width * 0.5,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-              child: Text(
-                loginForm.isLoading ? 'Espere' : 'Iniciar Sesión',
-                style: const TextStyle(color: Colors.white),
-              ),
+              child: loginForm.isLoading
+                  ? CircularProgressIndicator.adaptive(
+                      backgroundColor: ThemeProvider.whiteColor,
+                    )
+                  : const Text(
+                      'Iniciar Sesión',
+                      style: TextStyle(color: Colors.white),
+                    ),
             ),
           )
         ],

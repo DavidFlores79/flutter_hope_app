@@ -21,13 +21,7 @@ class ME21NScreen extends StatelessWidget {
     final me21nProvider = Provider.of<ME21NProvider>(context);
 
     return Scaffold(
-      body: (me21nProvider.isLoading)
-          ? Center(
-              child: SpinKitCubeGrid(
-                color: ThemeProvider.blueColor,
-              ),
-            )
-          : const CreateOrder(),
+      body: const CreateOrder(),
       floatingActionButton: FloatingActionButton(
         child: const Icon(FontAwesomeIcons.arrowsRotate),
         onPressed: () => {
@@ -105,44 +99,40 @@ class _CreateOrderState extends State<CreateOrder> {
                     Expanded(
                       flex: 1,
                       child: MaterialButton(
-                        onPressed: me21nProvider.isLoading
-                            ? null
-                            : () async {
-                                if (!me21nProvider.isValidForm()) return;
-                                me21nProvider.isLoading = true;
-                                FocusScope.of(context).unfocus();
+                        onPressed: () async {
+                          if (!me21nProvider.isValidForm()) return;
+                          FocusScope.of(context).unfocus();
 
-                                if (!me21nProvider.posiciones!
-                                    .contains(me21nProvider.materialSelected)) {
-                                  print(
-                                      'Cantidad vale: ${me21nProvider.quantity}');
-                                  setState(() {
-                                    me21nProvider.posiciones?.add(PedidoPos(
-                                      cantidad: me21nProvider.quantity,
-                                      numeroMaterial: me21nProvider
-                                          .materialSelected.numeroMaterial,
-                                      textoBreve: me21nProvider
-                                          .materialSelected.textoBreve,
-                                      grupoCompras: me21nProvider.gpoCompras,
-                                      centroReceptor:
-                                          me21nProvider.centroDefault,
-                                      unidadMedida: me21nProvider
-                                          .materialSelected.unidadMedida,
-                                      claseDocumento:
-                                          me21nProvider.claseDocumentoSelected,
-                                      esDevolucion: false,
-                                    ));
-                                  });
-                                  me21nProvider.formKey.currentState?.reset();
-                                  _searchController.clear();
-                                  setState(() {});
-                                } else {
-                                  await confirmDuplicate(
-                                      me21nProvider, _searchController);
-                                }
+                          if (!me21nProvider.posiciones!
+                              .contains(me21nProvider.materialSelected)) {
+                            print('Cantidad vale: ${me21nProvider.quantity}');
+                            setState(() {
+                              me21nProvider.posiciones?.add(PedidoPos(
+                                cantidad: me21nProvider.quantity,
+                                numeroMaterial: me21nProvider
+                                    .materialSelected.numeroMaterial,
+                                textoBreve:
+                                    me21nProvider.materialSelected.textoBreve,
+                                grupoCompras: me21nProvider.gpoCompras,
+                                centroReceptor: me21nProvider.centroDefault,
+                                unidadMedida:
+                                    me21nProvider.materialSelected.unidadMedida,
+                                claseDocumento:
+                                    me21nProvider.claseDocumentoSelected,
+                                //TODO: Depende de la Clase de Doc es si es devolucion o no
+                                esDevolucion: false,
+                              ));
+                            });
+                            me21nProvider.formKey.currentState?.reset();
+                            _searchController.clear();
+                            setState(() {});
+                          } else {
+                            await confirmDuplicate(
+                                me21nProvider, _searchController);
+                          }
 
-                                me21nProvider.isLoading = false;
-                              },
+                          me21nProvider.isLoading = false;
+                        },
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                         disabledColor: Colors.grey[500],
@@ -207,14 +197,12 @@ class _CreateOrderState extends State<CreateOrder> {
                 (me21nProvider.isLoading || me21nProvider.posiciones!.isEmpty)
                     ? null
                     : () async {
-                        me21nProvider.isLoading = true;
                         FocusScope.of(context).unfocus();
 
                         if (me21nProvider.posiciones!.isEmpty) {
                           Notifications.showSnackBar(
                             'Debe agregar al menos un material para crear el Pedido.',
                           );
-                          me21nProvider.isLoading = false;
                           return;
                         }
 
@@ -223,23 +211,26 @@ class _CreateOrderState extends State<CreateOrder> {
                         if (result) {
                           me21nProvider.posiciones = [];
                         }
-                        me21nProvider.isLoading = false;
                       },
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            disabledColor: Colors.grey,
+            disabledColor: ThemeProvider.blueColor.withAlpha(150),
             elevation: 0,
             color: ThemeProvider.blueColor,
             minWidth: double.infinity,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-              child: Text(
-                me21nProvider.isLoading ? 'Espere' : 'Crear Pedido',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
-              ),
+              child: (me21nProvider.isLoading)
+                  ? CircularProgressIndicator.adaptive(
+                      backgroundColor: ThemeProvider.whiteColor,
+                    )
+                  : const Text(
+                      'Crear Pedido',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
             ),
           ),
         ),

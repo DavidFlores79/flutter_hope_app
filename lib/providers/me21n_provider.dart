@@ -85,6 +85,7 @@ class ME21NProvider extends ChangeNotifier {
   get isLoading => _isLoading;
   set isLoading(value) {
     _isLoading = value;
+    notifyListeners();
   }
 
   bool isValidForm() {
