@@ -30,7 +30,7 @@ class CustomDrawer extends StatelessWidget {
             title: const Text('Inicio', style: TextStyle(fontSize: 20)),
             onTap: () {
               mp.selectedIndex = 0;
-              Navigator.pushNamed(context, HomeScreen.routeName);
+              Navigator.pushReplacementNamed(context, HomeScreen.routeName);
             },
           ),
           buildMenuItems(context),
