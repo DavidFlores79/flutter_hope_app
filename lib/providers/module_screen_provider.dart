@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/widgets/widgets.dart';
 
 class ModuleScreenProvider extends ChangeNotifier {
   List<ModuleScreenDTO> items = [
@@ -12,6 +14,12 @@ class ModuleScreenProvider extends ChangeNotifier {
       label: 'Liberar Solicitud de Pedidos',
       route: LiberarSolpedScreen.routeName,
       widget: LiberarSolpedScreen(),
+      actions: [
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(FontAwesomeIcons.calendar),
+        )
+      ],
     ),
     ModuleScreenDTO(
       label: 'MIGO',
@@ -22,6 +30,12 @@ class ModuleScreenProvider extends ChangeNotifier {
       label: 'Monitor Solped',
       route: MonitorSolpedScreen.routeName,
       widget: MonitorSolpedScreen(),
+      actions: [
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(FontAwesomeIcons.calendar),
+        )
+      ],
     ),
     ModuleScreenDTO(
       label: 'Creación de Pedidos',
@@ -48,6 +62,8 @@ class ModuleScreenDTO {
   String? label;
   String? route;
   Widget? iconData;
+  List<Widget>? actions;
 
-  ModuleScreenDTO({this.widget, this.label, this.iconData, this.route});
+  ModuleScreenDTO(
+      {this.widget, this.label, this.iconData, this.route, this.actions});
 }
