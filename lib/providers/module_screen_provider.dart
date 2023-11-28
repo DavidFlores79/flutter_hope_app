@@ -21,7 +21,7 @@ class ModuleScreenProvider extends ChangeNotifier {
     ModuleScreenDTO(
       label: 'Monitor Solped',
       route: MonitorSolpedScreen.routeName,
-      widget: const MonitorSolpedScreen(),
+      widget: MonitorSolpedScreen(),
     ),
     ModuleScreenDTO(
       label: 'Creación de Pedidos',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hope_app/locator.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
@@ -11,6 +12,7 @@ import 'services/services.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('es');
+
   await Preferences.init();
   setupLocator();
   runApp(const AppState());
@@ -70,6 +72,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<MaterialProvider>(
           create: (context) => MaterialProvider(),
         ),
+        ChangeNotifierProvider<MonitorSolpedProvider>(
+          create: (context) => MonitorSolpedProvider(),
+        ),
       ],
       child: const MyApp(),
     );
@@ -84,6 +89,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      supportedLocales: const [Locale('es')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       debugShowCheckedModeBanner: false,
       navigatorKey: locator<NavigationService>().navigatorKey,
       scaffoldMessengerKey: Notifications.messengerKey,
@@ -105,7 +116,7 @@ class MyApp extends StatelessWidget {
         SolpedScreen.routeName: (context) => SolpedScreen(),
         LiberarSolpedScreen.routeName: (context) => LiberarSolpedScreen(),
         MigoScreen.routeName: (context) => const MigoScreen(),
-        MonitorSolpedScreen.routeName: (context) => const MonitorSolpedScreen(),
+        MonitorSolpedScreen.routeName: (context) => MonitorSolpedScreen(),
         ME21NScreen.routeName: (context) => ME21NScreen(),
         UnderConstructionScreen.routeName: (context) =>
             const UnderConstructionScreen(),

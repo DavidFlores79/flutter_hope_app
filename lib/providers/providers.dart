@@ -12,3 +12,4 @@ export 'package:hope_app/providers/onesignal_provider.dart';
 export 'package:hope_app/providers/pedidos_provider.dart';
 export 'package:hope_app/providers/solped_provider.dart';
 export 'package:hope_app/providers/theme_provider.dart';
+export 'package:hope_app/providers/monitor_solped_provaider.dart';

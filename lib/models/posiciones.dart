@@ -6,6 +6,7 @@ class Posicion {
   int? id;
   int? userId;
   int? centroId;
+  String? centro;
   int? estatusId;
   String? clasedocto;
   String? tipoMaterial;
@@ -33,6 +34,7 @@ class Posicion {
   dynamic documentoSap;
   dynamic documentoOc;
   dynamic fechaEliminado;
+  dynamic sociedad;
   String? createdAt;
   String? updatedAt;
   Centros? centros;
@@ -42,6 +44,7 @@ class Posicion {
     this.id,
     this.userId,
     this.centroId,
+    this.centro,
     this.estatusId,
     this.clasedocto,
     this.tipoMaterial,
@@ -69,6 +72,7 @@ class Posicion {
     this.documentoSap,
     this.documentoOc,
     this.fechaEliminado,
+    this.sociedad,
     this.createdAt,
     this.updatedAt,
     this.centros,
@@ -83,6 +87,7 @@ class Posicion {
         id: json["id"],
         userId: json["user_id"],
         centroId: json["centro_id"],
+        centro: json["centro"],
         estatusId: json["estatus_id"],
         clasedocto: json["clasedocto"],
         tipoMaterial: json["tipo_material"],
@@ -110,6 +115,7 @@ class Posicion {
         documentoSap: json["documento_sap"],
         documentoOc: json["documento_oc"],
         fechaEliminado: json["fecha_eliminado"],
+        sociedad: json["sociedad"],
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
         centros:
@@ -122,6 +128,7 @@ class Posicion {
         "id": id,
         "user_id": userId,
         "centro_id": centroId,
+        "centro": centro,
         "estatus_id": estatusId,
         "clasedocto": clasedocto,
         "tipo_material": tipoMaterial,
@@ -149,6 +156,7 @@ class Posicion {
         "documento_sap": documentoSap,
         "documento_oc": documentoOc,
         "fecha_eliminado": fechaEliminado,
+        "sociedad": sociedad,
         "created_at": createdAt,
         "updated_at": updatedAt,
         "centros": centros?.toMap(),

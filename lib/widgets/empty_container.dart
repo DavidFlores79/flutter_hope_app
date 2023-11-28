@@ -7,13 +7,15 @@ class EmptyContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image(
             image: AssetImage(assetImage),
-            width: 130,
+            width:
+                size.width < size.height ? size.width * .40 : size.width * .12,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
