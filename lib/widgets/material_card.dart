@@ -15,6 +15,7 @@ class MaterialCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final solpedProvider = Provider.of<SolpedProvider>(context);
     final me21Provider = Provider.of<ME21NProvider>(context);
+    final materialProvider = Provider.of<MaterialProvider>(context);
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(
@@ -93,6 +94,7 @@ class MaterialCard extends StatelessWidget {
           print('Material Selected: ${material.textoBreve}');
           solpedProvider.materialSelected = material;
           me21Provider.materialSelected = material;
+          materialProvider.materialSelected = material;
           Navigator.pop(context);
         },
       ),

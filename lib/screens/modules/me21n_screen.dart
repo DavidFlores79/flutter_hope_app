@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/search/me21n_material_search_delegate.dart';
-import 'package:hope_app/search/supplier_material_search_delegate.dart';
+import 'package:hope_app/search/material_by_supplier_search_delegate.dart';
 import 'package:hope_app/search/supplier_search_delegate.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations_rounded.dart';
@@ -31,6 +31,7 @@ class ME21NScreen extends StatelessWidget {
           me21nProvider.getCatalogs(),
           me21nProvider.formKey.currentState?.reset(),
           me21nProvider.materialSelected = Materials(),
+          me21nProvider.posiciones = [],
           supplierProvider.supplierSelected = Supplier(),
         },
       ),
@@ -84,7 +85,8 @@ class _CreateOrderState extends State<CreateOrder> {
                   children: [
                     /**
                      * se pasan los texteditingcontroller para resetear 
-                     * los input
+                     * los input cuando hay cambio de clase de 
+                     * documento
                      */
                     ClasesDocumentoDropdownList(
                       me21nProvider: me21nProvider,
@@ -93,18 +95,25 @@ class _CreateOrderState extends State<CreateOrder> {
                           _searchSupplierMaterialController,
                     ),
                     const SizedBox(width: 10),
-                    CentrosUsuarioDropdown(miProvider: me21nProvider),
+                    OrgComprasDropdown(me21nProvider: me21nProvider),
                   ],
                 ),
                 const SizedBox(height: 15),
                 Row(
                   children: [
-                    OrgComprasDropdown(me21nProvider: me21nProvider),
+                    CentrosUsuarioDropdown(miProvider: me21nProvider),
                     const SizedBox(width: 10),
-                    _gpoCompras(gpoCompras: me21nProvider.gpoCompras)
+                    _gpoCompras(gpoCompras: me21nProvider.gpoCompras),
+                    SizedBox(
+                        width: (me21nProvider.clasesDocumentoProv.contains(me21nProvider.claseDocumentoSelected))
+                            ? 10
+                            : 0),
+                    (me21nProvider.clasesDocumentoProv.contains(me21nProvider.claseDocumentoSelected))
+                        ? _almacen(almacen: me21nProvider.almacen)
+                        : Container()
                   ],
                 ),
-                (me21nProvider.claseDocumentoSelected != 'ZOCM')
+                (!me21nProvider.clasesDocumentoProv.contains(me21nProvider.claseDocumentoSelected))
                     ? Column(
                         children: [
                           const SizedBox(height: 15),
@@ -118,7 +127,7 @@ class _CreateOrderState extends State<CreateOrder> {
                               searchController: _searchSupplierController),
                           const SizedBox(height: 15),
                           SearchSupplierMaterial(
-                              searchController:
+                              searchSupplierMaterialController:
                                   _searchSupplierMaterialController),
                         ],
                       ),
@@ -140,7 +149,7 @@ class _CreateOrderState extends State<CreateOrder> {
                               .contains(me21nProvider.materialSelected)) {
                             print('Cantidad vale: ${me21nProvider.quantity}');
                             setState(() {
-                              me21nProvider.posiciones?.add(PedidoPos(
+                              final pos = PedidoPos(
                                 cantidad: me21nProvider.quantity,
                                 numeroMaterial: me21nProvider
                                     .materialSelected.numeroMaterial,
@@ -154,10 +163,22 @@ class _CreateOrderState extends State<CreateOrder> {
                                     me21nProvider.claseDocumentoSelected,
                                 //TODO: Depende de la Clase de Doc es si es devolucion o no
                                 esDevolucion: false,
-                              ));
+                              );
+
+                              if (me21nProvider.clasesDocumentoProv.contains(me21nProvider.claseDocumentoSelected)) {
+                                //agregar el proveedor selecionado
+                                me21nProvider.numeroProveedor = me21nProvider
+                                    .getSupplierSelected(context)
+                                    .numeroProveedor!;
+                                //agregar almacen a cada posicion
+                                pos.almacen = me21nProvider.almacen;
+                              }
+
+                              me21nProvider.posiciones?.add(pos);
                             });
                             me21nProvider.formKey.currentState?.reset();
                             _searchController.clear();
+                            _searchSupplierMaterialController.clear();
                             setState(() {});
                           } else {
                             await confirmDuplicate(
@@ -345,6 +366,14 @@ class _CreateOrderState extends State<CreateOrder> {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final me21nProvider = Provider.of<ME21NProvider>(context, listen: false);
+    // Configurar el valor inicial solo la primera vez que se construye el widget
+    _searchSupplierController.text = me21nProvider.numeroProveedor;
   }
 }
 
@@ -581,6 +610,28 @@ class _gpoCompras extends StatelessWidget {
   }
 }
 
+class _almacen extends StatelessWidget {
+  final String almacen;
+
+  const _almacen({super.key, required this.almacen});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: TextFormField(
+        readOnly: true,
+        textAlign: TextAlign.center,
+        initialValue: almacen,
+        decoration: InputDecorationsRounded.authInputDecorationRounded(
+          hintText: '',
+          labelText: 'Almacén',
+          color: ThemeProvider.blueColor,
+        ),
+      ),
+    );
+  }
+}
+
 class SearchMaterial extends StatefulWidget {
   final TextEditingController searchController;
 
@@ -640,9 +691,11 @@ class _SearchSupplierState extends State<SearchSupplier> {
   @override
   Widget build(BuildContext context) {
     final supplierProvider = Provider.of<SupplierProvider>(context);
+    final me21nProvider = Provider.of<ME21NProvider>(context);
 
     return TextFormField(
       readOnly: true,
+      enabled: (me21nProvider.posiciones!.isEmpty) ? true : false,
       controller: widget.searchController,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecorationsRounded.authInputDecorationRounded(
@@ -674,9 +727,10 @@ class _SearchSupplierState extends State<SearchSupplier> {
 }
 
 class SearchSupplierMaterial extends StatefulWidget {
-  final TextEditingController searchController;
+  final TextEditingController searchSupplierMaterialController;
 
-  SearchSupplierMaterial({super.key, required this.searchController});
+  SearchSupplierMaterial(
+      {super.key, required this.searchSupplierMaterialController});
 
   @override
   State<SearchSupplierMaterial> createState() => _SearchSupplierMaterialState();
@@ -691,7 +745,7 @@ class _SearchSupplierMaterialState extends State<SearchSupplierMaterial> {
     return TextFormField(
       readOnly: true,
       // enabled: (supplierProvider.supplierSelected.numeroProveedor != null) ? true:false,
-      controller: widget.searchController,
+      controller: widget.searchSupplierMaterialController,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecorationsRounded.authInputDecorationRounded(
         hintText: 'Buscar Material Prov...',
@@ -709,10 +763,12 @@ class _SearchSupplierMaterialState extends State<SearchSupplierMaterial> {
               );
 
               if (materialProvider.materialSelected.numeroMaterial != '') {
-                widget.searchController.text =
+                print('si se cumplio');
+                widget.searchSupplierMaterialController.text =
                     materialProvider.materialSelected.numeroMaterial ?? '';
+                setState(() {});
               } else {
-                widget.searchController.clear();
+                widget.searchSupplierMaterialController.clear();
               }
             }
           : null,
@@ -770,6 +826,7 @@ class __QuantityState extends State<_Quantity> {
           color: ThemeProvider.blueColor,
           suffixIcon: FontAwesomeIcons.coins,
         ),
+        textAlign: TextAlign.center,
       ),
     );
   }

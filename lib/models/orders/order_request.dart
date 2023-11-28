@@ -1,19 +1,19 @@
 import 'dart:convert';
 
-class CreateZstsRequest {
+class CreateOrderRequest {
   PedidoME21N? pedido;
 
-  CreateZstsRequest({
+  CreateOrderRequest({
     this.pedido,
   });
 
-  factory CreateZstsRequest.fromJson(String str) =>
-      CreateZstsRequest.fromMap(json.decode(str));
+  factory CreateOrderRequest.fromJson(String str) =>
+      CreateOrderRequest.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory CreateZstsRequest.fromMap(Map<String, dynamic> json) =>
-      CreateZstsRequest(
+  factory CreateOrderRequest.fromMap(Map<String, dynamic> json) =>
+      CreateOrderRequest(
         pedido:
             json["pedido"] == null ? null : PedidoME21N.fromMap(json["pedido"]),
       );
@@ -58,10 +58,18 @@ class PedidoME21N {
 class Cabecera {
   String? gpoCompras;
   String? tipoPedido;
+  dynamic nuestraReferencia;
+    String? cuentaProveedor;
+    String? proveedorMercancias;
+    String? orgCompras;
 
   Cabecera({
     this.gpoCompras,
     this.tipoPedido,
+    this.nuestraReferencia,
+        this.cuentaProveedor,
+        this.proveedorMercancias,
+        this.orgCompras,
   });
 
   factory Cabecera.fromJson(String str) => Cabecera.fromMap(json.decode(str));
@@ -71,11 +79,19 @@ class Cabecera {
   factory Cabecera.fromMap(Map<String, dynamic> json) => Cabecera(
         gpoCompras: json["gpo_compras"],
         tipoPedido: json["tipo_pedido"],
+        nuestraReferencia: json["nuestra_referencia"],
+        cuentaProveedor: json["cuenta_proveedor"],
+        proveedorMercancias: json["proveedor_mercancias"],
+        orgCompras: json["org_compras"],
       );
 
   Map<String, dynamic> toMap() => {
         "gpo_compras": gpoCompras,
         "tipo_pedido": tipoPedido,
+        "nuestra_referencia": nuestraReferencia,
+        "cuenta_proveedor": cuentaProveedor,
+        "proveedor_mercancias": proveedorMercancias,
+        "org_compras": orgCompras,
       };
 }
 
@@ -88,6 +104,7 @@ class PedidoPos {
   String? grupoCompras;
   String? claseDocumento;
   bool? esDevolucion;
+  String? almacen;
 
   PedidoPos({
     this.cantidad,
@@ -98,6 +115,7 @@ class PedidoPos {
     this.grupoCompras,
     this.claseDocumento,
     this.esDevolucion,
+    this.almacen,
   });
 
   factory PedidoPos.fromJson(String str) => PedidoPos.fromMap(json.decode(str));
@@ -113,6 +131,7 @@ class PedidoPos {
         grupoCompras: json["grupo_compras"],
         claseDocumento: json["clase_documento"],
         esDevolucion: json["es_devolucion"],
+        almacen: json["almacen"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -124,6 +143,7 @@ class PedidoPos {
         "grupo_compras": grupoCompras,
         "clase_documento": claseDocumento,
         "es_devolucion": esDevolucion,
+        "almacen": almacen,
       };
 }
 
@@ -133,6 +153,7 @@ class PosicionZSTT {
   String? centroReceptor;
   String? unidadMedida;
   bool? esDevolucion;
+  String? almacen;
 
   PosicionZSTT({
     this.cantidad,
@@ -140,6 +161,7 @@ class PosicionZSTT {
     this.centroReceptor,
     this.unidadMedida,
     this.esDevolucion,
+    this.almacen
   });
 
   factory PosicionZSTT.fromJson(String str) =>
@@ -153,6 +175,7 @@ class PosicionZSTT {
         centroReceptor: json["centro_receptor"],
         unidadMedida: json["unidad_medida"],
         esDevolucion: json["es_devolucion"],
+        almacen: json["almacen"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -161,5 +184,6 @@ class PosicionZSTT {
         "centro_receptor": centroReceptor,
         "unidad_medida": unidadMedida,
         "es_devolucion": esDevolucion,
+        "almacen": almacen,
       };
 }

@@ -1,5 +1,3 @@
-export 'package:hope_app/models/proveedores_response.dart';
-
 export 'package:hope_app/models/activation_response.dart';
 export 'package:hope_app/models/buscar_solpeds_response.dart';
 export 'package:hope_app/models/centros.dart';
@@ -15,7 +13,8 @@ export 'package:hope_app/models/module_response.dart';
 export 'package:hope_app/models/order_prov_model.dart';
 export 'package:hope_app/models/order_response.dart';
 export 'package:hope_app/models/orders/mensajes.dart';
-export 'package:hope_app/models/orders/zsts_request.dart';
+export 'package:hope_app/models/orders/order_request.dart';
 export 'package:hope_app/models/posiciones.dart';
+export 'package:hope_app/models/proveedores_response.dart';
 export 'package:hope_app/models/server_response.dart';
 export 'package:hope_app/models/solped_response.dart';

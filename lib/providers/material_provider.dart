@@ -23,13 +23,6 @@ class MaterialProvider extends ChangeNotifier {
   List<Materials>? materials = [];
   Materials _materialSelected = Materials();
   String quantity = '';
-  String _centroDefault = '';
-
-  String get centroDefault => _centroDefault;
-
-  set centroDefault(String value) {
-    _centroDefault = value;
-  }
 
   Materials get materialSelected => _materialSelected;
 
@@ -65,7 +58,7 @@ class MaterialProvider extends ChangeNotifier {
   }
 
   //Peticiones API
-  Future<List<Materials>> searchMaterials(String query) async {
+  Future<List<Materials>> searchMaterials(String query, String centroDefault ) async {
     print('Peticion API Search');
     _endPoint = '/api/v1/me21n/search';
     String numeroMaterial = '';
@@ -170,7 +163,7 @@ class MaterialProvider extends ChangeNotifier {
     return materials!;
   }
 
-  Future<List<Materials>> searchSupplierMaterials(String query, String supplier) async {
+  Future<List<Materials>> searchMaterialsBySupplier(String query, String supplier, String centroDefault) async {
     print('Peticion API Search Material Supplier');
     _endPoint = '/api/v1/materials/supplier';
     String numeroMaterial = '';
@@ -197,6 +190,8 @@ class MaterialProvider extends ChangeNotifier {
       'proveedor': supplier,
     };
 
+    print(queryParameters);
+
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint', queryParameters);
 
     try {
@@ -204,7 +199,7 @@ class MaterialProvider extends ChangeNotifier {
       materials = [];
 
       final response = await http
-          .get(url, headers: headers)
+          .post(url, headers: headers)
           .timeout(const Duration(seconds: 30));
 
       switch (response.statusCode) {
@@ -276,11 +271,11 @@ class MaterialProvider extends ChangeNotifier {
     return materials!;
   }
 
-  void getMaterialsByQuery(String query) {
+  void getMaterialsByQuery(String query, String centroDefault) {
     debouncer.value = '';
     debouncer.onValue = (value) async {
       print('hay valor a buscar $value');
-      final results = await searchMaterials(value);
+      final results = await searchMaterials(value, centroDefault);
       _materialStreamController.add(results);
     };
 
@@ -293,11 +288,11 @@ class MaterialProvider extends ChangeNotifier {
     );
   }
 
-  void getSupplierMaterialsByQuery(String query, String supplier) {
+  void getMaterialsBySupplierQuery(String query, String supplier, String centroDefault) {
     debouncer.value = '';
     debouncer.onValue = (value) async {
       print('hay valor a buscar $value');
-      final results = await searchSupplierMaterials(query, supplier);
+      final results = await searchMaterialsBySupplier(query, supplier, centroDefault );
       _materialStreamController.add(results);
     };
 

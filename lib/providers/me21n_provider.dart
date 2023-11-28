@@ -4,11 +4,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/helpers/debouncer.dart';
 import 'package:hope_app/locator.dart';
 import 'package:hope_app/models/models.dart';
+import 'package:hope_app/providers/supplier_provider.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class ME21NProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -30,7 +32,35 @@ class ME21NProvider extends ChangeNotifier {
   String _claseDocumentoSelected = '';
   String _orgComprasSelected = '';
   String _centroDefault = '';
-  String gpoCompras = '';
+  String gpoCompras = '200';
+  String almacen = '1000';
+  String numeroProveedor = '';
+  List<ClasesDocumento> _clases = [];
+  List<OrgCompras> _orgCompras = [];
+  List<String> clasesDocumentoProv = ['ZOCM', 'ZDTP', 'ZDCP'];
+
+  final debouncer = Debouncer(duration: const Duration(milliseconds: 700));
+
+  final StreamController<List<Materials>> _materialStreamController =
+      StreamController.broadcast();
+
+  Stream<List<Materials>> get materialStream =>
+      _materialStreamController.stream;
+
+  final NavigationService _navigationService = locator<NavigationService>();
+
+  final storage = const FlutterSecureStorage();
+
+  bool isValidForm() {
+    return formKey.currentState?.validate() ?? false;
+  }
+
+  get isLoading => _isLoading;
+
+  set isLoading(value) {
+    _isLoading = value;
+    notifyListeners();
+  }
 
   List<PedidoPos>? get posiciones => _posiciones;
 
@@ -45,9 +75,6 @@ class ME21NProvider extends ChangeNotifier {
     _centroDefault = value;
     notifyListeners();
   }
-
-  List<ClasesDocumento> _clases = [];
-  List<OrgCompras> _orgCompras = [];
 
   String get orgComprasSelected => _orgComprasSelected;
 
@@ -68,28 +95,6 @@ class ME21NProvider extends ChangeNotifier {
   set materialSelected(Materials value) {
     _materialSelected = value;
     notifyListeners();
-  }
-
-  final debouncer = Debouncer(duration: const Duration(milliseconds: 700));
-
-  final StreamController<List<Materials>> _materialStreamController =
-      new StreamController.broadcast();
-
-  Stream<List<Materials>> get materialStream =>
-      this._materialStreamController.stream;
-
-  final NavigationService _navigationService = locator<NavigationService>();
-
-  final storage = const FlutterSecureStorage();
-
-  get isLoading => _isLoading;
-  set isLoading(value) {
-    _isLoading = value;
-    notifyListeners();
-  }
-
-  bool isValidForm() {
-    return formKey.currentState?.validate() ?? false;
   }
 
   List<OrgCompras> get orgCompras => _orgCompras;
@@ -367,18 +372,23 @@ class ME21NProvider extends ChangeNotifier {
     // Modificar la lista antes de enviarla al backend
     List<PosicionZSTT> listaModificada = posiciones!.map((posicion) {
       return PosicionZSTT(
-          cantidad: posicion.cantidad,
-          numeroMaterial: posicion.numeroMaterial,
-          centroReceptor: posicion.centroReceptor,
-          unidadMedida: posicion.unidadMedida,
-          esDevolucion: posicion.esDevolucion);
+        cantidad: posicion.cantidad,
+        numeroMaterial: posicion.numeroMaterial,
+        centroReceptor: posicion.centroReceptor,
+        unidadMedida: posicion.unidadMedida,
+        esDevolucion: posicion.esDevolucion,
+        almacen: posicion.almacen,
+      );
     }).toList();
 
-    final CreateZstsRequest pedido = CreateZstsRequest(
+    final CreateOrderRequest pedido = CreateOrderRequest(
       pedido: PedidoME21N(
         cabeceraPedido: Cabecera(
           gpoCompras: gpoCompras,
           tipoPedido: claseDocumentoSelected,
+          proveedorMercancias: numeroProveedor,
+          cuentaProveedor: numeroProveedor,
+          orgCompras: orgComprasSelected,
         ),
         posiciones: listaModificada,
       ),
@@ -475,6 +485,14 @@ class ME21NProvider extends ChangeNotifier {
     } else {
       return false;
     }
+  }
+
+  Supplier getSupplierSelected(BuildContext context) {
+    final supplierProvider =
+        Provider.of<SupplierProvider>(context, listen: false);
+    Supplier supplierSelected = supplierProvider.supplierSelected;
+    print('Supplier Selected ${supplierSelected.numeroProveedor}');
+    return supplierSelected;
   }
 
   logout() async {

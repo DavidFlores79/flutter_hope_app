@@ -22,9 +22,12 @@ class MaterialSearchDelegate extends SearchDelegate {
   Widget? buildLeading(BuildContext context) {
     return IconButton(
       onPressed: () {
-        final solpedProvider =
-            Provider.of<SolpedProvider>(context, listen: false);
+        final solpedProvider = Provider.of<SolpedProvider>(context, listen: false);
+        final materialProvider = Provider.of<MaterialProvider>(context, listen: false);
+        final me21nProvider = Provider.of<ME21NProvider>(context, listen: false);
+        me21nProvider.materialSelected = Materials();
         solpedProvider.materialSelected = Materials();
+        materialProvider.materialSelected = Materials();
         close(context, null);
       },
       icon: const Icon(Icons.arrow_back),
