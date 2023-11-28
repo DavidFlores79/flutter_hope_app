@@ -64,6 +64,12 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<ME21NProvider>(
           create: (context) => ME21NProvider(),
         ),
+        ChangeNotifierProvider<SupplierProvider>(
+          create: (context) => SupplierProvider(),
+        ),
+        ChangeNotifierProvider<MaterialProvider>(
+          create: (context) => MaterialProvider(),
+        ),
       ],
       child: const MyApp(),
     );

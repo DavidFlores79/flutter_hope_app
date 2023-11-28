@@ -1,3 +1,6 @@
+export 'package:hope_app/providers/material_provider.dart';
+export 'package:hope_app/providers/supplier_provider.dart';
+
 export 'package:hope_app/providers/liberar_solped_provider.dart';
 export 'package:hope_app/providers/login_form_provider.dart';
 export 'package:hope_app/providers/me21n_provider.dart';

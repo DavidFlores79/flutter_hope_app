@@ -117,11 +117,21 @@ class MigoProvider extends ChangeNotifier {
           break;
         case 422:
           isLoading = false;
-          serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido.');
-          notifyListeners();
-          print(serverResponse);
+          result = false;
+          print('422: ${response.body}');
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
           break;
         case 500:
           isLoading = false;
@@ -217,11 +227,21 @@ class MigoProvider extends ChangeNotifier {
           break;
         case 422:
           isLoading = false;
-          serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido.');
-          notifyListeners();
-          print('422 - $serverResponse');
+          result = false;
+          print('422: ${response.body}');
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
           break;
         case 500:
           isLoading = false;

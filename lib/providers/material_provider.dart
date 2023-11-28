@@ -10,7 +10,7 @@ import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:http/http.dart' as http;
 
-class ME21NProvider extends ChangeNotifier {
+class MaterialProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   final String _apiUrl = Preferences.apiServer;
@@ -20,47 +20,15 @@ class ME21NProvider extends ChangeNotifier {
   ServerResponse? serverResponse;
   bool result = false;
   MaterialResponse? materialResponse;
-  ME21NResponse? me21nResponse;
-  CreateOrderResponse? createOrderResponse;
-  List<Centros>? centrosUsuario = [];
-  List<PedidoPos>? _posiciones = [];
   List<Materials>? materials = [];
   Materials _materialSelected = Materials();
   String quantity = '';
-  String _claseDocumentoSelected = '';
-  String _orgComprasSelected = '';
   String _centroDefault = '';
-  String gpoCompras = '';
-
-  List<PedidoPos>? get posiciones => _posiciones;
-
-  set posiciones(List<PedidoPos>? value) {
-    _posiciones = value;
-    notifyListeners();
-  }
 
   String get centroDefault => _centroDefault;
 
   set centroDefault(String value) {
     _centroDefault = value;
-    notifyListeners();
-  }
-
-  List<ClasesDocumento> _clases = [];
-  List<OrgCompras> _orgCompras = [];
-
-  String get orgComprasSelected => _orgComprasSelected;
-
-  set orgComprasSelected(String value) {
-    _orgComprasSelected = value;
-    notifyListeners();
-  }
-
-  String get claseDocumentoSelected => _claseDocumentoSelected;
-
-  set claseDocumentoSelected(String value) {
-    _claseDocumentoSelected = value;
-    notifyListeners();
   }
 
   Materials get materialSelected => _materialSelected;
@@ -92,142 +60,11 @@ class ME21NProvider extends ChangeNotifier {
     return formKey.currentState?.validate() ?? false;
   }
 
-  List<OrgCompras> get orgCompras => _orgCompras;
-
-  set orgCompras(List<OrgCompras> value) {
-    _orgCompras = value;
-    notifyListeners();
-  }
-
-  List<ClasesDocumento> get clases => _clases;
-
-  set clases(List<ClasesDocumento> value) {
-    _clases = value;
-    notifyListeners();
-  }
-
-  int _selectedIndex = 0;
-
-  int get selectedIndex => _selectedIndex;
-
-  set selectedIndex(int selectedIndex) {
-    _selectedIndex = selectedIndex;
-    notifyListeners();
-  }
-
-  ME21NProvider() {
-    print('ME21NProvider inicializado');
-    getCatalogs();
+  MaterialProvider() {
+    print('MaterialProvider inicializado');
   }
 
   //Peticiones API
-  Future<bool> getCatalogs() async {
-    isLoading = true;
-    result = false;
-    print('Peticion ME21N - Get Catalogs');
-    _endPoint = '/api/v1/me21n';
-
-    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
-
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $jwtToken'
-    };
-
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
-
-    try {
-      final response = await http
-          .get(url, headers: headers)
-          .timeout(const Duration(seconds: 30));
-      // claseDocumentoSelected = clases.first.code;
-      // orgComprasSelected = orgCompras.first.code;
-      // posicionesSelected = [];
-      posiciones = [];
-
-      switch (response.statusCode) {
-        case 200:
-          result = true;
-          isLoading = false;
-          print('200: Pedido ${response.body}');
-          me21nResponse = ME21NResponse.fromJson(response.body);
-          centrosUsuario = me21nResponse!.centrosUsuario;
-          clases = me21nResponse!.clasesDocumento!;
-          orgCompras = me21nResponse!.orgCompras!;
-          gpoCompras = me21nResponse!.gpoCompras!;
-          claseDocumentoSelected = clases.first.code!;
-          orgComprasSelected = orgCompras.first.code!;
-          centroDefault = centrosUsuario!.first.idcentro!;
-          notifyListeners();
-          break;
-        case 401:
-          if (!response.body.contains('code')) {
-            logout();
-            print('logout');
-            break;
-          }
-          isLoading = false;
-          result = false;
-          serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-            (serverResponse?.message != null || serverResponse?.message != '')
-                ? serverResponse!.message!
-                : 'Error de Autenticación.',
-          );
-          break;
-        case 404:
-          isLoading = false;
-          result = false;
-          serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(serverResponse?.message ?? 'Error 404.');
-          notifyListeners();
-          print('404: ${response.body}');
-          break;
-        case 422:
-          isLoading = false;
-          result = false;
-          print('422: ${response.body}');
-          ValidatorResponse validatorResponse =
-              ValidatorResponse.fromJson(response.body);
-          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
-          String messages = '${validatorResponse.message}\n';
-
-          Iterable<dynamic> values = errors.values;
-          for (final error in values) {
-            Iterable<dynamic> errorStrings = error;
-            for (final errorString in errorStrings) {
-              print('error: $errorString');
-              messages = '${messages + errorString}\n';
-            }
-          }
-
-          Notifications.showSnackBar(messages);
-          notifyListeners();
-          break;
-        case 500:
-          isLoading = false;
-          result = false;
-          Notifications.showSnackBar('500 Server Error.');
-          break;
-        default:
-          print('Default: ${response.body}');
-          isLoading = false;
-          result = false;
-      }
-      notifyListeners();
-    } catch (e) {
-      print('Error $e');
-      isLoading = false;
-      if (e.toString().contains('TimeoutException')) {
-        Notifications.showSnackBar(
-            'Tiempo de espera agotado. Favor de reintentar');
-      }
-      notifyListeners();
-    }
-    return result;
-  }
-
   Future<List<Materials>> searchMaterials(String query) async {
     print('Peticion API Search');
     _endPoint = '/api/v1/me21n/search';
@@ -333,28 +170,11 @@ class ME21NProvider extends ChangeNotifier {
     return materials!;
   }
 
-  void getMaterialsByQuery(String query) {
-    debouncer.value = '';
-    debouncer.onValue = (value) async {
-      print('hay valor a buscar $value');
-      final results = await searchMaterials(value);
-      _materialStreamController.add(results);
-    };
-
-    final timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
-      debouncer.value = query;
-    });
-
-    Future.delayed(const Duration(milliseconds: 301)).then(
-      (value) => timer.cancel(),
-    );
-  }
-
-  Future<bool> createOrder() async {
-    isLoading = true;
-    result = false;
-    print('Peticion ME21N - Create');
-    _endPoint = '/api/v1/me21n';
+  Future<List<Materials>> searchSupplierMaterials(String query, String supplier) async {
+    print('Peticion API Search Material Supplier');
+    _endPoint = '/api/v1/materials/supplier';
+    String numeroMaterial = '';
+    String textoBreve = '';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -364,44 +184,35 @@ class ME21NProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    // Modificar la lista antes de enviarla al backend
-    List<PosicionZSTT> listaModificada = posiciones!.map((posicion) {
-      return PosicionZSTT(
-          cantidad: posicion.cantidad,
-          numeroMaterial: posicion.numeroMaterial,
-          centroReceptor: posicion.centroReceptor,
-          unidadMedida: posicion.unidadMedida,
-          esDevolucion: posicion.esDevolucion);
-    }).toList();
+    if (queryHasNumbers(query)) {
+      numeroMaterial = query;
+    } else {
+      textoBreve = query;
+    }
 
-    final CreateZstsRequest pedido = CreateZstsRequest(
-      pedido: PedidoME21N(
-        cabeceraPedido: Cabecera(
-          gpoCompras: gpoCompras,
-          tipoPedido: claseDocumentoSelected,
-        ),
-        posiciones: listaModificada,
-      ),
-    );
+    final Map<String, dynamic> queryParameters = {
+      'numero_material': numeroMaterial,
+      'texto_breve': textoBreve,
+      'centro': centroDefault,
+      'proveedor': supplier,
+    };
 
-    print(pedido.toJson());
-
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint', queryParameters);
 
     try {
+      isLoading = true;
+      materials = [];
+
       final response = await http
-          .post(url, headers: headers, body: pedido.toJson())
-          .timeout(const Duration(seconds: 20));
+          .get(url, headers: headers)
+          .timeout(const Duration(seconds: 30));
 
       switch (response.statusCode) {
         case 200:
-          result = true;
           isLoading = false;
-          print('200: Create ME21N ${response.body}');
-          createOrderResponse = CreateOrderResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-            createOrderResponse!.trace ?? 'Creacion Satisfactoria.',
-          );
+          print('200: ${response.body}');
+          materialResponse = MaterialResponse.fromJson(response.body);
+          materials = materialResponse?.materials;
           notifyListeners();
           break;
         case 401:
@@ -411,7 +222,7 @@ class ME21NProvider extends ChangeNotifier {
             break;
           }
           isLoading = false;
-          result = false;
+          materials = [];
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
@@ -420,9 +231,10 @@ class ME21NProvider extends ChangeNotifier {
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido.');
+              serverResponse?.message?.substring(0, 60) ??
+                  'Error Desconocido.');
           notifyListeners();
-          print('404: ${response.body}');
+          print('404 ${serverResponse?.message}');
           break;
         case 422:
           isLoading = false;
@@ -441,19 +253,15 @@ class ME21NProvider extends ChangeNotifier {
               messages = '${messages + errorString}\n';
             }
           }
-
-          Notifications.showSnackBar(messages);
-          notifyListeners();
           break;
         case 500:
           isLoading = false;
-          print('500: ${response.body}');
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
           isLoading = false;
-          result = false;
+          materials = [];
       }
       notifyListeners();
     } catch (e) {
@@ -465,7 +273,41 @@ class ME21NProvider extends ChangeNotifier {
       }
       notifyListeners();
     }
-    return result;
+    return materials!;
+  }
+
+  void getMaterialsByQuery(String query) {
+    debouncer.value = '';
+    debouncer.onValue = (value) async {
+      print('hay valor a buscar $value');
+      final results = await searchMaterials(value);
+      _materialStreamController.add(results);
+    };
+
+    final timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+      debouncer.value = query;
+    });
+
+    Future.delayed(const Duration(milliseconds: 301)).then(
+      (value) => timer.cancel(),
+    );
+  }
+
+  void getSupplierMaterialsByQuery(String query, String supplier) {
+    debouncer.value = '';
+    debouncer.onValue = (value) async {
+      print('hay valor a buscar $value');
+      final results = await searchSupplierMaterials(query, supplier);
+      _materialStreamController.add(results);
+    };
+
+    final timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+      debouncer.value = query;
+    });
+
+    Future.delayed(const Duration(milliseconds: 301)).then(
+      (value) => timer.cancel(),
+    );
   }
 
   bool queryHasNumbers(String query) {

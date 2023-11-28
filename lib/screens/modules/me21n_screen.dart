@@ -5,6 +5,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/search/me21n_material_search_delegate.dart';
+import 'package:hope_app/search/supplier_material_search_delegate.dart';
+import 'package:hope_app/search/supplier_search_delegate.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:hope_app/ui/notifications.dart';
@@ -19,6 +21,7 @@ class ME21NScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final me21nProvider = Provider.of<ME21NProvider>(context);
+    final supplierProvider = Provider.of<SupplierProvider>(context);
 
     return Scaffold(
       body: const CreateOrder(),
@@ -28,6 +31,7 @@ class ME21NScreen extends StatelessWidget {
           me21nProvider.getCatalogs(),
           me21nProvider.formKey.currentState?.reset(),
           me21nProvider.materialSelected = Materials(),
+          supplierProvider.supplierSelected = Supplier(),
         },
       ),
     );
@@ -43,6 +47,10 @@ class CreateOrder extends StatefulWidget {
 
 class _CreateOrderState extends State<CreateOrder> {
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchSupplierController =
+      TextEditingController();
+  final TextEditingController _searchSupplierMaterialController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +82,16 @@ class _CreateOrderState extends State<CreateOrder> {
               children: [
                 Row(
                   children: [
-                    ClasesDocumentoDropdownList(me21nProvider: me21nProvider),
+                    /**
+                     * se pasan los texteditingcontroller para resetear 
+                     * los input
+                     */
+                    ClasesDocumentoDropdownList(
+                      me21nProvider: me21nProvider,
+                      searchSupplierController: _searchSupplierController,
+                      searchSupplierMaterialController:
+                          _searchSupplierMaterialController,
+                    ),
                     const SizedBox(width: 10),
                     CentrosUsuarioDropdown(miProvider: me21nProvider),
                   ],
@@ -87,8 +104,24 @@ class _CreateOrderState extends State<CreateOrder> {
                     _gpoCompras(gpoCompras: me21nProvider.gpoCompras)
                   ],
                 ),
-                const SizedBox(height: 15),
-                SearchMaterial(searchController: _searchController),
+                (me21nProvider.claseDocumentoSelected != 'ZOCM')
+                    ? Column(
+                        children: [
+                          const SizedBox(height: 15),
+                          SearchMaterial(searchController: _searchController),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          const SizedBox(height: 15),
+                          SearchSupplier(
+                              searchController: _searchSupplierController),
+                          const SizedBox(height: 15),
+                          SearchSupplierMaterial(
+                              searchController:
+                                  _searchSupplierMaterialController),
+                        ],
+                      ),
                 const SizedBox(height: 15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -317,11 +350,18 @@ class _CreateOrderState extends State<CreateOrder> {
 
 class ClasesDocumentoDropdownList extends StatelessWidget {
   final ME21NProvider me21nProvider;
+  final TextEditingController searchSupplierController;
+  final TextEditingController searchSupplierMaterialController;
 
-  ClasesDocumentoDropdownList({super.key, required this.me21nProvider});
+  ClasesDocumentoDropdownList(
+      {super.key,
+      required this.me21nProvider,
+      required this.searchSupplierController,
+      required this.searchSupplierMaterialController});
 
   @override
   Widget build(BuildContext context) {
+    final supplierProvider = Provider.of<SupplierProvider>(context);
     final List<ClasesDocumento> clasesDocumento = me21nProvider.clases;
 
     return Expanded(
@@ -357,9 +397,16 @@ class ClasesDocumentoDropdownList extends StatelessWidget {
         ),
         focusColor: ThemeProvider.blueColor,
         value: me21nProvider.claseDocumentoSelected,
-        onChanged: (String? newValue) {
-          me21nProvider.claseDocumentoSelected = newValue!;
-        },
+        onChanged: (me21nProvider.posiciones!.isEmpty)
+            ? (String? newValue) {
+                me21nProvider.claseDocumentoSelected = newValue!;
+                supplierProvider.supplierSelected = Supplier();
+                //TODO: Resetear el form
+                me21nProvider.formKey.currentState!.reset();
+                searchSupplierController.clear();
+                searchSupplierMaterialController.clear();
+              }
+            : null,
         items: clasesDocumento
             .map<DropdownMenuItem<String>>((ClasesDocumento value) {
           return DropdownMenuItem<String>(
@@ -422,9 +469,11 @@ class OrgComprasDropdown extends StatelessWidget {
         ),
         focusColor: ThemeProvider.blueColor,
         value: me21nProvider.orgComprasSelected,
-        onChanged: (String? newValue) {
-          me21nProvider.orgComprasSelected = newValue!;
-        },
+        onChanged: (me21nProvider.posiciones!.isEmpty)
+            ? (String? newValue) {
+                me21nProvider.orgComprasSelected = newValue!;
+              }
+            : null,
         items: orgCompras.map<DropdownMenuItem<String>>((OrgCompras value) {
           return DropdownMenuItem<String>(
             value: value.code,
@@ -486,9 +535,11 @@ class CentrosUsuarioDropdown extends StatelessWidget {
         ),
         focusColor: ThemeProvider.blueColor,
         value: miProvider.centroDefault,
-        onChanged: (String? newValue) {
-          miProvider.centroDefault = newValue!;
-        },
+        onChanged: (miProvider.posiciones!.isEmpty)
+            ? (String? newValue) {
+                miProvider.centroDefault = newValue!;
+              }
+            : null,
         items: centrosUsuario.map<DropdownMenuItem<String>>((Centros value) {
           return DropdownMenuItem<String>(
             value: value.idcentro,
@@ -571,6 +622,104 @@ class _SearchMaterialState extends State<SearchMaterial> {
         return (value != null && value.length >= 3)
             ? null
             : 'Por favor agrega un material para crear el Pedido.';
+      },
+    );
+  }
+}
+
+class SearchSupplier extends StatefulWidget {
+  final TextEditingController searchController;
+
+  SearchSupplier({super.key, required this.searchController});
+
+  @override
+  State<SearchSupplier> createState() => _SearchSupplierState();
+}
+
+class _SearchSupplierState extends State<SearchSupplier> {
+  @override
+  Widget build(BuildContext context) {
+    final supplierProvider = Provider.of<SupplierProvider>(context);
+
+    return TextFormField(
+      readOnly: true,
+      controller: widget.searchController,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      decoration: InputDecorationsRounded.authInputDecorationRounded(
+        hintText: 'Buscar Proveedor...',
+        labelText: 'Proveedor',
+        color: ThemeProvider.blueColor,
+        suffixIcon: FontAwesomeIcons.magnifyingGlass,
+      ),
+      onTap: () async {
+        await showSearch(
+          context: context,
+          delegate: SupplierSearchDelegate(),
+        );
+
+        if (supplierProvider.supplierSelected.numeroProveedor != '') {
+          widget.searchController.text =
+              supplierProvider.supplierSelected.numeroProveedor ?? '';
+        } else {
+          widget.searchController.clear();
+        }
+      },
+      validator: (value) {
+        return (value != null && value.length >= 3)
+            ? null
+            : 'Por favor agrega un proveedor para crear el Pedido.';
+      },
+    );
+  }
+}
+
+class SearchSupplierMaterial extends StatefulWidget {
+  final TextEditingController searchController;
+
+  SearchSupplierMaterial({super.key, required this.searchController});
+
+  @override
+  State<SearchSupplierMaterial> createState() => _SearchSupplierMaterialState();
+}
+
+class _SearchSupplierMaterialState extends State<SearchSupplierMaterial> {
+  @override
+  Widget build(BuildContext context) {
+    final materialProvider = Provider.of<MaterialProvider>(context);
+    final supplierProvider = Provider.of<SupplierProvider>(context);
+
+    return TextFormField(
+      readOnly: true,
+      // enabled: (supplierProvider.supplierSelected.numeroProveedor != null) ? true:false,
+      controller: widget.searchController,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      decoration: InputDecorationsRounded.authInputDecorationRounded(
+        hintText: 'Buscar Material Prov...',
+        labelText: 'Material Prov',
+        color: ThemeProvider.blueColor,
+        suffixIcon: FontAwesomeIcons.magnifyingGlass,
+      ),
+      onTap: (supplierProvider.supplierSelected.numeroProveedor != null)
+          ? () async {
+              print(
+                  'Ya fue seleccionado el Proveedor ${supplierProvider.supplierSelected.numeroProveedor}');
+              await showSearch(
+                context: context,
+                delegate: SupplierMaterialSearchDelegate(),
+              );
+
+              if (materialProvider.materialSelected.numeroMaterial != '') {
+                widget.searchController.text =
+                    materialProvider.materialSelected.numeroMaterial ?? '';
+              } else {
+                widget.searchController.clear();
+              }
+            }
+          : null,
+      validator: (value) {
+        return (value != null && value.length >= 3)
+            ? null
+            : 'Por favor agrega un material prov para crear el Pedido.';
       },
     );
   }

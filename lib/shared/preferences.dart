@@ -208,4 +208,19 @@ class Preferences {
 
     return fechaFormateada;
   }
+
+  static String padNumberWithZeros(String number, int length) {
+    // Ensure that the length is positive
+    if (length <= 0) {
+      throw ArgumentError('Length must be a positive number.');
+    }
+
+    // Ensure that the number is not null or empty
+    if (number == null || number.isEmpty) {
+      throw ArgumentError('Number cannot be null or empty.');
+    }
+
+    // Pad with zeros to the left until reaching the desired length
+    return number.padLeft(length, '0');
+  }
 }
