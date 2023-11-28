@@ -4,7 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
-import 'package:hope_app/search/me21n_material_search_delegate.dart';
+import 'package:hope_app/search/main_material_search_delegate.dart';
 import 'package:hope_app/search/material_by_supplier_search_delegate.dart';
 import 'package:hope_app/search/supplier_search_delegate.dart';
 import 'package:hope_app/shared/preferences.dart';
@@ -22,6 +22,7 @@ class ME21NScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final me21nProvider = Provider.of<ME21NProvider>(context);
     final supplierProvider = Provider.of<SupplierProvider>(context);
+    final materialProvider = Provider.of<MaterialProvider>(context);
 
     return Scaffold(
       body: const CreateOrder(),
@@ -30,7 +31,7 @@ class ME21NScreen extends StatelessWidget {
         onPressed: () => {
           me21nProvider.getCatalogs(),
           me21nProvider.formKey.currentState?.reset(),
-          me21nProvider.materialSelected = Materials(),
+          materialProvider.materialSelected = Materials(),
           me21nProvider.posiciones = [],
           supplierProvider.supplierSelected = Supplier(),
         },
@@ -56,6 +57,7 @@ class _CreateOrderState extends State<CreateOrder> {
   @override
   Widget build(BuildContext context) {
     final me21nProvider = Provider.of<ME21NProvider>(context);
+    final materialProvider = Provider.of<MaterialProvider>(context);
 
     return Column(
       children: [
@@ -146,7 +148,7 @@ class _CreateOrderState extends State<CreateOrder> {
                           FocusScope.of(context).unfocus();
 
                           if (!me21nProvider.posiciones!
-                              .contains(me21nProvider.materialSelected)) {
+                              .contains(materialProvider.materialSelected)) {
                             print('Cantidad vale: ${me21nProvider.quantity}');
                             setState(() {
                               final pos = PedidoPos(
@@ -154,11 +156,11 @@ class _CreateOrderState extends State<CreateOrder> {
                                 numeroMaterial: me21nProvider
                                     .materialSelected.numeroMaterial,
                                 textoBreve:
-                                    me21nProvider.materialSelected.textoBreve,
+                                    materialProvider.materialSelected.textoBreve,
                                 grupoCompras: me21nProvider.gpoCompras,
                                 centroReceptor: me21nProvider.centroDefault,
                                 unidadMedida:
-                                    me21nProvider.materialSelected.unidadMedida,
+                                    materialProvider.materialSelected.unidadMedida,
                                 claseDocumento:
                                     me21nProvider.claseDocumentoSelected,
                                 //TODO: Depende de la Clase de Doc es si es devolucion o no
@@ -211,6 +213,7 @@ class _CreateOrderState extends State<CreateOrder> {
         ),
         const SizedBox(height: 15),
         Expanded(
+          flex: 10,
           child: ListView.builder(
               padding: const EdgeInsetsDirectional.only(
                 bottom: 150,
@@ -244,47 +247,50 @@ class _CreateOrderState extends State<CreateOrder> {
                 );
               }),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-          child: MaterialButton(
-            onPressed:
-                (me21nProvider.isLoading || me21nProvider.posiciones!.isEmpty)
-                    ? null
-                    : () async {
-                        FocusScope.of(context).unfocus();
-
-                        if (me21nProvider.posiciones!.isEmpty) {
-                          Notifications.showSnackBar(
-                            'Debe agregar al menos un material para crear el Pedido.',
-                          );
-                          return;
-                        }
-
-                        //hacer la peticion al backend
-                        final result = await me21nProvider.createOrder();
-                        if (result) {
-                          me21nProvider.posiciones = [];
-                        }
-                      },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            disabledColor: ThemeProvider.blueColor.withAlpha(150),
-            elevation: 0,
-            color: ThemeProvider.blueColor,
-            minWidth: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-              child: (me21nProvider.isLoading)
-                  ? CircularProgressIndicator.adaptive(
-                      backgroundColor: ThemeProvider.whiteColor,
-                    )
-                  : const Text(
-                      'Crear Pedido',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
+        Expanded(
+          flex: 2,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+            child: MaterialButton(
+              onPressed:
+                  (me21nProvider.isLoading || me21nProvider.posiciones!.isEmpty)
+                      ? null
+                      : () async {
+                          FocusScope.of(context).unfocus();
+        
+                          if (me21nProvider.posiciones!.isEmpty) {
+                            Notifications.showSnackBar(
+                              'Debe agregar al menos un material para crear el Pedido.',
+                            );
+                            return;
+                          }
+        
+                          //hacer la peticion al backend
+                          final result = await me21nProvider.createOrder();
+                          if (result) {
+                            me21nProvider.posiciones = [];
+                          }
+                        },
+              shape:
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              disabledColor: ThemeProvider.blueColor.withAlpha(150),
+              elevation: 0,
+              color: ThemeProvider.blueColor,
+              minWidth: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                child: (me21nProvider.isLoading)
+                    ? CircularProgressIndicator.adaptive(
+                        backgroundColor: ThemeProvider.whiteColor,
+                      )
+                    : const Text(
+                        'Crear Pedido',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
                       ),
-                    ),
+              ),
             ),
           ),
         ),
@@ -298,6 +304,8 @@ class _CreateOrderState extends State<CreateOrder> {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
+        final materialProvider = Provider.of<MaterialProvider>(context);
+
         return AlertDialog(
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
@@ -317,7 +325,7 @@ class _CreateOrderState extends State<CreateOrder> {
                   text: "¿Ya existe el material ",
                   children: [
                     TextSpan(
-                      text: '${me21nProvider.materialSelected.numeroMaterial}',
+                      text: '${materialProvider.materialSelected.numeroMaterial}',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const TextSpan(
@@ -344,10 +352,10 @@ class _CreateOrderState extends State<CreateOrder> {
                     PedidoPos(
                       cantidad: me21nProvider.quantity,
                       numeroMaterial:
-                          me21nProvider.materialSelected.numeroMaterial,
-                      textoBreve: me21nProvider.materialSelected.textoBreve,
+                          materialProvider.materialSelected.numeroMaterial,
+                      textoBreve: materialProvider.materialSelected.textoBreve,
                       centroReceptor: me21nProvider.centroDefault,
-                      unidadMedida: me21nProvider.materialSelected.unidadMedida,
+                      unidadMedida: materialProvider.materialSelected.unidadMedida,
                       claseDocumento: me21nProvider.claseDocumentoSelected,
                       esDevolucion: false,
                     ),
@@ -645,6 +653,7 @@ class _SearchMaterialState extends State<SearchMaterial> {
   @override
   Widget build(BuildContext context) {
     final me21nProvider = Provider.of<ME21NProvider>(context);
+    final materialProvider = Provider.of<MaterialProvider>(context);
 
     return TextFormField(
       readOnly: true,
@@ -659,12 +668,12 @@ class _SearchMaterialState extends State<SearchMaterial> {
       onTap: () async {
         await showSearch(
           context: context,
-          delegate: ME21NMaterialSearchDelegate(),
+          delegate: MainMaterialSearchDelegate(),
         );
 
-        if (me21nProvider.materialSelected.numeroMaterial != '') {
+        if (materialProvider.materialSelected.numeroMaterial != '') {
           widget.searchController.text =
-              me21nProvider.materialSelected.numeroMaterial ?? '';
+              materialProvider.materialSelected.numeroMaterial ?? '';
         } else {
           widget.searchController.clear();
         }
@@ -845,6 +854,7 @@ class __addPositionButtonState extends State<_addPositionButton> {
   @override
   Widget build(BuildContext context) {
     final me21nProvider = Provider.of<ME21NProvider>(context);
+    final materialProvider = Provider.of<MaterialProvider>(context);
 
     return Expanded(
       flex: 1,
@@ -857,17 +867,17 @@ class __addPositionButtonState extends State<_addPositionButton> {
                 FocusScope.of(context).unfocus();
 
                 if (!me21nProvider.posiciones!
-                    .contains(me21nProvider.materialSelected)) {
+                    .contains(materialProvider.materialSelected)) {
                   print('Cantidad vale: ${me21nProvider.quantity}');
                   setState(() {
                     me21nProvider.posiciones?.add(PedidoPos(
                       cantidad: me21nProvider.quantity,
                       numeroMaterial:
-                          me21nProvider.materialSelected.numeroMaterial,
-                      textoBreve: me21nProvider.materialSelected.textoBreve,
+                          materialProvider.materialSelected.numeroMaterial,
+                      textoBreve: materialProvider.materialSelected.textoBreve,
                       grupoCompras: me21nProvider.gpoCompras,
                       centroReceptor: me21nProvider.centroDefault,
-                      unidadMedida: me21nProvider.materialSelected.unidadMedida,
+                      unidadMedida: materialProvider.materialSelected.unidadMedida,
                       claseDocumento: me21nProvider.claseDocumentoSelected,
                       esDevolucion: false,
                     ));
@@ -903,6 +913,8 @@ class __addPositionButtonState extends State<_addPositionButton> {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
+        final materialProvider = Provider.of<MaterialProvider>(context);
+        
         return AlertDialog(
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
@@ -922,7 +934,7 @@ class __addPositionButtonState extends State<_addPositionButton> {
                   text: "¿Ya existe el material ",
                   children: [
                     TextSpan(
-                      text: '${me21nProvider.materialSelected.numeroMaterial}',
+                      text: '${materialProvider.materialSelected.numeroMaterial}',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const TextSpan(
@@ -944,10 +956,10 @@ class __addPositionButtonState extends State<_addPositionButton> {
               onPressed: () async {
                 me21nProvider.posiciones?.add(PedidoPos(
                   cantidad: me21nProvider.quantity,
-                  numeroMaterial: me21nProvider.materialSelected.numeroMaterial,
-                  textoBreve: me21nProvider.materialSelected.textoBreve,
+                  numeroMaterial: materialProvider.materialSelected.numeroMaterial,
+                  textoBreve: materialProvider.materialSelected.textoBreve,
                   centroReceptor: me21nProvider.centroDefault,
-                  unidadMedida: me21nProvider.materialSelected.unidadMedida,
+                  unidadMedida: materialProvider.materialSelected.unidadMedida,
                   claseDocumento: me21nProvider.claseDocumentoSelected,
                   esDevolucion: false,
                 ));

@@ -4,9 +4,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
-import 'package:hope_app/search/material_search_delegate.dart';
+import 'package:hope_app/search/main_material_search_delegate.dart';
 import 'package:hope_app/shared/preferences.dart';
-import 'package:hope_app/ui/input_decorations.dart';
 import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/widgets.dart';
@@ -28,6 +27,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
   @override
   Widget build(BuildContext context) {
     final solpedProvider = Provider.of<SolpedProvider>(context);
+    final materialProvider = Provider.of<MaterialProvider>(context);
     final liberarsolpedProvider = Provider.of<LiberarSolpedProvider>(context);
     final posiciones = solpedProvider.posiciones;
 
@@ -87,11 +87,10 @@ class _SolpedScreenState extends State<SolpedScreen> {
                               onTap: () async {
                                 await showSearch(
                                   context: context,
-                                  delegate: MaterialSearchDelegate(),
+                                  delegate: MainMaterialSearchDelegate(),
                                 );
 
-                                if (solpedProvider
-                                        .materialSelected.numeroMaterial !=
+                                if (materialProvider.materialSelected.numeroMaterial !=
                                     '') {
                                   _searchController.text = solpedProvider
                                           .materialSelected.numeroMaterial ??
@@ -107,7 +106,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                               },
                             ),
                             const SizedBox(height: 20),
-                            (solpedProvider.materialSelected.textoBreve == null)
+                            (materialProvider.materialSelected.textoBreve == null)
                                 ? Container()
                                 : Column(
                                     crossAxisAlignment:
@@ -124,7 +123,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                             ),
                                           ),
                                           Text(
-                                            '${solpedProvider.materialSelected.textoBreve}',
+                                            '${materialProvider.materialSelected.textoBreve}',
                                           ),
                                         ],
                                       ),
@@ -144,7 +143,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                                 ),
                                               ),
                                               Text(
-                                                '${solpedProvider.materialSelected.umeComercial}',
+                                                '${materialProvider.materialSelected.umeComercial}',
                                               ),
                                             ],
                                           ),
@@ -237,7 +236,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                         setState(() {
                                           solpedProvider.formKey.currentState
                                               ?.reset();
-                                          solpedProvider.materialSelected =
+                                          materialProvider.materialSelected =
                                               Materials();
                                           _searchController.clear();
                                           _qtyController.clear();
@@ -246,7 +245,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                         setState(() {
                                           solpedProvider.formKey.currentState
                                               ?.reset();
-                                          solpedProvider.materialSelected =
+                                          materialProvider.materialSelected =
                                               Materials();
                                           _searchController.clear();
                                           _qtyController.clear();
@@ -278,7 +277,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                 ),
                               ),
                             ),
-                            (solpedProvider.materialSelected.textoBreve == null)
+                            (materialProvider.materialSelected.textoBreve == null)
                                 ? const Column(
                                     children: [
                                       SizedBox(height: 15),

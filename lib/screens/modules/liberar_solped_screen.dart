@@ -49,7 +49,14 @@ class LiberarSolpedScreen extends StatelessWidget {
                     ),
                   )
                 : (pedidos.isEmpty)
-                    ? const _emptyContainer()
+                    ? GestureDetector(
+                      onTap: () => liberarSolpedProvider.searchByDates(),
+                      child: EmptyContainer(
+                          assetImage: 'assets/images/modules/order-tracking.png',
+                          text:
+                              'No hay Solicitudes de Pedido disponibles.\nToca para refrescar',
+                        ),
+                    )
                     : SolpedList(
                         pedidos: pedidos, idsSeleccionados: idsSeleccionados);
           },
@@ -231,40 +238,40 @@ validateSelected(LiberarSolpedProvider liberarSolpedProvider) {
           "No existen posiciones seleccionadas. Favor de validar.");
 }
 
-class _emptyContainer extends StatelessWidget {
-  final resultCount;
-  const _emptyContainer({super.key, this.resultCount});
+// class _emptyContainer extends StatelessWidget {
+//   final resultCount;
+//   const _emptyContainer({super.key, this.resultCount});
 
-  @override
-  Widget build(BuildContext context) {
-    final liberarSolpedProvider = Provider.of<LiberarSolpedProvider>(context);
+//   @override
+//   Widget build(BuildContext context) {
+//     final liberarSolpedProvider = Provider.of<LiberarSolpedProvider>(context);
 
-    return Center(
-      child: GestureDetector(
-        onTap: () => liberarSolpedProvider.searchByDates(),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Image(
-              image: AssetImage('assets/images/modules/order-tracking.png'),
-              width: 130,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-              child: Text(
-                'No hay Solicitudes de Pedido disponibles.\nToca para refrescar',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.grey[400],
-                  fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+//     return Center(
+//       child: GestureDetector(
+//         onTap: () => liberarSolpedProvider.searchByDates(),
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             const Image(
+//               image: AssetImage('assets/images/modules/order-tracking.png'),
+//               width: 130,
+//             ),
+//             Padding(
+//               padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+//               child: Text(
+//                 'No hay Solicitudes de Pedido disponibles.\nToca para refrescar',
+//                 textAlign: TextAlign.center,
+//                 style: TextStyle(
+//                   fontSize: 18,
+//                   color: Colors.grey[400],
+//                   fontFamily: 'Roboto',
+//                   fontWeight: FontWeight.w500,
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
