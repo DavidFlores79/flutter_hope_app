@@ -50,19 +50,47 @@ class LiberarSolpedScreen extends StatelessWidget {
                   )
                 : (pedidos.isEmpty)
                     ? GestureDetector(
-                      onTap: () => liberarSolpedProvider.searchByDates(),
-                      child: EmptyContainer(
-                          assetImage: 'assets/images/modules/order-tracking.png',
+                        onTap: () => liberarSolpedProvider.searchByDates(),
+                        child: EmptyContainer(
+                          assetImage:
+                              'assets/images/modules/order-tracking.png',
                           text:
                               'No hay Solicitudes de Pedido disponibles.\nToca para refrescar',
                         ),
-                    )
+                      )
                     : SolpedList(
                         pedidos: pedidos, idsSeleccionados: idsSeleccionados);
           },
         ),
       ),
     );
+  }
+
+  static showModal() {
+
+    //   return showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return AlertDialog(
+    //       shape: const RoundedRectangleBorder(
+    //           borderRadius: BorderRadius.all(Radius.circular(20.0))),
+    //       title: const Text(
+    //         "Detalles",
+    //         textAlign: TextAlign.center,
+    //         style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+    //       ),
+    //       contentPadding:
+    //           const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+    //       content: SingleChildScrollView(
+    //         child: Column(
+    //           children: [
+
+    //           ],
+    //         ),
+    //       ),
+    //     );
+    //   },
+    // );
   }
 }
 
@@ -238,6 +266,29 @@ validateSelected(LiberarSolpedProvider liberarSolpedProvider) {
           "No existen posiciones seleccionadas. Favor de validar.");
 }
 
+showModal(context) {
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        title: const Text(
+          "Detalles",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+        content: SingleChildScrollView(
+          child: Column(
+            children: [],
+          ),
+        ),
+      );
+    },
+  );
+}
 // class _emptyContainer extends StatelessWidget {
 //   final resultCount;
 //   const _emptyContainer({super.key, this.resultCount});
