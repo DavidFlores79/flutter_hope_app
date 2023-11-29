@@ -23,9 +23,10 @@ class ME21NScreen extends StatelessWidget {
     final me21nProvider = Provider.of<ME21NProvider>(context);
     final supplierProvider = Provider.of<SupplierProvider>(context);
     final materialProvider = Provider.of<MaterialProvider>(context);
-
+    final orientation = MediaQuery.of(context).orientation;
+    print('Orientation: $orientation');
     return Scaffold(
-      body: const CreateOrder(),
+      body: (orientation == Orientation.portrait) ? const CreateOrder() : EmptyContainer(assetImage: 'assets/images/icons/portrait.png', text: 'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.'),
       floatingActionButton: FloatingActionButton(
         child: const Icon(FontAwesomeIcons.arrowsRotate),
         onPressed: () => {
@@ -247,50 +248,47 @@ class _CreateOrderState extends State<CreateOrder> {
                 );
               }),
         ),
-        Expanded(
-          flex: 2,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-            child: MaterialButton(
-              onPressed:
-                  (me21nProvider.isLoading || me21nProvider.posiciones!.isEmpty)
-                      ? null
-                      : () async {
-                          FocusScope.of(context).unfocus();
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+          child: MaterialButton(
+            onPressed:
+                (me21nProvider.isLoading || me21nProvider.posiciones!.isEmpty)
+                    ? null
+                    : () async {
+                        FocusScope.of(context).unfocus();
         
-                          if (me21nProvider.posiciones!.isEmpty) {
-                            Notifications.showSnackBar(
-                              'Debe agregar al menos un material para crear el Pedido.',
-                            );
-                            return;
-                          }
+                        if (me21nProvider.posiciones!.isEmpty) {
+                          Notifications.showSnackBar(
+                            'Debe agregar al menos un material para crear el Pedido.',
+                          );
+                          return;
+                        }
         
-                          //hacer la peticion al backend
-                          final result = await me21nProvider.createOrder();
-                          if (result) {
-                            me21nProvider.posiciones = [];
-                          }
-                        },
-              shape:
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              disabledColor: ThemeProvider.blueColor.withAlpha(150),
-              elevation: 0,
-              color: ThemeProvider.blueColor,
-              minWidth: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                child: (me21nProvider.isLoading)
-                    ? CircularProgressIndicator.adaptive(
-                        backgroundColor: ThemeProvider.whiteColor,
-                      )
-                    : const Text(
-                        'Crear Pedido',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
+                        //hacer la peticion al backend
+                        final result = await me21nProvider.createOrder();
+                        if (result) {
+                          me21nProvider.posiciones = [];
+                        }
+                      },
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            disabledColor: ThemeProvider.blueColor.withAlpha(150),
+            elevation: 0,
+            color: ThemeProvider.blueColor,
+            minWidth: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+              child: (me21nProvider.isLoading)
+                  ? CircularProgressIndicator.adaptive(
+                      backgroundColor: ThemeProvider.whiteColor,
+                    )
+                  : const Text(
+                      'Crear Pedido',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
                       ),
-              ),
+                    ),
             ),
           ),
         ),

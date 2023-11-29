@@ -30,10 +30,12 @@ class LiberarSolpedScreen extends StatelessWidget {
             print('futureExecuted $futureExecuted');
 
             if (!snapshot.hasData) {
-              return Container(
-                constraints: const BoxConstraints(maxWidth: 150),
-                height: 250,
-                child: const CupertinoActivityIndicator(),
+              return Center(
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 150),
+                  height: 250,
+                  child: const CupertinoActivityIndicator(),
+                ),
               );
             }
 

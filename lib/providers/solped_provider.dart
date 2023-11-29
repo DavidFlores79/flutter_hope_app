@@ -628,6 +628,14 @@ class SolpedProvider extends ChangeNotifier {
           materials = materialResponse?.materials;
           notifyListeners();
           break;
+        case 400:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print('400: ${response.body}');
+          break;
         case 401:
           if (!response.body.contains('code')) {
             logout();
