@@ -5,11 +5,13 @@ class ConsultaStockResponse {
   int? code;
   String? status;
   List<Centros>? centrosUsuario;
+  Stock? stock;
 
   ConsultaStockResponse({
     this.code,
     this.status,
     this.centrosUsuario,
+    this.stock,
   });
 
   factory ConsultaStockResponse.fromJson(String str) =>
@@ -34,4 +36,32 @@ class ConsultaStockResponse {
             ? []
             : List<dynamic>.from(centrosUsuario!.map((x) => x.toMap())),
       };
+}
+
+class Stock {
+  String? centro;
+  List<DetalleStock>? detalleStock;
+
+  Stock({
+    this.centro,
+    this.detalleStock,
+  });
+}
+
+class DetalleStock {
+  String? centro;
+  String? grupoArticulo;
+  String? numeroMaterial;
+  String? descripcionMaterial;
+  double? stockLibre;
+  double? stockTransito;
+
+  DetalleStock({
+    this.centro,
+    this.grupoArticulo,
+    this.numeroMaterial,
+    this.descripcionMaterial,
+    this.stockLibre,
+    this.stockTransito,
+  });
 }
