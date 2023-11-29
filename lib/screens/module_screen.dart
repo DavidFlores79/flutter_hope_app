@@ -48,6 +48,16 @@ class ModuleScreen extends StatelessWidget {
       route: ME21NScreen.routeName,
       widget: ME21NScreen(),
     ),
+    ModuleScreenDTO(
+      label: 'Consulta Stock',
+      route: ConsultaStockScreen.routeName,
+      widget: ConsultaStockScreen(),
+    ),
+    ModuleScreenDTO(
+      label: 'Recibo Embarque',
+      route: ReciboEmbarqueScreen.routeName,
+      widget: ReciboEmbarqueScreen(),
+    ),
   ];
 
     final ModuleScreenDTO moduleScreen = items.firstWhere(

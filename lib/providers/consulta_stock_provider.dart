@@ -1,40 +1,46 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hope_app/helpers/debouncer.dart';
 import 'package:hope_app/locator.dart';
-import 'package:hope_app/models/migo_entrada_request.dart';
+import 'package:hope_app/models/consulta_stock_response.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/screens/login_screen.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
-class MigoProvider extends ChangeNotifier {
+class ConsultaStockProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   final String _apiUrl = Preferences.apiServer;
   final String _proyectName = Preferences.projectName;
-  String _endPoint = '/api/v1/ordenes-pendientes';
+  String _endPoint = '/api/v1/mi-endpoint';
   String jwtToken = '';
   ServerResponse? serverResponse;
+  ConsultaStockResponse? consultaStockResponse;
   bool result = false;
-  bool contabilizarResult = false;
-  String actividadSelected = 'A01';
-  String documentoSelected = '';
-  String claseSelected = '';
-  String numeroPedido = '';
-  String newValue = '';
-  late MigoOrderResponse migoResponse;
-  List<Posiciones> posicionesSelected = [];
-  bool _maxQty = false;
-  bool _finalDeliveryPos = true;
-
+  final DateTime now = DateTime.now();
+  final debouncer = Debouncer(duration: const Duration(milliseconds: 700));
   final NavigationService _navigationService = locator<NavigationService>();
-
   final storage = const FlutterSecureStorage();
+  List<Centros>? centrosUsuario = [];
+  List results = [];
+  String _centroDefault = '';
+  String material = '';
+  String grupoArticulo = '';
 
-  MigoProvider() {
-    print('Migo provider inicializado');
+  ConsultaStockProvider() {
+    print('ConsultaStock provider inicializado');
+    // searchByDates();
+  }
+
+  bool isValidForm() {
+    return formKey.currentState?.validate() ?? false;
   }
 
   get isLoading => _isLoading;
@@ -43,30 +49,21 @@ class MigoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool get maxQty => _maxQty;
-  set maxQty(bool value) {
-    _maxQty = value;
+  String get centroDefault => _centroDefault;
+
+  set centroDefault(String value) {
+    _centroDefault = value;
     notifyListeners();
   }
 
-  bool get finalDeliveryPos => _finalDeliveryPos;
-  set finalDeliveryPos(bool value) {
-    _finalDeliveryPos = value;
-  }
-
-  bool isValidForm() {
-    //print('$email - $password');
-    return formKey.currentState?.validate() ?? false;
-  }
-
-  Future<bool> getPedido(String numero_pedido) async {
+  //Peticiones API
+  Future<bool> getCatalogs() async {
     isLoading = true;
     result = false;
-    print('Peticion API getPedido');
-    _endPoint = '/api/v1/migo/get-pedido';
+    print('Peticion ME21N - Get Catalogs');
+    _endPoint = '/api/v1/consultastock';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
-    print('MIGO Token: $jwtToken');
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -74,24 +71,21 @@ class MigoProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    final queryParameters = {
-      'pedido': numero_pedido,
-    };
-
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint', queryParameters);
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
     try {
       final response = await http
           .get(url, headers: headers)
           .timeout(const Duration(seconds: 30));
-      posicionesSelected = [];
 
       switch (response.statusCode) {
         case 200:
           result = true;
           isLoading = false;
-          print('200: getPedido ${response.body}');
-          migoResponse = MigoOrderResponse.fromJson(response.body);
+          print('200: Catalogos ${response.body}');
+          consultaStockResponse = ConsultaStockResponse.fromJson(response.body);
+          centrosUsuario = consultaStockResponse!.centrosUsuario;
+          centroDefault = centrosUsuario!.first.idcentro!;
           notifyListeners();
           break;
         case 401:
@@ -100,20 +94,22 @@ class MigoProvider extends ChangeNotifier {
             print('logout');
             break;
           }
-
           isLoading = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error de Autenticación.');
+            (serverResponse?.message != null || serverResponse?.message != '')
+                ? serverResponse!.message!
+                : 'Error de Autenticación.',
+          );
           break;
         case 404:
           isLoading = false;
+          result = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido.');
+          Notifications.showSnackBar(serverResponse?.message ?? 'Error 404.');
           notifyListeners();
-          print(serverResponse);
+          print('404: ${response.body}');
           break;
         case 422:
           isLoading = false;
@@ -132,9 +128,13 @@ class MigoProvider extends ChangeNotifier {
               messages = '${messages + errorString}\n';
             }
           }
+
+          Notifications.showSnackBar(messages);
+          notifyListeners();
           break;
         case 500:
           isLoading = false;
+          result = false;
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
@@ -155,14 +155,14 @@ class MigoProvider extends ChangeNotifier {
     return result;
   }
 
-  Future<bool> contabilizarEntrada() async {
+  Future<bool> search() async {
     isLoading = true;
-    contabilizarResult = false;
-    print('Peticion API');
-    _endPoint = '/api/v1/migo/contabilizar';
+    result = false;
+    print('Peticion API - Search');
+    _endPoint = '/api/v1/consultastock/search';
+    final String formatedDate = DateFormat('yyyy-MM-dd').format(now);
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
-    print('Contabilizar MIGO Token: $jwtToken');
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -170,38 +170,26 @@ class MigoProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    final MigoEntrada101 pedidoContabilizar = MigoEntrada101(
-      cabeceraPedido: migoResponse.pedidoMigo!.cabeceraPedido,
-      documentoPedido: migoResponse.pedidoMigo!.documentoPedido,
-      claseMovimiento: '101',
-      posiciones: posicionesSelected,
-      fechaDoc: DateTime.now(),
-      fechaCont: DateTime.now(),
-    );
+    Map<String, dynamic> dataRaw = {
+      'centro': centroDefault,
+      'articulo': material,
+      'grupo': grupoArticulo,
+    };
 
-    print('''
-      cantidad: ${posicionesSelected[0].cantidad},
-      cantidadRecidida: ${posicionesSelected[0].cantidadRecibida},
-      cantidadFaltante: ${posicionesSelected[0].cantidadFaltante},
-    ''');
-    // return false;
+    print(dataRaw);
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+
     try {
       final response = await http
-          .post(url, headers: headers, body: pedidoContabilizar.toJson())
-          .timeout(const Duration(seconds: 30));
+          .post(url, headers: headers, body: jsonEncode(dataRaw))
+          .timeout(const Duration(seconds: 300));
 
       switch (response.statusCode) {
         case 200:
+          result = true;
           isLoading = false;
-          contabilizarResult = true;
-          result = false;
-          formKey.currentState!.reset();
-          print('200: Contabilizar Pedido ${response.body}');
-          serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(serverResponse?.message ??
-              'Pedido ${migoResponse.pedidoMigo!.documentoPedido} Contabilizado.');
+          print('200: Search Consulta Stock ${response.body}');
           notifyListeners();
           break;
         case 400:
@@ -218,9 +206,8 @@ class MigoProvider extends ChangeNotifier {
             print('logout');
             break;
           }
-
           isLoading = false;
-          contabilizarResult = false;
+          result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
@@ -231,7 +218,7 @@ class MigoProvider extends ChangeNotifier {
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido.');
           notifyListeners();
-          print('404 - $serverResponse');
+          print('404: ${response.body}');
           break;
         case 422:
           isLoading = false;
@@ -250,15 +237,19 @@ class MigoProvider extends ChangeNotifier {
               messages = '${messages + errorString}\n';
             }
           }
+
+          Notifications.showSnackBar(messages);
+          notifyListeners();
           break;
         case 500:
           isLoading = false;
+          print('500: ${response.body}');
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
           isLoading = false;
-          contabilizarResult = false;
+          result = false;
       }
       notifyListeners();
     } catch (e) {
@@ -270,41 +261,12 @@ class MigoProvider extends ChangeNotifier {
       }
       notifyListeners();
     }
-    return contabilizarResult;
+    return result;
   }
 
   logout() async {
     await storage.deleteAll();
     Preferences.apiUser = '';
-    // Notifications.showSnackBar('Su sesión ha vencido.');
     _navigationService.navigateTo(LoginScreen.routeName);
-  }
-
-  bool validatePosQty(Posiciones posicion) {
-    bool isValid = false;
-
-    if (newValue != '') {
-      final val = double.parse(newValue);
-      print('val $val');
-      if (val > double.parse(posicion.cantidadFaltante)) {
-        Notifications.showSnackBar(
-            'La cantidad recibida no puede ser mayor a la del Pedido.');
-        return isValid;
-      }
-      isValid = true;
-    }
-    return isValid;
-  }
-
-  updatePosQty(Posiciones posicion) {
-    final val = newValue;
-    posicion.cantidadRecibida = val;
-    posicion.indicadorEntregaFinal = finalDeliveryPos;
-    int index = posicionesSelected
-        .indexWhere((pos) => pos.numeroMaterial == posicion.numeroMaterial);
-    if (index != -1) {
-      posicionesSelected[index] = posicion;
-    }
-    notifyListeners();
   }
 }

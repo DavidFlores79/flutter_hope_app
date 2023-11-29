@@ -155,7 +155,7 @@ class ME21NProvider extends ChangeNotifier {
         case 200:
           result = true;
           isLoading = false;
-          print('200: Pedido ${response.body}');
+          print('200: Catalogs ${response.body}');
           me21nResponse = ME21NResponse.fromJson(response.body);
           centrosUsuario = me21nResponse!.centrosUsuario;
           clases = me21nResponse!.clasesDocumento!;

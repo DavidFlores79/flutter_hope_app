@@ -92,7 +92,7 @@ class SolpedProvider extends ChangeNotifier {
         case 200:
           result = true;
           isLoading = false;
-          print('200: Pedido ${response.body}');
+          print('200: get Catalogs ${response.body}');
           solpedResponse = SolpedResponse.fromJson(response.body);
           posiciones = solpedResponse?.posiciones;
           centrosUsuario = solpedResponse?.centrosUsuario;
@@ -193,7 +193,7 @@ class SolpedProvider extends ChangeNotifier {
         case 200:
           result = true;
           isLoading = false;
-          print('200: Pedido ${response.body}');
+          print('200: getSolpeds ${response.body}');
           solpedResponse = SolpedResponse.fromJson(response.body);
           posiciones = solpedResponse?.posiciones;
           centrosUsuario = solpedResponse?.centrosUsuario;
@@ -417,7 +417,7 @@ class SolpedProvider extends ChangeNotifier {
         case 200:
           result = true;
           isLoading = false;
-          print('200: Create Solped ${response.body}');
+          print('200: Update Solped ${response.body}');
           solpedResponse = SolpedResponse.fromJson(response.body);
           posiciones = solpedResponse!.posiciones;
           notifyListeners();

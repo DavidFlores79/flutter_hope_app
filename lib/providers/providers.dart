@@ -1,3 +1,4 @@
+export 'package:hope_app/providers/consulta_stock_provider.dart';
 export 'package:hope_app/providers/material_provider.dart';
 export 'package:hope_app/providers/supplier_provider.dart';
 

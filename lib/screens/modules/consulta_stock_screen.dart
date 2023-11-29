@@ -1,0 +1,206 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hope_app/models/centros.dart';
+import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/ui/input_decorations_rounded.dart';
+import 'package:provider/provider.dart';
+
+class ConsultaStockScreen extends StatefulWidget {
+  static const String routeName = 'consultastock';
+
+  const ConsultaStockScreen({super.key});
+
+  @override
+  State<ConsultaStockScreen> createState() => _ConsultaStockScreenState();
+}
+
+class _ConsultaStockScreenState extends State<ConsultaStockScreen> {
+  bool _dialogShown = false;
+
+  @override
+  void initState() {
+    final consultaStockProvider = context.read<ConsultaStockProvider>();
+    consultaStockProvider.getCatalogs();
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Llamamos a showDialog dentro de didChangeDependencies
+    if (!_dialogShown) {
+      _dialogShown = true;
+      Future.delayed(Duration.zero, () {
+        consultaStockModal(context);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final consultaStockProvider = Provider.of<ConsultaStockProvider>(context);
+
+    return Scaffold(
+      body: (consultaStockProvider.isLoading)
+          ? Center(
+              child: SpinKitCubeGrid(
+                color: ThemeProvider.blueColor,
+              ),
+            )
+          : ListView.builder(
+              itemCount: 2,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title:
+                      Text('Hola mundo ${consultaStockProvider.centroDefault}'),
+                );
+              },
+            ),
+    );
+  }
+}
+
+Future consultaStockModal(BuildContext context) {
+  print('mostrar modal');
+  return showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (BuildContext context) {
+      final consultaStockProvider = Provider.of<ConsultaStockProvider>(context);
+
+      return AlertDialog(
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        title: const Text(
+          "Consultar",
+          textAlign: TextAlign.center,
+        ),
+        content: Form(
+          key: consultaStockProvider.formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                autofocus: true,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  TextInputFormatter.withFunction((oldValue, newValue) {
+                    final text = newValue.text;
+                    return text.isEmpty
+                        ? newValue
+                        : int.tryParse(text) == null
+                            ? oldValue
+                            : newValue;
+                  }),
+                ],
+                maxLength: 18,
+                validator: (value) {
+                  return (value != null)
+                      ? null
+                      : 'Por favor agrega un material.';
+                },
+                onChanged: (value) {
+                  print(value);
+                  consultaStockProvider.material = value;
+                },
+                decoration: InputDecorationsRounded.authInputDecorationRounded(
+                  hintText: 'Artículo (opcional)',
+                  labelText: 'Artículo',
+                  color: ThemeProvider.blueColor,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                autofocus: true,
+                autocorrect: false,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                keyboardType: TextInputType.text,
+                textAlign: TextAlign.center,
+                maxLength: 10,
+                decoration: InputDecorationsRounded.authInputDecorationRounded(
+                    hintText: 'Grupo de artículo (opcional)',
+                    labelText: 'Grupo de Artículo',
+                    color: ThemeProvider.blueColor),
+                onChanged: (value) =>
+                    consultaStockProvider.grupoArticulo = value,
+                validator: (value) {
+                  return (value != null) ? null : 'Al menos 3 caracteres.';
+                },
+              ),
+              const SizedBox(height: 10),
+              CentrosUsuario(miProvider: consultaStockProvider),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(
+              "Cancelar",
+              style: TextStyle(color: ThemeProvider.redColor),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              if (!consultaStockProvider.isValidForm()) return;
+              FocusScope.of(context).unfocus();
+              Navigator.pop(context);
+              final result = await consultaStockProvider.search();
+              print('Result: $result');
+            },
+            child: Text(
+              "Confirmar",
+              style: TextStyle(
+                color: ThemeProvider.blueColor,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+class CentrosUsuario extends StatelessWidget {
+  final ConsultaStockProvider miProvider;
+
+  CentrosUsuario({super.key, required this.miProvider});
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Centros> centrosUsuario = miProvider.centrosUsuario!;
+
+    return DropdownButtonFormField(
+      isExpanded: true,
+      decoration: InputDecorationsRounded.authInputDecorationRounded(
+        hintText: '',
+        labelText: 'Centros',
+        color: ThemeProvider.blueColor,
+      ),
+      focusColor: ThemeProvider.blueColor,
+      value: miProvider.centroDefault,
+      onChanged: (String? newValue) {
+        miProvider.centroDefault = newValue!;
+      },
+      items: centrosUsuario.map<DropdownMenuItem<String>>((Centros value) {
+        return DropdownMenuItem<String>(
+          value: value.idcentro,
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(
+              value.idcentro!,
+              style: const TextStyle(fontSize: 14),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}

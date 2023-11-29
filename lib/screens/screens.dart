@@ -1,5 +1,3 @@
-export 'package:hope_app/screens/modules/liberar_solped_screen.dart';
-
 export 'package:hope_app/screens/about_screen.dart';
 export 'package:hope_app/screens/activation_screen.dart';
 export 'package:hope_app/screens/auth_token_screen.dart';
@@ -7,9 +5,12 @@ export 'package:hope_app/screens/home_screen.dart';
 export 'package:hope_app/screens/login_screen.dart';
 export 'package:hope_app/screens/menu_modules_screen.dart';
 export 'package:hope_app/screens/module_screen.dart';
+export 'package:hope_app/screens/modules/consulta_stock_screen.dart';
+export 'package:hope_app/screens/modules/liberar_solped_screen.dart';
 export 'package:hope_app/screens/modules/me21n_screen.dart';
 export 'package:hope_app/screens/modules/migo_screen.dart';
 export 'package:hope_app/screens/modules/monitor_solped_screen.dart';
+export 'package:hope_app/screens/modules/recibo_embarque_screen.dart';
 export 'package:hope_app/screens/modules/solped_screen.dart';
 export 'package:hope_app/screens/notification_screen.dart';
 export 'package:hope_app/screens/pedidos_screen.dart';

@@ -18,12 +18,12 @@ class HomeScreen extends StatelessWidget {
       context,
       listen: false,
     );
-    final solpedProvider = Provider.of<SolpedProvider>(
-      context,
-      listen: false,
-    );
+    // final solpedProvider = Provider.of<SolpedProvider>(
+    //   context,
+    //   listen: false,
+    // );
     modulosProvider.getModulosApp();
-    solpedProvider.getCatalogs();
+    // solpedProvider.getCatalogs();
 
     return Scaffold(
       drawer: const CustomDrawer(),
