@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hope_app/screens/screens.dart';
 
 class ReciboEmbarqueScreen extends StatelessWidget {
   static String routeName = 'reciboembarque';
@@ -8,9 +9,7 @@ class ReciboEmbarqueScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(
-        child: Text('Recibo Embarque'),
-      ),
+      body: UnderConstructionScreen(),
     );
   }
 }

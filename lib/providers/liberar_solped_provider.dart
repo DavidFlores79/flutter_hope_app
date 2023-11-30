@@ -63,7 +63,9 @@ class LiberarSolpedProvider extends ChangeNotifier {
     result = false;
     print('Peticion LIberar Solped - Search');
     _endPoint = '/api/v1/liberarsolped/buscar';
-    final String formatedDate = DateFormat('yyyy-MM-dd').format(now);
+    final DateTime yesterday = now.subtract(const Duration(days: 1));
+    final String initialDate = DateFormat('yyyy-MM-dd').format(yesterday);
+    final String finalDate = DateFormat('yyyy-MM-dd').format(now);
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -74,8 +76,8 @@ class LiberarSolpedProvider extends ChangeNotifier {
     };
 
     Map<String, dynamic> dataRaw = {
-      'fecha_desde': formatedDate,
-      'fecha_hasta': formatedDate,
+      'fecha_desde': initialDate,
+      'fecha_hasta': finalDate,
     };
 
     print(dataRaw);
