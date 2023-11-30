@@ -26,7 +26,12 @@ class ME21NScreen extends StatelessWidget {
     final orientation = MediaQuery.of(context).orientation;
     print('Orientation: $orientation');
     return Scaffold(
-      body: (orientation == Orientation.portrait) ? const CreateOrder() : EmptyContainer(assetImage: 'assets/images/icons/portrait.png', text: 'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.'),
+      body: (orientation == Orientation.portrait)
+          ? const CreateOrder()
+          : EmptyContainer(
+              assetImage: 'assets/images/icons/portrait.png',
+              text:
+                  'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.'),
       floatingActionButton: FloatingActionButton(
         child: const Icon(FontAwesomeIcons.arrowsRotate),
         onPressed: () => {
@@ -108,15 +113,18 @@ class _CreateOrderState extends State<CreateOrder> {
                     const SizedBox(width: 10),
                     _gpoCompras(gpoCompras: me21nProvider.gpoCompras),
                     SizedBox(
-                        width: (me21nProvider.clasesDocumentoProv.contains(me21nProvider.claseDocumentoSelected))
+                        width: (me21nProvider.clasesDocumentoProv
+                                .contains(me21nProvider.claseDocumentoSelected))
                             ? 10
                             : 0),
-                    (me21nProvider.clasesDocumentoProv.contains(me21nProvider.claseDocumentoSelected))
+                    (me21nProvider.clasesDocumentoProv
+                            .contains(me21nProvider.claseDocumentoSelected))
                         ? _almacen(almacen: me21nProvider.almacen)
                         : Container()
                   ],
                 ),
-                (!me21nProvider.clasesDocumentoProv.contains(me21nProvider.claseDocumentoSelected))
+                (!me21nProvider.clasesDocumentoProv
+                        .contains(me21nProvider.claseDocumentoSelected))
                     ? Column(
                         children: [
                           const SizedBox(height: 15),
@@ -148,27 +156,39 @@ class _CreateOrderState extends State<CreateOrder> {
                           if (!me21nProvider.isValidForm()) return;
                           FocusScope.of(context).unfocus();
 
-                          if (!me21nProvider.posiciones!
-                              .contains(materialProvider.materialSelected)) {
-                            print('Cantidad vale: ${me21nProvider.quantity}');
-                            setState(() {
-                              final pos = PedidoPos(
-                                cantidad: me21nProvider.quantity,
-                                numeroMaterial: me21nProvider
-                                    .materialSelected.numeroMaterial,
-                                textoBreve:
-                                    materialProvider.materialSelected.textoBreve,
-                                grupoCompras: me21nProvider.gpoCompras,
-                                centroReceptor: me21nProvider.centroDefault,
-                                unidadMedida:
-                                    materialProvider.materialSelected.unidadMedida,
-                                claseDocumento:
-                                    me21nProvider.claseDocumentoSelected,
-                                //TODO: Depende de la Clase de Doc es si es devolucion o no
-                                esDevolucion: false,
-                              );
+                          print('Cantidad vale: ${me21nProvider.quantity}');
 
-                              if (me21nProvider.clasesDocumentoProv.contains(me21nProvider.claseDocumentoSelected)) {
+                          final pos = PedidoPos(
+                            cantidad: getCantidadConversion(
+                                    materialProvider.materialSelected,
+                                    me21nProvider.quantity)
+                                .toString(),
+                            numeroMaterial: materialProvider
+                                .materialSelected.numeroMaterial,
+                            textoBreve:
+                                materialProvider.materialSelected.textoBreve,
+                            grupoCompras: me21nProvider.gpoCompras,
+                            centroReceptor: me21nProvider.centroDefault,
+                            unidadMedida: materialProvider
+                                .materialSelected.unidadMedidaVisual,
+                            claseDocumento:
+                                me21nProvider.claseDocumentoSelected,
+                            //TODO: Depende de la Clase de Doc es si es devolucion o no
+                            esDevolucion: false,
+                          );
+
+                          print('Material a insertar: ${pos.numeroMaterial}');
+                          for (var pos in me21nProvider.posiciones!) {
+                            print('Material pos: ${pos.numeroMaterial}');
+                          }
+
+                          // if (!me21nProvider.posiciones!.contains(pos)) {
+                          if (!me21nProvider.posiciones!.any((element) =>
+                              element.numeroMaterial == pos.numeroMaterial)) {
+                            print('no existe');
+                            setState(() {
+                              if (me21nProvider.clasesDocumentoProv.contains(
+                                  me21nProvider.claseDocumentoSelected)) {
                                 //agregar el proveedor selecionado
                                 me21nProvider.numeroProveedor = me21nProvider
                                     .getSupplierSelected(context)
@@ -179,15 +199,15 @@ class _CreateOrderState extends State<CreateOrder> {
 
                               me21nProvider.posiciones?.add(pos);
                             });
-                            me21nProvider.formKey.currentState?.reset();
-                            _searchController.clear();
-                            _searchSupplierMaterialController.clear();
-                            setState(() {});
                           } else {
+                            print('si existe');
                             await confirmDuplicate(
                                 me21nProvider, _searchController);
                           }
-
+                          me21nProvider.formKey.currentState?.reset();
+                          _searchController.clear();
+                          _searchSupplierMaterialController.clear();
+                          setState(() {});
                           me21nProvider.isLoading = false;
                         },
                         shape: RoundedRectangleBorder(
@@ -256,14 +276,14 @@ class _CreateOrderState extends State<CreateOrder> {
                     ? null
                     : () async {
                         FocusScope.of(context).unfocus();
-        
+
                         if (me21nProvider.posiciones!.isEmpty) {
                           Notifications.showSnackBar(
                             'Debe agregar al menos un material para crear el Pedido.',
                           );
                           return;
                         }
-        
+
                         //hacer la peticion al backend
                         final result = await me21nProvider.createOrder();
                         if (result) {
@@ -323,7 +343,8 @@ class _CreateOrderState extends State<CreateOrder> {
                   text: "¿Ya existe el material ",
                   children: [
                     TextSpan(
-                      text: '${materialProvider.materialSelected.numeroMaterial}',
+                      text:
+                          '${materialProvider.materialSelected.numeroMaterial}',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const TextSpan(
@@ -348,13 +369,19 @@ class _CreateOrderState extends State<CreateOrder> {
                 setState(() {
                   me21nProvider.posiciones?.add(
                     PedidoPos(
-                      cantidad: me21nProvider.quantity,
+                      cantidad: getCantidadConversion(
+                              materialProvider.materialSelected,
+                              me21nProvider.quantity)
+                          .toString(),
                       numeroMaterial:
                           materialProvider.materialSelected.numeroMaterial,
                       textoBreve: materialProvider.materialSelected.textoBreve,
+                      grupoCompras: me21nProvider.gpoCompras,
                       centroReceptor: me21nProvider.centroDefault,
-                      unidadMedida: materialProvider.materialSelected.unidadMedida,
+                      unidadMedida:
+                          materialProvider.materialSelected.unidadMedidaVisual,
                       claseDocumento: me21nProvider.claseDocumentoSelected,
+                      //TODO: Depende de la Clase de Doc es si es devolucion o no
                       esDevolucion: false,
                     ),
                   );
@@ -381,6 +408,15 @@ class _CreateOrderState extends State<CreateOrder> {
     // Configurar el valor inicial solo la primera vez que se construye el widget
     _searchSupplierController.text = me21nProvider.numeroProveedor;
   }
+}
+
+getCantidadConversion(materialSelected, quantity) {
+  final umren = materialSelected.denConversion;
+  final umrez = materialSelected.numConversion;
+  final cantidad = quantity;
+  final cantidadConversion = (double.parse(umrez!) / double.parse(umren!)) *
+      double.parse(cantidad); //CANTIDAD = (UMREZ / UMREN) * CANTIDAD
+  return cantidadConversion;
 }
 
 class ClasesDocumentoDropdownList extends StatelessWidget {
@@ -869,14 +905,18 @@ class __addPositionButtonState extends State<_addPositionButton> {
                   print('Cantidad vale: ${me21nProvider.quantity}');
                   setState(() {
                     me21nProvider.posiciones?.add(PedidoPos(
-                      cantidad: me21nProvider.quantity,
+                      cantidad: getCantidadConversion(
+                          materialProvider.materialSelected,
+                          me21nProvider.quantity),
                       numeroMaterial:
                           materialProvider.materialSelected.numeroMaterial,
                       textoBreve: materialProvider.materialSelected.textoBreve,
                       grupoCompras: me21nProvider.gpoCompras,
                       centroReceptor: me21nProvider.centroDefault,
-                      unidadMedida: materialProvider.materialSelected.unidadMedida,
+                      unidadMedida:
+                          materialProvider.materialSelected.unidadMedidaVisual,
                       claseDocumento: me21nProvider.claseDocumentoSelected,
+                      //TODO: Depende de la Clase de Doc es si es devolucion o no
                       esDevolucion: false,
                     ));
                   });
@@ -912,7 +952,7 @@ class __addPositionButtonState extends State<_addPositionButton> {
       context: context,
       builder: (BuildContext context) {
         final materialProvider = Provider.of<MaterialProvider>(context);
-        
+
         return AlertDialog(
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
@@ -932,7 +972,8 @@ class __addPositionButtonState extends State<_addPositionButton> {
                   text: "¿Ya existe el material ",
                   children: [
                     TextSpan(
-                      text: '${materialProvider.materialSelected.numeroMaterial}',
+                      text:
+                          '${materialProvider.materialSelected.numeroMaterial}',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const TextSpan(
@@ -954,7 +995,8 @@ class __addPositionButtonState extends State<_addPositionButton> {
               onPressed: () async {
                 me21nProvider.posiciones?.add(PedidoPos(
                   cantidad: me21nProvider.quantity,
-                  numeroMaterial: materialProvider.materialSelected.numeroMaterial,
+                  numeroMaterial:
+                      materialProvider.materialSelected.numeroMaterial,
                   textoBreve: materialProvider.materialSelected.textoBreve,
                   centroReceptor: me21nProvider.centroDefault,
                   unidadMedida: materialProvider.materialSelected.unidadMedida,

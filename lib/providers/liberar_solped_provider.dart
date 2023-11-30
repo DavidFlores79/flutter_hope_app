@@ -24,8 +24,11 @@ class LiberarSolpedProvider extends ChangeNotifier {
   BuscarSolpedsResponse? solpedResponse;
   List<Posicion>? pedidos = [];
   List<int> _posicionesSelected = [];
-  final DateTime now = DateTime.now();
   String _motivoRechazo = '';
+  late String start = DateFormat('yyyy-MM-dd')
+      .format(DateTime.now().subtract(const Duration(days: 1)));
+
+  late String end = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   String get motivoRechazo => _motivoRechazo;
 
@@ -58,14 +61,11 @@ class LiberarSolpedProvider extends ChangeNotifier {
     return formKey.currentState?.validate() ?? false;
   }
 
-  Future<List<Posicion>> searchByDates() async {
+  Future<List<Posicion>> getSolpeds() async {
     isLoading = true;
     result = false;
     print('Peticion LIberar Solped - Search');
     _endPoint = '/api/v1/liberarsolped/buscar';
-    final DateTime yesterday = now.subtract(const Duration(days: 1));
-    final String initialDate = DateFormat('yyyy-MM-dd').format(yesterday);
-    final String finalDate = DateFormat('yyyy-MM-dd').format(now);
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -76,8 +76,8 @@ class LiberarSolpedProvider extends ChangeNotifier {
     };
 
     Map<String, dynamic> dataRaw = {
-      'fecha_desde': initialDate,
-      'fecha_hasta': finalDate,
+      'fecha_desde': start,
+      'fecha_hasta': end,
     };
 
     print(dataRaw);
@@ -91,6 +91,7 @@ class LiberarSolpedProvider extends ChangeNotifier {
 
       switch (response.statusCode) {
         case 200:
+        print('Estatus: $isLoading');
           result = true;
           isLoading = false;
           print('200: Search Liberar Solped ${response.body}');
@@ -175,7 +176,6 @@ class LiberarSolpedProvider extends ChangeNotifier {
     result = false;
     print('Peticion LIberar Solped - Aprobar');
     _endPoint = '/api/v1/liberarsolped/aprobar';
-    final String formatedDate = DateFormat('yyyy-MM-dd').format(now);
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -186,8 +186,8 @@ class LiberarSolpedProvider extends ChangeNotifier {
     };
 
     Map<String, dynamic> dataRaw = {
-      'fecha_desde': formatedDate,
-      'fecha_hasta': formatedDate,
+      'fecha_desde': start,
+      'fecha_hasta': end,
       'solped_seleccionados': posicionesSelected,
     };
 
@@ -283,7 +283,6 @@ class LiberarSolpedProvider extends ChangeNotifier {
     result = false;
     print('Peticion LIberar Solped - Rechazar');
     _endPoint = '/api/v1/liberarsolped/rechazar';
-    final String formatedDate = DateFormat('yyyy-MM-dd').format(now);
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -294,8 +293,8 @@ class LiberarSolpedProvider extends ChangeNotifier {
     };
 
     Map<String, dynamic> dataRaw = {
-      'fecha_desde': formatedDate,
-      'fecha_hasta': formatedDate,
+      'fecha_desde': start,
+      'fecha_hasta': end,
       'solped_seleccionados': posicionesSelected,
       'motivo_rechazo': motivoRechazo
     };

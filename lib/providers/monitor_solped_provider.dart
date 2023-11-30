@@ -24,14 +24,8 @@ class MonitorSolpedProvider extends ChangeNotifier {
   SolpedResponse? solpedResponse;
   String claseDocumento = 'ZADQ';
   List<Posicion>? pedidos = [];
-  late String _start = DateFormat('yyyy-MM-dd')
+  late String start = DateFormat('yyyy-MM-dd')
       .format(DateTime.now().subtract(const Duration(days: 1)));
-
-  String get start => _start;
-
-  set start(String value) {
-    _start = value;
-  }
 
   late String end = DateFormat('yyyy-MM-dd').format(DateTime.now());
 

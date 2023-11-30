@@ -32,12 +32,7 @@ class ModuleScreen extends StatelessWidget {
         route: LiberarSolpedScreen.routeName,
         widget: LiberarSolpedScreen(),
         icon: FontAwesomeIcons.calendar,
-        onPressedCallback: (BuildContext context) {
-          showDialog(
-              context: context,
-              builder: (context) =>
-                  showDatesModal(context, liberarSolpedProvider));
-        },
+        onPressedCallback: (BuildContext context) => showDatesModal(context, liberarSolpedProvider),
       ),
       ModuleScreenDTO(
         label: 'MIGO',
@@ -49,13 +44,7 @@ class ModuleScreen extends StatelessWidget {
         route: MonitorSolpedScreen.routeName,
         widget: MonitorSolpedScreen(),
         icon: FontAwesomeIcons.calendar,
-        onPressedCallback: (BuildContext context) {
-          showDialog(
-              barrierDismissible: true,
-              context: context,
-              builder: (context) =>
-                  showDatesModal(context, monitorSolpedProvider));
-        },
+        onPressedCallback: (BuildContext context) => showDatesModal(context, monitorSolpedProvider),
       ),
       ModuleScreenDTO(
         label: 'Creación de Pedidos',

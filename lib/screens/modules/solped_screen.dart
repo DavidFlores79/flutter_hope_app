@@ -250,7 +250,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                           _searchController.clear();
                                           _qtyController.clear();
                                         });
-                                        liberarsolpedProvider.searchByDates();
+                                        liberarsolpedProvider.getSolpeds();
                                         Notifications.showSnackBar(
                                             'Pedido creado correctamente.');
                                       }

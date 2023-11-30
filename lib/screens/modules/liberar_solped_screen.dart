@@ -20,11 +20,11 @@ class LiberarSolpedScreen extends StatelessWidget {
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () => liberarSolpedProvider.searchByDates(),
+        onRefresh: () => liberarSolpedProvider.getSolpeds(),
         child: FutureBuilder<List<Posicion>>(
           // Llamada al método async desde el Provider
           future: (futureExecuted != true)
-              ? liberarSolpedProvider.searchByDates()
+              ? liberarSolpedProvider.getSolpeds()
               : Future.value(pedidos),
           builder: (context, snapshot) {
             print('futureExecuted $futureExecuted');
@@ -52,7 +52,7 @@ class LiberarSolpedScreen extends StatelessWidget {
                   )
                 : (pedidos.isEmpty)
                     ? GestureDetector(
-                      onTap: () => liberarSolpedProvider.searchByDates(),
+                      onTap: () => liberarSolpedProvider.getSolpeds(),
                       child: EmptyContainer(
                           assetImage: 'assets/images/modules/order-tracking.png',
                           text:
