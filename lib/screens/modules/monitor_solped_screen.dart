@@ -4,14 +4,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
-import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/widgets/empty_container.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
-String fechaInicio = DateFormat('yyyy-MM-dd')
-    .format(DateTime.now().subtract(const Duration(days: 1)));
-String fechaFin = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
 // ignore: must_be_immutable
 class MonitorSolpedScreen extends StatelessWidget {
@@ -25,12 +19,11 @@ class MonitorSolpedScreen extends StatelessWidget {
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () =>
-            solpedMonitorProvider.getSolpeds(fechaInicio, fechaFin),
+        onRefresh: () => solpedMonitorProvider.getSolpeds(),
         child: FutureBuilder<List<Posicion>>(
           // Llamada al método async desde el Provider
           future: (futureExecuted != true)
-              ? solpedMonitorProvider.getSolpeds(fechaInicio, fechaFin)
+              ? solpedMonitorProvider.getSolpeds()
               : Future.value(pedidos),
           builder: (context, snapshot) {
             print('futureExecuted $futureExecuted');
@@ -46,9 +39,11 @@ class MonitorSolpedScreen extends StatelessWidget {
             final List<Posicion> pedidos = snapshot.data!;
             futureExecuted = true;
             return Column(children: [
-              _datepickers(),
+              const SizedBox(
+                height: 20,
+              ),
               solpedMonitorProvider.isLoading
-                  ? const Expanded(
+                  ? const  Expanded(
                       child: Center(
                         child: CupertinoActivityIndicator(),
                       ),
@@ -78,7 +73,6 @@ class ListaObjet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     Posicion pedido;
     return Expanded(
       child: ListView.builder(
@@ -98,7 +92,6 @@ class SlidableSimple extends StatelessWidget {
   SlidableSimple({Key? key, required this.pedido}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    final TextTheme text = Theme.of(context).textTheme;
     return Slidable(
       key: ValueKey(0),
       startActionPane: ActionPane(
@@ -344,217 +337,6 @@ class _solpedFieldTitle extends StatelessWidget {
         ),
         Text(value),
       ],
-    );
-  }
-}
-
-// ignore: unused_element, camel_case_types
-class _datepickers extends StatefulWidget {
-  @override
-  State<_datepickers> createState() => _datepickersState();
-}
-
-// ignore: camel_case_types
-class _datepickersState extends State<_datepickers> {
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _dateController2 = TextEditingController();
-
-  void initState() {
-    super.initState();
-    // Establecer la fecha inicial aquí (por ejemplo, la fecha de hoy)
-    _dateController.text = fechaInicio;
-    _dateController2.text = fechaFin;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final solpedMonitorProvider = Provider.of<MonitorSolpedProvider>(context);
-    final size = MediaQuery.of(context).size;
-    return Container(
-      decoration: BoxDecoration(
-        color: (Preferences.isDarkMode)
-            ? ThemeProvider.lightColor
-            : ThemeProvider.whiteColor,
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 4,
-            spreadRadius: 1,
-            offset: Offset(0, 4),
-          )
-        ],
-      ),
-      // Configura el color del fondo del Card
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Column(children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              SizedBox(
-                width: size.width * .4,
-                child: TextFormField(
-                  controller: _dateController,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: 'Fecha Inicio',
-                    labelStyle: TextStyle(color: ThemeProvider.blueColor),
-                    suffixIcon: Icon(
-                      Icons.calendar_month_outlined,
-                      color: ThemeProvider.blueColor,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: ThemeProvider.blueColor, width: 2.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: ThemeProvider.blueColor, width: 2.0),
-                    ),
-                  ),
-                  textAlign: TextAlign.center,
-                  onTap: () async {
-                    DateTime? selectedDate = await showDatePicker(
-                      locale: const Locale('es'),
-                      context: context,
-                      initialEntryMode: DatePickerEntryMode.calendarOnly,
-                      initialDate:
-                          DateFormat('yyyy-MM-dd').parse(_dateController.text),
-                      firstDate: DateTime(1950),
-                      lastDate:
-                          DateFormat('yyyy-MM-dd').parse(_dateController2.text),
-                      builder: (BuildContext context, Widget? child) {
-                        return Theme(
-                          data: Theme.of(context).copyWith(
-                            colorScheme: Theme.of(context).colorScheme.copyWith(
-                                  primary: ThemeProvider
-                                      .blueColor, // Cambia el color primario al azul
-                                  onPrimary: Colors
-                                      .white, // Cambia el color del texto sobre el color primario
-                                ),
-                            buttonTheme: const ButtonThemeData(
-                              textTheme: ButtonTextTheme.primary,
-                            ),
-                          ),
-                          child: child!,
-                        );
-                      },
-                    );
-
-                    if (selectedDate == null) {
-                      return; // Si se cancela la selección
-                    }
-
-                    setState(() {
-                      var formattedDate =
-                          DateFormat('yyyy-MM-dd').format(selectedDate);
-                      // print('Fecha seleccionada: ${formattedDate.toString()}');
-                      _dateController.text = formattedDate;
-                      fechaInicio = _dateController.text;
-                    });
-                  },
-                ),
-              ),
-              SizedBox(
-                width: size.width * .4,
-                child: TextFormField(
-                  controller: _dateController2,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: 'Fecha Fin',
-                    labelStyle: TextStyle(color: ThemeProvider.blueColor),
-                    suffixIcon: Icon(
-                      Icons.calendar_month_outlined,
-                      color: ThemeProvider.blueColor,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: ThemeProvider.blueColor, width: 2.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: ThemeProvider.blueColor, width: 2.0),
-                    ),
-                  ),
-                  textAlign: TextAlign.center,
-                  onTap: () async {
-                    DateTime? selectedDate = await showDatePicker(
-                      context: context,
-                      locale: const Locale('es'),
-                      initialEntryMode: DatePickerEntryMode.calendarOnly,
-                      initialDate:
-                          DateFormat('yyyy-MM-dd').parse(_dateController2.text),
-                      firstDate:
-                          DateFormat('yyyy-MM-dd').parse(_dateController.text),
-                      lastDate: DateTime(2025),
-                      builder: (BuildContext context, Widget? child) {
-                        return Theme(
-                          data: Theme.of(context).copyWith(
-                            colorScheme: Theme.of(context).colorScheme.copyWith(
-                                  primary: ThemeProvider
-                                      .blueColor, // Cambia el color primario al azul
-                                  onPrimary: Colors
-                                      .white, // Cambia el color del texto sobre el color primario
-                                ),
-                            buttonTheme: const ButtonThemeData(
-                              textTheme: ButtonTextTheme.primary,
-                            ),
-                          ),
-                          child: child!,
-                        );
-                      },
-                    );
-
-                    if (selectedDate == null) {
-                      return; // Si se cancela la selección
-                    }
-
-                    setState(() {
-                      var formattedDate2 =
-                          DateFormat('yyyy-MM-dd').format(selectedDate);
-                      // print('Fecha seleccionada: ${formattedDate.toString()}');
-                      _dateController2.text = formattedDate2;
-                      fechaFin = _dateController2.text;
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Padding(
-              padding: EdgeInsets.only(right: size.width * 0.04),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  MaterialButton(
-                    onPressed: solpedMonitorProvider.isLoading
-                        ? null
-                        : () async {
-                            solpedMonitorProvider.getSolpeds(
-                                _dateController.text, _dateController2.text);
-                          },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    disabledColor: Colors.grey[500],
-                    elevation: 5,
-                    color: ThemeProvider.blueColor,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
-                    child: const Text(
-                      'Buscar',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                  )
-                ],
-              ))
-        ]),
-      ),
     );
   }
 }

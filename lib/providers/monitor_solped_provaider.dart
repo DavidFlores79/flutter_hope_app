@@ -10,6 +10,7 @@ import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class MonitorSolpedProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -23,8 +24,17 @@ class MonitorSolpedProvider extends ChangeNotifier {
   SolpedResponse? solpedResponse;
   String claseDocumento = 'ZADQ';
   List<Posicion>? pedidos = [];
-  late String todayFormatted;
-  late String yesterdayFormatted;
+  late String _start = DateFormat('yyyy-MM-dd')
+      .format(DateTime.now().subtract(const Duration(days: 1)));
+
+  String get start => _start;
+
+  set start(String value) {
+    _start = value;
+  }
+
+  late String end = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
   final debouncer = Debouncer(duration: const Duration(milliseconds: 700));
 
   final NavigationService _navigationService = locator<NavigationService>();
@@ -32,12 +42,9 @@ class MonitorSolpedProvider extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
 
   MonitorSolpedProvider() {
+    // ignore: avoid_print
     print('Monitor Solped  provider inicializado');
-
     // getSolpeds();
-  }
-  String formatDate(DateTime date) {
-    return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }
 
   get isLoading => _isLoading;
@@ -49,13 +56,13 @@ class MonitorSolpedProvider extends ChangeNotifier {
     return formKey.currentState?.validate() ?? false;
   }
 
-  Future<List<Posicion>> getSolpeds(yesterday, today) async {
+  Future<List<Posicion>> getSolpeds() async {
+    // print(start);
+    // print(end);
     isLoading = true;
-    print("Me ejectuto");
-    // Formatear las fechas en el formato deseado (YYYY-MM-DD)
-//  String todayFormatted = formatDate(today);
-//     String yesterdayFormatted = formatDate(yesterday);
-    // Llamar a la función getSolpeds con las fechas
+
+    // ignore: avoid_print
+    print("Voy a buscar solpeds");
     result = false;
     _endPoint = '/api/v1/monitor-solped';
 
@@ -69,8 +76,8 @@ class MonitorSolpedProvider extends ChangeNotifier {
 
     Map<String, dynamic> dataRaw = {
       'clase': 'ZADQ',
-      'fecha_inicio': yesterday,
-      'fecha_fin': today,
+      'fecha_inicio': start,
+      'fecha_fin': end,
     };
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');

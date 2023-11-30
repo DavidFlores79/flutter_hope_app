@@ -22,3 +22,4 @@ export 'package:hope_app/widgets/status_label.dart';
 export 'package:hope_app/widgets/supplier_card.dart';
 export 'package:hope_app/widgets/supplier_search_list.dart';
 export 'package:hope_app/widgets/consulta_stock_modal.dart';
+export 'package:hope_app/widgets/date_container.dart';
