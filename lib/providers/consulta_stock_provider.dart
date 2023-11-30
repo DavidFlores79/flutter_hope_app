@@ -29,6 +29,7 @@ class ConsultaStockProvider extends ChangeNotifier {
   final NavigationService _navigationService = locator<NavigationService>();
   final storage = const FlutterSecureStorage();
   List<Centros>? centrosUsuario = [];
+  List<DetalleStock>? materials = [];
   List results = [];
   String _centroDefault = '';
   String material = '';
@@ -36,7 +37,7 @@ class ConsultaStockProvider extends ChangeNotifier {
 
   ConsultaStockProvider() {
     print('ConsultaStock provider inicializado');
-    // searchByDates();
+    getCatalogs();
   }
 
   bool isValidForm() {
@@ -160,7 +161,6 @@ class ConsultaStockProvider extends ChangeNotifier {
     result = false;
     print('Peticion API - Search');
     _endPoint = '/api/v1/consultastock/search';
-    final String formatedDate = DateFormat('yyyy-MM-dd').format(now);
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -183,13 +183,16 @@ class ConsultaStockProvider extends ChangeNotifier {
     try {
       final response = await http
           .post(url, headers: headers, body: jsonEncode(dataRaw))
-          .timeout(const Duration(seconds: 300));
+          .timeout(const Duration(seconds: 900));
 
       switch (response.statusCode) {
         case 200:
           result = true;
           isLoading = false;
           print('200: Search Consulta Stock ${response.body}');
+          final consultaStockResponse = ConsultaStockResponse.fromJson(response.body);
+          materials = consultaStockResponse.stock?.detalleStock;
+          print('${consultaStockResponse.stock?.detalleStock}');
           notifyListeners();
           break;
         case 400:

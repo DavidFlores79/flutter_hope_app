@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class ModuleScreen extends StatelessWidget {
@@ -51,7 +52,9 @@ class ModuleScreen extends StatelessWidget {
     ModuleScreenDTO(
       label: 'Consulta Stock',
       route: ConsultaStockScreen.routeName,
-      widget: ConsultaStockScreen(),
+      widget: const ConsultaStockScreen(),
+      icon: FontAwesomeIcons.magnifyingGlass,
+      onPressedCallback: (BuildContext context) => consultaStockModal(context),
     ),
     ModuleScreenDTO(
       label: 'Recibo Embarque',
