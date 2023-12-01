@@ -5,11 +5,13 @@ class ReciboEmbarqueResponse {
   int? code;
   String? status;
   List<Centros>? centrosUsuario;
+  List<Embarque>? datos;
 
   ReciboEmbarqueResponse({
     this.code,
     this.status,
     this.centrosUsuario,
+    this.datos,
   });
 
   factory ReciboEmbarqueResponse.fromJson(String str) =>
@@ -25,6 +27,7 @@ class ReciboEmbarqueResponse {
             ? []
             : List<Centros>.from(
                 json["centros_usuario"]!.map((x) => Centros.fromMap(x))),
+        datos: json["datos"] == null ? [] : List<Embarque>.from(json["datos"]!.map((x) => Embarque.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -33,6 +36,166 @@ class ReciboEmbarqueResponse {
         "centros_usuario": centrosUsuario == null
             ? []
             : List<dynamic>.from(centrosUsuario!.map((x) => x.toMap())),
+        "datos": datos == null ? [] : List<dynamic>.from(datos!.map((x) => x.toMap())),
       };
 }
 
+class Embarque {
+    int? id;
+    int? estatusId;
+    String? usuarioVerificador;
+    String? horaInicio;
+    dynamic horaFinalizacion;
+    List<Pallet>? pallets;
+    String? createdAt;
+    String? updatedAt;
+    String? entrega;
+    String? fechaEntrega;
+    String? fechaPicking;
+    String? centro;
+    String? codigoTransporte;
+    String? claseTransporte;
+    int? pesoPlan;
+    double? pesoNeto;
+    dynamic estatus;
+
+    Embarque({
+        this.id,
+        this.estatusId,
+        this.usuarioVerificador,
+        this.horaInicio,
+        this.horaFinalizacion,
+        this.pallets,
+        this.createdAt,
+        this.updatedAt,
+        this.entrega,
+        this.fechaEntrega,
+        this.fechaPicking,
+        this.centro,
+        this.codigoTransporte,
+        this.claseTransporte,
+        this.pesoPlan,
+        this.pesoNeto,
+        this.estatus,
+    });
+
+    factory Embarque.fromJson(String str) => Embarque.fromMap(json.decode(str));
+
+    String toJson() => json.encode(toMap());
+
+    factory Embarque.fromMap(Map<String, dynamic> json) => Embarque(
+        id: json["id"],
+        estatusId: json["estatus_id"],
+        usuarioVerificador: json["usuario_verificador"],
+        horaInicio: json["hora_inicio"],
+        horaFinalizacion: json["hora_finalizacion"],
+        pallets: json["pallets"] == null ? [] : List<Pallet>.from(json["pallets"]!.map((x) => Pallet.fromMap(x))),
+        createdAt: json["created_at"],
+        updatedAt: json["updated_at"],
+        entrega: json["entrega"],
+        fechaEntrega: json["fecha_entrega"],
+        fechaPicking: json["fecha_picking"],
+        centro: json["centro"],
+        codigoTransporte: json["codigo_transporte"],
+        claseTransporte: json["clase_transporte"],
+        pesoPlan: json["peso_plan"],
+        pesoNeto: json["peso_neto"]?.toDouble(),
+        estatus: json["estatus"],
+    );
+
+    Map<String, dynamic> toMap() => {
+        "id": id,
+        "estatus_id": estatusId,
+        "usuario_verificador": usuarioVerificador,
+        "hora_inicio": horaInicio,
+        "hora_finalizacion": horaFinalizacion,
+        "pallets": pallets == null ? [] : List<dynamic>.from(pallets!.map((x) => x.toMap())),
+        "created_at": createdAt,
+        "updated_at": updatedAt,
+        "entrega": entrega,
+        "fecha_entrega": fechaEntrega,
+        "fecha_picking": fechaPicking,
+        "centro": centro,
+        "codigo_transporte": codigoTransporte,
+        "clase_transporte": claseTransporte,
+        "peso_plan": pesoPlan,
+        "peso_neto": pesoNeto,
+        "estatus": estatus,
+    };
+}
+
+class EstatusClass {
+    int? id;
+    String? descripcion;
+    int? estatus;
+    String? createdAt;
+    String? updatedAt;
+
+    EstatusClass({
+        this.id,
+        this.descripcion,
+        this.estatus,
+        this.createdAt,
+        this.updatedAt,
+    });
+
+    factory EstatusClass.fromJson(String str) => EstatusClass.fromMap(json.decode(str));
+
+    String toJson() => json.encode(toMap());
+
+    factory EstatusClass.fromMap(Map<String, dynamic> json) => EstatusClass(
+        id: json["id"],
+        descripcion: json["descripcion"],
+        estatus: json["estatus"],
+        createdAt: json["created_at"],
+        updatedAt: json["updated_at"],
+    );
+
+    Map<String, dynamic> toMap() => {
+        "id": id,
+        "descripcion": descripcion,
+        "estatus": estatus,
+        "created_at": createdAt,
+        "updated_at": updatedAt,
+    };
+}
+
+class Pallet {
+    String? entrega;
+    String? unidadManipulacion;
+    String? numeroContenedor;
+    int? peso;
+    double? volumen;
+    String? estatus;
+
+    Pallet({
+        this.entrega,
+        this.unidadManipulacion,
+        this.numeroContenedor,
+        this.peso,
+        this.volumen,
+        this.estatus,
+    });
+
+    factory Pallet.fromJson(String str) => Pallet.fromMap(json.decode(str));
+
+    String toJson() => json.encode(toMap());
+
+    factory Pallet.fromMap(Map<String, dynamic> json) => Pallet(
+        entrega: json["entrega"],
+        unidadManipulacion: json["unidadManipulacion"],
+        numeroContenedor: json["numeroContenedor"],
+        peso: json["peso"],
+        volumen: json["volumen"]?.toDouble(),
+        estatus: json["estatus"],
+    );
+
+    Map<String, dynamic> toMap() => {
+        "entrega": entrega,
+        "unidadManipulacion": unidadManipulacion,
+        "numeroContenedor": numeroContenedor,
+        "peso": peso,
+        "volumen": volumen,
+        "estatus": estatus,
+    };
+}

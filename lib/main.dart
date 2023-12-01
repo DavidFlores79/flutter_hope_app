@@ -125,8 +125,8 @@ class MyApp extends StatelessWidget {
         MonitorSolpedScreen.routeName: (context) => MonitorSolpedScreen(),
         ME21NScreen.routeName: (context) => ME21NScreen(),
         ConsultaStockScreen.routeName: (context) => ConsultaStockScreen(),
-        UnderConstructionScreen.routeName: (context) =>
-            const UnderConstructionScreen(),
+        UnderConstructionScreen.routeName: (context) => const UnderConstructionScreen(),
+        DescargaPalletsScreen.routeName: (context) => const DescargaPalletsScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );

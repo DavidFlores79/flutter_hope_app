@@ -117,9 +117,7 @@ class MaterialProvider extends ChangeNotifier {
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message?.substring(0, 60) ??
-                  'Error Desconocido.');
+          Notifications.showSnackBar(Preferences.truncateMessage(serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
           print('404 ${serverResponse?.message}');
           break;
@@ -225,9 +223,7 @@ class MaterialProvider extends ChangeNotifier {
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message?.substring(0, 60) ??
-                  'Error Desconocido.');
+          Notifications.showSnackBar(Preferences.truncateMessage(serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
           print('404 ${serverResponse?.message}');
           break;

@@ -223,4 +223,12 @@ class Preferences {
     // Pad with zeros to the left until reaching the desired length
     return number.padLeft(length, '0');
   }
+  
+  static String truncateMessage(String message) {
+    if (message.length > 60) {
+      return '${message.substring(0, 60)}...';
+    } else {
+      return message;
+    }
+  }
 }

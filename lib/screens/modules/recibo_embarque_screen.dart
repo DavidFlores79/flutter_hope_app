@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hope_app/models/centros.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
+
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:hope_app/widgets/widgets.dart';
@@ -21,78 +24,126 @@ class ReciboEmbarqueScreen extends StatelessWidget {
   }
 }
 
-class ReciboEmbarque extends StatelessWidget {
+class ReciboEmbarque extends StatefulWidget {
   const ReciboEmbarque({super.key});
+
+  @override
+  State<ReciboEmbarque> createState() => _ReciboEmbarqueState();
+}
+
+class _ReciboEmbarqueState extends State<ReciboEmbarque> {
+  @override
+  void initState() {
+    super.initState();
+    final reciboEmbarqueProvider = context.read<ReciboEmbarqueProvider>();
+    reciboEmbarqueProvider.getCatalogs();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reciboEmbarqueProvider = context.read<ReciboEmbarqueProvider>();
+
+    return Consumer<ReciboEmbarqueProvider>(
+      builder: (context, reciboEmbarqueProvider, _) {
+        return (reciboEmbarqueProvider.isLoadingCatalogs)
+            ? Center(
+                child: SpinKitCubeGrid(
+                  color: ThemeProvider.blueColor,
+                ),
+              )
+            : // Aquí colocas el contenido del screen cuando isLoading es false
+            const SearchEmbarques();
+      },
+    );
+  }
+}
+
+class SearchEmbarques extends StatelessWidget {
+  const SearchEmbarques({super.key});
 
   @override
   Widget build(BuildContext context) {
     final reciboEmbarqueProvider = Provider.of<ReciboEmbarqueProvider>(context);
 
-    return Container(
-      padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: 15,
-        vertical: 20,
-      ),
-      decoration: BoxDecoration(
-        color: (Preferences.isDarkMode)
-            ? ThemeProvider.lightColor
-            : ThemeProvider.whiteColor,
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 4,
-            spreadRadius: 1,
-            offset: Offset(0, 4),
-          )
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsetsDirectional.symmetric(
+            horizontal: 15,
+            vertical: 20,
+          ),
+          decoration: BoxDecoration(
+            color: (Preferences.isDarkMode)
+                ? ThemeProvider.lightColor
+                : ThemeProvider.whiteColor,
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 4,
+                spreadRadius: 1,
+                offset: Offset(0, 4),
+              )
+            ],
+          ),
+          child: Column(
             children: [
-              CentrosUsuarioDrop(
-                provider: reciboEmbarqueProvider,
+              Row(
+                children: [
+                  CentrosUsuarioDrop(
+                    provider: reciboEmbarqueProvider,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: DatePicker(),
+                  ),
+                ],
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: DatePicker(),
+              const SizedBox(height: 15),
+              MaterialButton(
+                onPressed: (reciboEmbarqueProvider.isLoading)
+                    ? null
+                    : () async {
+                        // if (!reciboEmbarqueProvider.isValidForm()) return;
+                        FocusScope.of(context).unfocus();
+
+                        //hacer la peticion al backend
+                        final result =
+                            await reciboEmbarqueProvider.searchEmbarques();
+                        print('Result $result');
+                      },
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                disabledColor: ThemeProvider.blueColor.withAlpha(150),
+                elevation: 0,
+                color: ThemeProvider.blueColor,
+                minWidth: double.infinity,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                  child: reciboEmbarqueProvider.isLoading
+                      ? const CupertinoActivityIndicator()
+                      : const Text(
+                          'Buscar',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 15),
-          MaterialButton(
-            onPressed: (reciboEmbarqueProvider.isLoading)
-                ? null
-                : () async {
-                    if (!reciboEmbarqueProvider.isValidForm()) return;
-                    reciboEmbarqueProvider.isLoading = true;
-                    FocusScope.of(context).unfocus();
-
-                    //hacer la peticion al backend
-                    final result =
-                        await reciboEmbarqueProvider.searchEmbarques();
-
-                    print('Result $result');
-                  },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            disabledColor: Colors.grey,
-            elevation: 0,
-            color: ThemeProvider.blueColor,
-            minWidth: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-              child: Text(
-                reciboEmbarqueProvider.isLoading ? 'Espere' : 'Buscar',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
+        ),
+        (reciboEmbarqueProvider.isLoading)
+            ? Expanded(
+                child: Center(
+                  child: SpinKitCubeGrid(
+                    color: ThemeProvider.blueColor,
+                  ),
                 ),
-              ),
-            ),
-          )
-        ],
-      ),
+              )
+            : const EmbarquesList(),
+      ],
     );
   }
 }
@@ -158,6 +209,192 @@ class _DatePickerState extends State<DatePicker> {
         reciboEmbarqueProvider.fecha = formattedDate;
         setState(() {});
       },
+    );
+  }
+}
+
+class EmbarquesList extends StatelessWidget {
+  const EmbarquesList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final reciboEmbarqueProvider = Provider.of<ReciboEmbarqueProvider>(context);
+
+    return Expanded(
+      child: ListView.builder(
+        itemCount: reciboEmbarqueProvider.embarques!.length,
+        itemBuilder: (context, index) {
+          final embarque = reciboEmbarqueProvider.embarques![index];
+          return ListTile(
+            title: EmbarqueCard(embarque: embarque),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class EmbarqueCard extends StatelessWidget {
+  final Embarque embarque;
+
+  EmbarqueCard({super.key, required this.embarque});
+
+  @override
+  Widget build(BuildContext context) {
+    const double divider = 5;
+    final estatus =
+        (embarque.estatusId == null) ? embarque.estatus : 'EN PROCESO';
+
+    return ListTile(
+      onTap: () {
+        Navigator.pushNamed(context, DescargaPalletsScreen.routeName, arguments: embarque);
+      },
+      minLeadingWidth: 120,
+      title: Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.only(right: 25, top: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/images/icons/pallet.png', width: 100),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                    decoration: BoxDecoration(
+                        color: (embarque.estatus == 'EMBARCADO')
+                            ? ThemeProvider.greyColor
+                            : ThemeProvider.greenColor,
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Text(
+                      '$estatus',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: ThemeProvider.whiteColor,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: divider),
+                CardItemLabelValue(
+                    label: 'Entrega: ', value: '${embarque.entrega}'),
+                const SizedBox(height: divider),
+                CardItemLabelValue(
+                    label: 'F.Entrega: ', value: '${embarque.fechaEntrega}'),
+                const SizedBox(height: divider),
+                CardItemLabelValue(
+                    label: 'F.Picking: ', value: '${embarque.fechaPicking}'),
+                const SizedBox(height: divider),
+                CardItemLabelValue(
+                    label: 'Centro: ', value: '${embarque.centro}'),
+                (embarque.usuarioVerificador != '' &&
+                        embarque.usuarioVerificador != null)
+                    ? Column(
+                        children: [
+                          const SizedBox(height: divider),
+                          CardItemLabelValue(
+                              label: 'Verif.: ',
+                              value: '${embarque.usuarioVerificador}'),
+                        ],
+                      )
+                    : const SizedBox(),
+                (embarque.claseTransporte != '' &&
+                        embarque.claseTransporte != null)
+                    ? Column(
+                        children: [
+                          const SizedBox(height: divider),
+                          CardItemLabelValue(
+                              label: 'Clase Transp: ',
+                              value: '${embarque.claseTransporte}'),
+                        ],
+                      )
+                    : const SizedBox(),
+                (embarque.claseTransporte != '' &&
+                        embarque.claseTransporte != null)
+                    ? Column(
+                        children: [
+                          const SizedBox(height: divider),
+                          CardItemLabelValue(
+                              label: 'Cod.Transp: ',
+                              value: '${embarque.codigoTransporte}'),
+                        ],
+                      )
+                    : const SizedBox(),
+              ],
+            ),
+          ],
+        ),
+      ),
+      subtitle: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          // Text("Doc.Pedido:${pedido.documentoOc}"),
+          const SizedBox(height: divider),
+          Row(
+            children: [
+              Text(
+                'Peso Plan: ',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: ThemeProvider.blueColor),
+              ),
+              Text(
+                '${embarque.pesoPlan}',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: ThemeProvider.blueColor),
+              ),
+            ],
+          ),
+          const SizedBox(height: divider),
+          Row(
+            children: [
+              Text(
+                'Peso Neto: ',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: ThemeProvider.blueColor),
+              ),
+              Text(
+                '${embarque.pesoNeto}',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: ThemeProvider.blueColor),
+              ),
+            ],
+          ),
+          const SizedBox(height: 26),
+        ],
+      ),
+    );
+  }
+}
+
+class CardItemLabelValue extends StatelessWidget {
+  final String label;
+  final String value;
+  const CardItemLabelValue(
+      {super.key, required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text(value),
+      ],
     );
   }
 }

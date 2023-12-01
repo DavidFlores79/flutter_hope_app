@@ -13,6 +13,9 @@ import 'package:intl/intl.dart';
 class ReciboEmbarqueProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _isLoadingCatalogs = false;
+  bool get isLoadingCatalogs => _isLoadingCatalogs;
+
   final String _apiUrl = Preferences.apiServer;
   final String _proyectName = Preferences.projectName;
   String _endPoint = '/api/v1/mi-endpoint';
@@ -21,7 +24,9 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
   ReciboEmbarqueResponse? reciboEmbarqueResponse;
   bool result = false;
   List<Centros>? centrosUsuario = [];
+  List<Embarque>? embarques = [];
   String _centroDefault = '';
+  late Embarque embarqueSelected;
   late String fecha = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   final NavigationService _navigationService = locator<NavigationService>();
@@ -47,15 +52,15 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
 
   ReciboEmbarqueProvider() {
     print('ReciboEmbarqueProvider inicializado');
-    getCatalogs();
   }
 
   //Peticiones API
-  Future<bool> getCatalogs() async {
-    isLoading = true;
+  Future<List<Centros>> getCatalogs() async {
+    _isLoadingCatalogs = true;
     result = false;
     print('Peticion ReciboEmbarque - Get Catalogs');
     _endPoint = '/api/v1/reciboembarque';
+    embarques = [];
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -75,9 +80,10 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       switch (response.statusCode) {
         case 200:
           result = true;
-          isLoading = false;
+          _isLoadingCatalogs = false;
           print('200: Catalogs ${response.body}');
-          reciboEmbarqueResponse = ReciboEmbarqueResponse.fromJson(response.body);
+          reciboEmbarqueResponse =
+              ReciboEmbarqueResponse.fromJson(response.body);
           centrosUsuario = reciboEmbarqueResponse!.centrosUsuario;
           centroDefault = centrosUsuario!.first.idcentro!;
           notifyListeners();
@@ -88,7 +94,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
             print('logout');
             break;
           }
-          isLoading = false;
+          _isLoadingCatalogs = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
@@ -98,7 +104,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
           );
           break;
         case 404:
-          isLoading = false;
+          _isLoadingCatalogs = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(serverResponse?.message ?? 'Error 404.');
@@ -106,7 +112,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
           print('404: ${response.body}');
           break;
         case 422:
-          isLoading = false;
+          _isLoadingCatalogs = false;
           result = false;
           print('422: ${response.body}');
           ValidatorResponse validatorResponse =
@@ -127,31 +133,32 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
           notifyListeners();
           break;
         case 500:
-          isLoading = false;
+          _isLoadingCatalogs = false;
           result = false;
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
-          isLoading = false;
+          _isLoadingCatalogs = false;
           result = false;
       }
       notifyListeners();
     } catch (e) {
       print('Error $e');
-      isLoading = false;
+      _isLoadingCatalogs = false;
       if (e.toString().contains('TimeoutException')) {
         Notifications.showSnackBar(
             'Tiempo de espera agotado. Favor de reintentar');
       }
       notifyListeners();
     }
-    return result;
+    return centrosUsuario ?? [];
   }
 
-  Future<List> searchEmbarques() async {
+  Future<List<Embarque>> searchEmbarques() async {
     print('Peticion ReciboEmbarque Search');
     _endPoint = '/api/v1/reciboembarque/search';
+    embarques = [];
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -172,13 +179,16 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       isLoading = true;
 
       final response = await http
-          .get(url, headers: headers)
+          .post(url, headers: headers)
           .timeout(const Duration(seconds: 30));
 
       switch (response.statusCode) {
         case 200:
           isLoading = false;
           print('200: ${response.body}');
+          reciboEmbarqueResponse =
+              ReciboEmbarqueResponse.fromJson(response.body);
+          embarques = reciboEmbarqueResponse!.datos;
           notifyListeners();
           break;
         case 401:
@@ -195,9 +205,8 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message?.substring(0, 60) ??
-                  'Error Desconocido.');
+          Notifications.showSnackBar(Preferences.truncateMessage(
+              serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
           print('404 ${serverResponse?.message}');
           break;
@@ -237,7 +246,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       }
       notifyListeners();
     }
-    return [];
+    return embarques ?? [];
   }
 
   Future<bool> contabilizarEmbarque() async {
