@@ -25,10 +25,10 @@ class LiberarSolpedProvider extends ChangeNotifier {
   List<Posicion>? pedidos = [];
   List<int> _posicionesSelected = [];
   String _motivoRechazo = '';
-  late String start = DateFormat('yyyy-MM-dd')
+  late String fecha1 = DateFormat('yyyy-MM-dd')
       .format(DateTime.now().subtract(const Duration(days: 1)));
 
-  late String end = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  late String fecha2 = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   String get motivoRechazo => _motivoRechazo;
 
@@ -76,8 +76,8 @@ class LiberarSolpedProvider extends ChangeNotifier {
     };
 
     Map<String, dynamic> dataRaw = {
-      'fecha_desde': start,
-      'fecha_hasta': end,
+      'fecha_desde': fecha1,
+      'fecha_hasta': fecha2,
     };
 
     print(dataRaw);
@@ -186,8 +186,8 @@ class LiberarSolpedProvider extends ChangeNotifier {
     };
 
     Map<String, dynamic> dataRaw = {
-      'fecha_desde': start,
-      'fecha_hasta': end,
+      'fecha_desde': fecha1,
+      'fecha_hasta': fecha2,
       'solped_seleccionados': posicionesSelected,
     };
 
@@ -293,8 +293,8 @@ class LiberarSolpedProvider extends ChangeNotifier {
     };
 
     Map<String, dynamic> dataRaw = {
-      'fecha_desde': start,
-      'fecha_hasta': end,
+      'fecha_desde': fecha1,
+      'fecha_hasta': fecha2,
       'solped_seleccionados': posicionesSelected,
       'motivo_rechazo': motivoRechazo
     };

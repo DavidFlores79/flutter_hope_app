@@ -24,10 +24,10 @@ class MonitorSolpedProvider extends ChangeNotifier {
   SolpedResponse? solpedResponse;
   String claseDocumento = 'ZADQ';
   List<Posicion>? pedidos = [];
-  late String start = DateFormat('yyyy-MM-dd')
+  late String fecha1 = DateFormat('yyyy-MM-dd')
       .format(DateTime.now().subtract(const Duration(days: 1)));
 
-  late String end = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  late String fecha2 = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   final debouncer = Debouncer(duration: const Duration(milliseconds: 700));
 
@@ -51,8 +51,8 @@ class MonitorSolpedProvider extends ChangeNotifier {
   }
 
   Future<List<Posicion>> getSolpeds() async {
-    // print(start);
-    // print(end);
+    // print(fecha1);
+    // print(fecha2);
     isLoading = true;
 
     // ignore: avoid_print
@@ -70,8 +70,8 @@ class MonitorSolpedProvider extends ChangeNotifier {
 
     Map<String, dynamic> dataRaw = {
       'clase': 'ZADQ',
-      'fecha_inicio': start,
-      'fecha_fin': end,
+      'fecha_inicio': fecha1,
+      'fecha_fin': fecha2,
     };
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');

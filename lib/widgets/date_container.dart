@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:intl/intl.dart';
 
 class DateContainer extends StatefulWidget {
@@ -20,10 +21,10 @@ class DateContainerState extends State<DateContainer> {
   void initState() {
     super.initState();
     dynamic dynamicProvider = widget.provider;
-    _dateController.text = dynamicProvider.start;
-    print("Start${_dateController.text}");
-    _dateController2.text = dynamicProvider.end;
-    print("end${_dateController2.text}");
+    _dateController.text = dynamicProvider.fecha1;
+    print("fecha1${_dateController.text}");
+    _dateController2.text = dynamicProvider.fecha2;
+    print("fecha2${_dateController2.text}");
   }
 
   @override
@@ -37,21 +38,11 @@ class DateContainerState extends State<DateContainer> {
           child: TextFormField(
             controller: _dateController,
             readOnly: true,
-            decoration: InputDecoration(
-              labelText: 'Fecha Inicio',
-              labelStyle: TextStyle(color: ThemeProvider.blueColor),
-              suffixIcon: Icon(
-                Icons.calendar_month_outlined,
-                color: ThemeProvider.blueColor,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: ThemeProvider.blueColor, width: 2.0),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: ThemeProvider.blueColor, width: 2.0),
-              ),
+            decoration: InputDecorationsRounded.authInputDecorationRounded(
+              hintText: 'Fecha inicio',
+              labelText: 'Fecha inicio',
+              suffixIcon: Icons.calendar_month,
+              color: ThemeProvider.blueColor,
             ),
             textAlign: TextAlign.center,
             onTap: () async {
@@ -91,7 +82,7 @@ class DateContainerState extends State<DateContainer> {
                 // print('Fecha seleccionada: ${formattedDate.toString()}');
                 dynamic dynamicProvider = widget.provider;
                 _dateController.text = formattedDate;
-                dynamicProvider.start = formattedDate;
+                dynamicProvider.fecha1 = formattedDate;
                 // print("new valor ${dynamicProvider.start}");
               });
             },
@@ -105,21 +96,11 @@ class DateContainerState extends State<DateContainer> {
           child: TextFormField(
             controller: _dateController2,
             readOnly: true,
-            decoration: InputDecoration(
-              labelText: 'Fecha Fin',
-              labelStyle: TextStyle(color: ThemeProvider.blueColor),
-              suffixIcon: Icon(
-                Icons.calendar_month_outlined,
-                color: ThemeProvider.blueColor,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: ThemeProvider.blueColor, width: 2.0),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: ThemeProvider.blueColor, width: 2.0),
-              ),
+            decoration: InputDecorationsRounded.authInputDecorationRounded(
+              hintText: 'Fecha fin',
+              labelText: 'Fecha fin',
+              suffixIcon: Icons.calendar_month,
+              color: ThemeProvider.blueColor,
             ),
             textAlign: TextAlign.center,
             onTap: () async {
@@ -155,10 +136,10 @@ class DateContainerState extends State<DateContainer> {
 
               setState(() {
                 var formattedDate2 =
-                  DateFormat('yyyy-MM-dd').format(selectedDate);
+                    DateFormat('yyyy-MM-dd').format(selectedDate);
                 dynamic dynamicProvider = widget.provider;
                 _dateController2.text = formattedDate2;
-                dynamicProvider.start = formattedDate2;
+                dynamicProvider.fecha2 = formattedDate2;
                 // dynamicProvider.end = _dateController2.text;
               });
             },
