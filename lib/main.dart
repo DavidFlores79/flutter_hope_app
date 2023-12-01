@@ -78,6 +78,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<ConsultaStockProvider>(
           create: (context) => ConsultaStockProvider(),
         ),
+        ChangeNotifierProvider<ReciboEmbarqueProvider>(
+          create: (context) => ReciboEmbarqueProvider(),
+        ),
       ],
       child: const MyApp(),
     );

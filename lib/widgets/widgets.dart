@@ -1,3 +1,5 @@
+export 'package:hope_app/widgets/centros_dropdown.dart';
+
 export 'package:hope_app/widgets/auth_background.dart';
 export 'package:hope_app/widgets/bottom_navigation_bar.dart';
 export 'package:hope_app/widgets/card_container.dart';
