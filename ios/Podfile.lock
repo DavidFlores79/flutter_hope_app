@@ -1,5 +1,7 @@
 PODS:
   - Flutter (1.0.0)
+  - flutter_barcode_scanner (2.0.0):
+    - Flutter
   - flutter_secure_storage (6.0.0):
     - Flutter
   - onesignal_flutter (5.0.4):
@@ -52,6 +54,7 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - flutter_barcode_scanner (from `.symlinks/plugins/flutter_barcode_scanner/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - onesignal_flutter (from `.symlinks/plugins/onesignal_flutter/ios`)
   - OneSignalXCFramework (< 6.0, >= 5.0.0)
@@ -64,6 +67,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  flutter_barcode_scanner:
+    :path: ".symlinks/plugins/flutter_barcode_scanner/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
   onesignal_flutter:
@@ -73,11 +78,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_barcode_scanner: 7a1144744c28dc0c57a8de7218ffe5ec59a9e4bf
   flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
   onesignal_flutter: 2c2f01520fa953d93fad18162538cc98d6da009b
   OneSignalXCFramework: 7e0a6d68dda7e80b03069bd145232f480f8c2279
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
 
-PODFILE CHECKSUM: 62d3aeffe2098f1daf22f3564a092246689d468a
+PODFILE CHECKSUM: f6ecfdb7a5c1f4cc1d476fe5ca9bcf3243fe98dd
 
 COCOAPODS: 1.14.2

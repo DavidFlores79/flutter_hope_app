@@ -164,7 +164,7 @@ class Pallet {
     String? entrega;
     String? unidadManipulacion;
     String? numeroContenedor;
-    int? peso;
+    double? peso;
     double? volumen;
     String? estatus;
 
@@ -185,7 +185,7 @@ class Pallet {
         entrega: json["entrega"],
         unidadManipulacion: json["unidadManipulacion"],
         numeroContenedor: json["numeroContenedor"],
-        peso: json["peso"],
+        peso: json["peso"]?.toDouble(),
         volumen: json["volumen"]?.toDouble(),
         estatus: json["estatus"],
     );

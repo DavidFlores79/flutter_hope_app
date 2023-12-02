@@ -216,8 +216,8 @@ class Preferences {
     }
 
     // Ensure that the number is not null or empty
-    if (number == null || number.isEmpty) {
-      throw ArgumentError('Number cannot be null or empty.');
+    if (number.isEmpty) {
+      return '';
     }
 
     // Pad with zeros to the left until reaching the desired length

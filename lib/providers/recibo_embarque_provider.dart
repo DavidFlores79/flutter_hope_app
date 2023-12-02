@@ -26,6 +26,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
   List<Centros>? centrosUsuario = [];
   List<Embarque>? embarques = [];
   String _centroDefault = '';
+  String palletCaptured = '';
   late Embarque embarqueSelected;
   late String fecha = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
@@ -249,6 +250,135 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
     return embarques ?? [];
   }
 
+  Future<bool> guardarEmbarque() async {
+    print('Peticion ReciboEmbarque Search');
+    _endPoint = '/api/v1/reciboembarque';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    // final Map<String, dynamic> queryParameters = {
+    //   'fecha_recepcion': fecha,
+    //   'centro': centroDefault,
+    // };
+
+    // print(embarqueSelected.toJson());
+    print('Embarque ${embarqueSelected.toJson()}');
+
+    return false;
+
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint', embarqueSelected.toMap());
+
+    try {
+      isLoading = true;
+
+      final response = await http
+          .post(url, headers: headers)
+          .timeout(const Duration(seconds: 30));
+
+      switch (response.statusCode) {
+        case 200:
+          isLoading = false;
+          print('200: ${response.body}');
+          reciboEmbarqueResponse =
+              ReciboEmbarqueResponse.fromJson(response.body);
+          embarques = reciboEmbarqueResponse!.datos;
+          notifyListeners();
+          break;
+        case 401:
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(Preferences.truncateMessage(
+              serverResponse?.message ?? 'Error Desconocido.'));
+          notifyListeners();
+          print('404 ${serverResponse?.message}');
+          break;
+        case 422:
+          isLoading = false;
+          result = false;
+          print('422: ${response.body}');
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
+          break;
+        case 500:
+          isLoading = false;
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return result;
+  }
+
+  bool isPalletCapturedValid() {
+    print('Captured Value $palletCaptured');
+    print('Cuantos Pallets ${embarqueSelected.pallets!.length}');
+    palletCaptured = Preferences.padNumberWithZeros(palletCaptured, 20);
+    // Verificar si el palletCaptured está dentro de la lista de pallets
+    var foundPallet = embarqueSelected.pallets!.firstWhere(
+      (pallet) => pallet.numeroContenedor == palletCaptured,
+      orElse: () => Pallet(),
+    );
+    print('foundPallet ${foundPallet.toJson()}');
+
+    if (foundPallet.numeroContenedor != null) {
+      if (foundPallet.estatus == 'DESCARGADO') {
+        Notifications.showFloatingSnackBar(
+            'El pallet $palletCaptured ya se encuentra registrado.');
+        return false;
+      }
+      // Si encontramos el pallet, actualizamos su estatus a "DESCARGADO"
+      foundPallet.estatus = 'DESCARGADO';
+      Notifications.showFloatingSnackBar(
+          'Pallet $palletCaptured fue Descargado correctamente.');
+      guardarEmbarque();
+      notifyListeners(); // Notificamos a los oyentes que el estado ha cambiado
+      return true; // Indicamos que el palletCaptured es válido
+    } else {
+      Notifications.showFloatingSnackBar(
+          'El número de Pallet no se encuentra en el embarque.');
+      return false; // Indicamos que el palletCaptured no está en la lista
+    }
+  }
+
   Future<bool> contabilizarEmbarque() async {
     isLoading = true;
     result = false;
@@ -262,6 +392,9 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       'Accept': 'application/json',
       'Authorization': 'Bearer $jwtToken'
     };
+
+    isLoading = false;
+    return false;
 
     // Modificar la lista antes de enviarla al backend
     // List<PosicionZSTT> listaModificada = posiciones!.map((posicion) {
