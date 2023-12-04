@@ -8,6 +8,7 @@ import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:hope_app/widgets/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class DescargaPalletsScreen extends StatefulWidget {
@@ -35,7 +36,7 @@ class _DescargaPalletsScreenState extends State<DescargaPalletsScreen> {
         .listen((barcode) => print(barcode));
   }
 
-  Future<void> scanQR() async {
+  Future<void> scanQR(ReciboEmbarqueProvider reciboEmbarqueProvider, barCodeController) async {
     String barcodeScanRes;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
@@ -51,8 +52,18 @@ class _DescargaPalletsScreenState extends State<DescargaPalletsScreen> {
     // setState to update our non-existent appearance.
     if (!mounted) return;
 
-    setState(() {
+    setState(() async {
       _scanBarcode = barcodeScanRes;
+      reciboEmbarqueProvider.palletCaptured = barcodeScanRes;
+      final result = await reciboEmbarqueProvider.isPalletCapturedValid();
+      print('Result $result');
+      if(result) {
+        reciboEmbarqueProvider.palletCaptured = '';
+        reciboEmbarqueProvider.embarqueSelected = reciboEmbarqueProvider.reciboEmbarqueResponse!.dato!;
+        setState(() {
+          barCodeController.text = '';
+        });
+      }
     });
   }
 
@@ -81,11 +92,11 @@ class _DescargaPalletsScreenState extends State<DescargaPalletsScreen> {
   @override
   Widget build(BuildContext context) {
     final reciboEmbarqueProvider = Provider.of<ReciboEmbarqueProvider>(context);
-    final Embarque embarque =
-        ModalRoute.of(context)!.settings.arguments as Embarque;
-    reciboEmbarqueProvider.embarqueSelected = embarque;
+    // reciboEmbarqueProvider.embarqueSelected = ModalRoute.of(context)!.settings.arguments as Embarque;
     final List<Pallet> palletsDescargados =
         reciboEmbarqueProvider.embarqueSelected.pallets!;
+
+    print('Embarque ID ${reciboEmbarqueProvider.embarqueSelected.id}');
 
     return Scaffold(
       appBar: AppBar(
@@ -100,11 +111,29 @@ class _DescargaPalletsScreenState extends State<DescargaPalletsScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                CardItemLabelValue(label: 'Entrega: ', value: '${embarque.entrega}'),
-                CardItemLabelValue(label: 'Ingresados: ', value: '${embarque.pallets!.where((pallet) => pallet.estatus == 'DESCARGADO').length}'),
-                CardItemLabelValue(label: 'Restantes: ', value: '${embarque.pallets!.where((pallet) => pallet.estatus != 'DESCARGADO').length}'),
-                CardItemLabelValue(label: 'Peso Total: ', value: embarque.pallets!.where((pallet) => pallet.estatus == 'DESCARGADO').fold(0.0, (prev, pallet) => prev + pallet.peso!).toStringAsFixed(3)),
-                CardItemLabelValue(label: 'Volumen Total: ', value: embarque.pallets!.where((pallet) => pallet.estatus == 'DESCARGADO').fold(0.0, (prev, pallet) => prev + pallet.volumen!).toStringAsFixed(3)),
+                CardItemLabelValue(label: 'ID: ', value: '${reciboEmbarqueProvider.embarqueSelected.id}'),
+                CardItemLabelValue(
+                    label: 'Entrega: ', value: '${reciboEmbarqueProvider.embarqueSelected.entrega}'),
+                CardItemLabelValue(
+                    label: 'Ingresados: ',
+                    value:
+                        '${reciboEmbarqueProvider.embarqueSelected.pallets!.where((pallet) => pallet.estatus == 'DESCARGADO').length}'),
+                CardItemLabelValue(
+                    label: 'Restantes: ',
+                    value:
+                        '${reciboEmbarqueProvider.embarqueSelected.pallets!.where((pallet) => pallet.estatus != 'DESCARGADO').length}'),
+                CardItemLabelValue(
+                    label: 'Peso Total: ',
+                    value: reciboEmbarqueProvider.embarqueSelected.pallets!
+                        .where((pallet) => pallet.estatus == 'DESCARGADO')
+                        .fold(0.0, (prev, pallet) => prev + pallet.peso!)
+                        .toStringAsFixed(3)),
+                CardItemLabelValue(
+                    label: 'Volumen Total: ',
+                    value: reciboEmbarqueProvider.embarqueSelected.pallets!
+                        .where((pallet) => pallet.estatus == 'DESCARGADO')
+                        .fold(0.0, (prev, pallet) => prev + pallet.volumen!)
+                        .toStringAsFixed(3)),
               ],
             ),
           ),
@@ -124,14 +153,14 @@ class _DescargaPalletsScreenState extends State<DescargaPalletsScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () => scanQR(),
+        onPressed: (reciboEmbarqueProvider.embarqueSelected.pallets!.where((pallet) => pallet.estatus != 'DESCARGADO').isNotEmpty) ? () => scanQR(reciboEmbarqueProvider, _barCodeController) : null,
         child: const Icon(FontAwesomeIcons.barcode),
       ),
       bottomNavigationBar: BottomAppBar(
           color: ThemeProvider.lightColor,
           shape: const CircularNotchedRectangle(),
           child: const SizedBox(
-            height: 20,
+            height: 35,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[],
@@ -168,18 +197,23 @@ class ConfirmButton extends StatelessWidget {
       ),
       child: MaterialButton(
         onPressed: (reciboEmbarqueProvider.embarqueSelected.pallets!
-                                .where(
-                                  (pallet) => pallet.estatus == 'DESCARGADO',
-                                )
-                                .length !=
-                            reciboEmbarqueProvider
-                                .embarqueSelected.pallets!.length)
+                        .where(
+                          (pallet) => pallet.estatus == 'DESCARGADO',
+                        )
+                        .length !=
+                    reciboEmbarqueProvider.embarqueSelected.pallets!.length ||
+                reciboEmbarqueProvider.isLoading)
             ? null
             : () async {
                 FocusScope.of(context).unfocus();
-
+                reciboEmbarqueProvider.embarqueSelected.horaFinalizacion =
+                    DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
                 //hacer la peticion al backend
-                final result = await reciboEmbarqueProvider.contabilizarEmbarque();
+                final result =
+                    await reciboEmbarqueProvider.contabilizarEmbarque();
+                if (result) {
+                  Future.microtask(() => Navigator.pop(context));
+                }
                 print('Result $result');
               },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -246,6 +280,7 @@ class _AddPalletFormState extends State<AddPalletForm> {
                   flex: 4,
                   child: TextFormField(
                     // readOnly: true,
+                    maxLength: 20,
                     controller: widget.barCodeController,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     decoration:
@@ -267,43 +302,49 @@ class _AddPalletFormState extends State<AddPalletForm> {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: MaterialButton(
-                    onPressed: (reciboEmbarqueProvider.embarqueSelected.pallets!
-                                .where(
-                                  (pallet) => pallet.estatus == 'DESCARGADO',
-                                )
-                                .length ==
-                            reciboEmbarqueProvider
-                                .embarqueSelected.pallets!.length)
-                        ? null
-                        : () async {
-                            if (!reciboEmbarqueProvider.isValidForm()) return;
-                            FocusScope.of(context).unfocus();
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 20),
+                    child: MaterialButton(
+                      onPressed: (reciboEmbarqueProvider
+                                  .embarqueSelected.pallets!
+                                  .where(
+                                    (pallet) => pallet.estatus == 'DESCARGADO',
+                                  )
+                                  .length ==
+                              reciboEmbarqueProvider
+                                  .embarqueSelected.pallets!.length)
+                          ? null
+                          : () async {
+                              if (!reciboEmbarqueProvider.isValidForm()) return;
+                              FocusScope.of(context).unfocus();
 
-                            //hacer la peticion al backend
-                            // final result = await reciboEmbarqueProvider.agregarPallet();
-                            final result = await reciboEmbarqueProvider
-                                .isPalletCapturedValid();
-                            print('Result $result');
-                            reciboEmbarqueProvider.palletCaptured = '';
-                            setState(() {
-                              widget.barCodeController.text = '';
-                            });
-                          },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    disabledColor: ThemeProvider.blueColor.withAlpha(150),
-                    elevation: 0,
-                    color: ThemeProvider.blueColor,
-                    minWidth: double.infinity,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: reciboEmbarqueProvider.isLoading
-                          ? const CupertinoActivityIndicator()
-                          : Icon(
-                              FontAwesomeIcons.floppyDisk,
-                              color: ThemeProvider.whiteColor,
-                            ),
+                              //hacer la peticion al backend
+                              // final result = await reciboEmbarqueProvider.agregarPallet();
+                              final result = await reciboEmbarqueProvider.isPalletCapturedValid();
+                              print('Result $result');
+                              if(result) {
+                                reciboEmbarqueProvider.palletCaptured = '';
+                                reciboEmbarqueProvider.embarqueSelected = reciboEmbarqueProvider.reciboEmbarqueResponse!.dato!;
+                                setState(() {
+                                  widget.barCodeController.text = '';
+                                });
+                              }
+                            },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      disabledColor: ThemeProvider.blueColor.withAlpha(150),
+                      elevation: 0,
+                      color: ThemeProvider.blueColor,
+                      minWidth: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: reciboEmbarqueProvider.isLoading
+                            ? const CupertinoActivityIndicator()
+                            : Icon(
+                                FontAwesomeIcons.floppyDisk,
+                                color: ThemeProvider.whiteColor,
+                              ),
+                      ),
                     ),
                   ),
                 ),

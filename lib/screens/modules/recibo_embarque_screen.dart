@@ -41,7 +41,6 @@ class _ReciboEmbarqueState extends State<ReciboEmbarque> {
 
   @override
   Widget build(BuildContext context) {
-    final reciboEmbarqueProvider = context.read<ReciboEmbarqueProvider>();
 
     return Consumer<ReciboEmbarqueProvider>(
       builder: (context, reciboEmbarqueProvider, _) {
@@ -241,13 +240,15 @@ class EmbarqueCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final reciboEmbarqueProvider = Provider.of<ReciboEmbarqueProvider>(context);
     const double divider = 5;
     final estatus =
         (embarque.estatusId == null) ? embarque.estatus : 'EN PROCESO';
 
     return ListTile(
       onTap: () {
-        Navigator.pushNamed(context, DescargaPalletsScreen.routeName, arguments: embarque);
+        reciboEmbarqueProvider.embarqueSelected = embarque;
+        Navigator.pushNamed(context, DescargaPalletsScreen.routeName);
       },
       minLeadingWidth: 120,
       title: Padding(

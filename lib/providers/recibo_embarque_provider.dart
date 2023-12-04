@@ -98,7 +98,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
           _isLoadingCatalogs = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
+          Notifications.showFloatingSnackBar(
             (serverResponse?.message != null || serverResponse?.message != '')
                 ? serverResponse!.message!
                 : 'Error de Autenticación.',
@@ -108,7 +108,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
           _isLoadingCatalogs = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(serverResponse?.message ?? 'Error 404.');
+          Notifications.showFloatingSnackBar(serverResponse?.message ?? 'Error 404.');
           notifyListeners();
           print('404: ${response.body}');
           break;
@@ -130,13 +130,13 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
             }
           }
 
-          Notifications.showSnackBar(messages);
+          Notifications.showFloatingSnackBar(messages);
           notifyListeners();
           break;
         case 500:
           _isLoadingCatalogs = false;
           result = false;
-          Notifications.showSnackBar('500 Server Error.');
+          Notifications.showFloatingSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
@@ -148,7 +148,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       print('Error $e');
       _isLoadingCatalogs = false;
       if (e.toString().contains('TimeoutException')) {
-        Notifications.showSnackBar(
+        Notifications.showFloatingSnackBar(
             'Tiempo de espera agotado. Favor de reintentar');
       }
       notifyListeners();
@@ -200,13 +200,13 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
           }
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
+          Notifications.showFloatingSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
           break;
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(Preferences.truncateMessage(
+          Notifications.showFloatingSnackBar(Preferences.truncateMessage(
               serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
           print('404 ${serverResponse?.message}');
@@ -231,7 +231,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
           break;
         case 500:
           isLoading = false;
-          Notifications.showSnackBar('500 Server Error.');
+          Notifications.showFloatingSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
@@ -242,7 +242,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       print('Error $e');
       isLoading = false;
       if (e.toString().contains('TimeoutException')) {
-        Notifications.showSnackBar(
+        Notifications.showFloatingSnackBar(
             'Tiempo de espera agotado. Favor de reintentar');
       }
       notifyListeners();
@@ -262,33 +262,27 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    // final Map<String, dynamic> queryParameters = {
-    //   'fecha_recepcion': fecha,
-    //   'centro': centroDefault,
-    // };
+    embarqueSelected.horaInicio = (embarqueSelected.id != null) ? DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(embarqueSelected.horaInicio!)) : DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
+    print(embarqueSelected.toJson());
 
-    // print(embarqueSelected.toJson());
-    print('Embarque ${embarqueSelected.toJson()}');
-
-    return false;
-
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint', embarqueSelected.toMap());
-
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    
     try {
       isLoading = true;
 
-      final response = await http
-          .post(url, headers: headers)
+    final response = await http
+          .post(url, headers: headers, body: embarqueSelected.toJson())
           .timeout(const Duration(seconds: 30));
 
       switch (response.statusCode) {
         case 200:
           isLoading = false;
           print('200: ${response.body}');
-          reciboEmbarqueResponse =
-              ReciboEmbarqueResponse.fromJson(response.body);
-          embarques = reciboEmbarqueResponse!.datos;
+          reciboEmbarqueResponse = ReciboEmbarqueResponse.fromJson(response.body);
+          embarqueSelected = reciboEmbarqueResponse!.dato!;
           notifyListeners();
+          print('embarque guardado ${embarqueSelected.id}');
+          searchEmbarques();
           break;
         case 401:
           if (!response.body.contains('code')) {
@@ -298,13 +292,13 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
           }
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
+          Notifications.showFloatingSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
           break;
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(Preferences.truncateMessage(
+          Notifications.showFloatingSnackBar(Preferences.truncateMessage(
               serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
           print('404 ${serverResponse?.message}');
@@ -326,10 +320,11 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
               messages = '${messages + errorString}\n';
             }
           }
+          Notifications.showFloatingSnackBar(messages);
           break;
         case 500:
           isLoading = false;
-          Notifications.showSnackBar('500 Server Error.');
+          Notifications.showFloatingSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
@@ -340,7 +335,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       print('Error $e');
       isLoading = false;
       if (e.toString().contains('TimeoutException')) {
-        Notifications.showSnackBar(
+        Notifications.showFloatingSnackBar(
             'Tiempo de espera agotado. Favor de reintentar');
       }
       notifyListeners();
@@ -348,7 +343,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
     return result;
   }
 
-  bool isPalletCapturedValid() {
+  Future<bool> isPalletCapturedValid() async {
     print('Captured Value $palletCaptured');
     print('Cuantos Pallets ${embarqueSelected.pallets!.length}');
     palletCaptured = Preferences.padNumberWithZeros(palletCaptured, 20);
@@ -367,10 +362,14 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       }
       // Si encontramos el pallet, actualizamos su estatus a "DESCARGADO"
       foundPallet.estatus = 'DESCARGADO';
-      Notifications.showFloatingSnackBar(
-          'Pallet $palletCaptured fue Descargado correctamente.');
-      guardarEmbarque();
-      notifyListeners(); // Notificamos a los oyentes que el estado ha cambiado
+      final result = await guardarEmbarque();
+      if(result) {
+          Notifications.showFloatingSnackBar(
+              'Pallet $palletCaptured fue Descargado correctamente.');
+          notifyListeners(); // Notificamos a los oyentes que el estado ha cambiado
+      } else {
+        foundPallet.estatus = null;
+      }
       return true; // Indicamos que el palletCaptured es válido
     } else {
       Notifications.showFloatingSnackBar(
@@ -393,123 +392,94 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    isLoading = false;
-    return false;
+    print('******** EMBARQUE A CONTABILIZAR **********');
+    print(embarqueSelected.toJson());
 
-    // Modificar la lista antes de enviarla al backend
-    // List<PosicionZSTT> listaModificada = posiciones!.map((posicion) {
-    //   return PosicionZSTT(
-    //     cantidad: posicion.cantidad,
-    //     numeroMaterial: posicion.numeroMaterial,
-    //     centroReceptor: posicion.centroReceptor,
-    //     unidadMedida: posicion.unidadMedida,
-    //     esDevolucion: posicion.esDevolucion,
-    //     almacen: posicion.almacen,
-    //   );
-    // }).toList();
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
-    // final CreateOrderRequest pedido = CreateOrderRequest(
-    //   pedido: PedidoME21N(
-    //     cabeceraPedido: Cabecera(
-    //       gpoCompras: gpoCompras,
-    //       tipoPedido: claseDocumentoSelected,
-    //       proveedorMercancias: numeroProveedor,
-    //       cuentaProveedor: numeroProveedor,
-    //       orgCompras: orgComprasSelected,
-    //     ),
-    //     posiciones: listaModificada,
-    //   ),
-    // );
+    try {
+      final response = await http
+          .put(url, headers: headers, body: embarqueSelected.toJson())
+          .timeout(const Duration(seconds: 20));
 
-    // print(pedido.toJson());
+      switch (response.statusCode) {
+        case 200:
+          result = true;
+          isLoading = false;
+          print('200: Contabilizar Embarque ${response.body}');
+          Notifications.showFloatingSnackBar(serverResponse!.message!);
+          searchEmbarques();
+          notifyListeners();
+          break;
+        case 400:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showFloatingSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print('400: ${response.body}');
+          break;
+        case 401:
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          isLoading = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showFloatingSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showFloatingSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print('404: ${response.body}');
+          break;
+        case 422:
+          isLoading = false;
+          result = false;
+          print('422: ${response.body}');
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
 
-    // final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
 
-    // try {
-    //   final response = await http
-    //       .post(url, headers: headers, body: pedido.toJson())
-    //       .timeout(const Duration(seconds: 20));
-
-    //   switch (response.statusCode) {
-    //     case 200:
-    //       result = true;
-    //       isLoading = false;
-    //       print('200: Create ME21N ${response.body}');
-    //       createOrderResponse = CreateOrderResponse.fromJson(response.body);
-    //       Notifications.showSnackBar(
-    //         createOrderResponse!.trace ?? 'Creacion Satisfactoria.',
-    //       );
-    //       notifyListeners();
-    //       break;
-    //     case 400:
-    //       isLoading = false;
-    //       serverResponse = ServerResponse.fromJson(response.body);
-    //       Notifications.showSnackBar(
-    //           serverResponse?.message ?? 'Error Desconocido.');
-    //       notifyListeners();
-    //       print('400: ${response.body}');
-    //       break;
-    //     case 401:
-    //       if (!response.body.contains('code')) {
-    //         logout();
-    //         print('logout');
-    //         break;
-    //       }
-    //       isLoading = false;
-    //       result = false;
-    //       serverResponse = ServerResponse.fromJson(response.body);
-    //       Notifications.showSnackBar(
-    //           serverResponse?.message ?? 'Error de Autenticación.');
-    //       break;
-    //     case 404:
-    //       isLoading = false;
-    //       serverResponse = ServerResponse.fromJson(response.body);
-    //       Notifications.showSnackBar(
-    //           serverResponse?.message ?? 'Error Desconocido.');
-    //       notifyListeners();
-    //       print('404: ${response.body}');
-    //       break;
-    //     case 422:
-    //       isLoading = false;
-    //       result = false;
-    //       print('422: ${response.body}');
-    //       ValidatorResponse validatorResponse =
-    //           ValidatorResponse.fromJson(response.body);
-    //       final Map<String, dynamic> errors = validatorResponse.errors.toMap();
-    //       String messages = '${validatorResponse.message}\n';
-
-    //       Iterable<dynamic> values = errors.values;
-    //       for (final error in values) {
-    //         Iterable<dynamic> errorStrings = error;
-    //         for (final errorString in errorStrings) {
-    //           print('error: $errorString');
-    //           messages = '${messages + errorString}\n';
-    //         }
-    //       }
-
-    //       Notifications.showSnackBar(messages);
-    //       notifyListeners();
-    //       break;
-    //     case 500:
-    //       isLoading = false;
-    //       print('500: ${response.body}');
-    //       Notifications.showSnackBar('500 Server Error.');
-    //       break;
-    //     default:
-    //       print('Default: ${response.body}');
-    //       isLoading = false;
-    //       result = false;
-    //   }
-    //   notifyListeners();
-    // } catch (e) {
-    //   print('Error $e');
-    //   isLoading = false;
-    //   if (e.toString().contains('TimeoutException')) {
-    //     Notifications.showSnackBar(
-    //         'Tiempo de espera agotado. Favor de reintentar');
-    //   }
-    //   notifyListeners();
-    // }
+          Notifications.showFloatingSnackBar(messages);
+          notifyListeners();
+          break;
+        case 500:
+          isLoading = false;
+          print('500: ${response.body}');
+          Notifications.showFloatingSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          result = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showFloatingSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
     return result;
   }
 

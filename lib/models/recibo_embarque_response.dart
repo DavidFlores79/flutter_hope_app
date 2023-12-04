@@ -5,12 +5,14 @@ class ReciboEmbarqueResponse {
   int? code;
   String? status;
   List<Centros>? centrosUsuario;
+  Embarque? dato;
   List<Embarque>? datos;
 
   ReciboEmbarqueResponse({
     this.code,
     this.status,
     this.centrosUsuario,
+    this.dato,
     this.datos,
   });
 
@@ -28,6 +30,7 @@ class ReciboEmbarqueResponse {
             : List<Centros>.from(
                 json["centros_usuario"]!.map((x) => Centros.fromMap(x))),
         datos: json["datos"] == null ? [] : List<Embarque>.from(json["datos"]!.map((x) => Embarque.fromMap(x))),
+        dato: json["dato"] == null ? null : Embarque.fromMap(json["dato"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -37,6 +40,7 @@ class ReciboEmbarqueResponse {
             ? []
             : List<dynamic>.from(centrosUsuario!.map((x) => x.toMap())),
         "datos": datos == null ? [] : List<dynamic>.from(datos!.map((x) => x.toMap())),
+        "dato": dato?.toMap(),
       };
 }
 
@@ -55,7 +59,7 @@ class Embarque {
     String? centro;
     String? codigoTransporte;
     String? claseTransporte;
-    int? pesoPlan;
+    double? pesoPlan;
     double? pesoNeto;
     dynamic estatus;
 
@@ -98,7 +102,7 @@ class Embarque {
         centro: json["centro"],
         codigoTransporte: json["codigo_transporte"],
         claseTransporte: json["clase_transporte"],
-        pesoPlan: json["peso_plan"],
+        pesoPlan: json["peso_plan"]?.toDouble(),
         pesoNeto: json["peso_neto"]?.toDouble(),
         estatus: json["estatus"],
     );
@@ -121,42 +125,6 @@ class Embarque {
         "peso_plan": pesoPlan,
         "peso_neto": pesoNeto,
         "estatus": estatus,
-    };
-}
-
-class EstatusClass {
-    int? id;
-    String? descripcion;
-    int? estatus;
-    String? createdAt;
-    String? updatedAt;
-
-    EstatusClass({
-        this.id,
-        this.descripcion,
-        this.estatus,
-        this.createdAt,
-        this.updatedAt,
-    });
-
-    factory EstatusClass.fromJson(String str) => EstatusClass.fromMap(json.decode(str));
-
-    String toJson() => json.encode(toMap());
-
-    factory EstatusClass.fromMap(Map<String, dynamic> json) => EstatusClass(
-        id: json["id"],
-        descripcion: json["descripcion"],
-        estatus: json["estatus"],
-        createdAt: json["created_at"],
-        updatedAt: json["updated_at"],
-    );
-
-    Map<String, dynamic> toMap() => {
-        "id": id,
-        "descripcion": descripcion,
-        "estatus": estatus,
-        "created_at": createdAt,
-        "updated_at": updatedAt,
     };
 }
 
