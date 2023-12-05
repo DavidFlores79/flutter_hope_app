@@ -81,6 +81,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<ReciboEmbarqueProvider>(
           create: (context) => ReciboEmbarqueProvider(),
         ),
+        ChangeNotifierProvider<TransferenciaInternaProvider>(
+          create: (context) => TransferenciaInternaProvider(),
+        ),
       ],
       child: const MyApp(),
     );
@@ -127,6 +130,7 @@ class MyApp extends StatelessWidget {
         ConsultaStockScreen.routeName: (context) => ConsultaStockScreen(),
         UnderConstructionScreen.routeName: (context) => const UnderConstructionScreen(),
         DescargaPalletsScreen.routeName: (context) => const DescargaPalletsScreen(),
+        TransferenciasInternasScreen.routeName: (context) => const TransferenciasInternasScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );

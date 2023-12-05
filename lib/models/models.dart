@@ -1,3 +1,4 @@
+export 'package:hope_app/models/transferencias_internat_response.dart';
 export 'package:hope_app/models/recibo_embarque_response.dart';
 
 export 'package:hope_app/models/activation_response.dart';

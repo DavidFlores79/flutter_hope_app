@@ -62,7 +62,12 @@ class ModuleScreen extends StatelessWidget {
       ModuleScreenDTO(
         label: 'Recibo Embarque',
         route: ReciboEmbarqueScreen.routeName,
-        widget: ReciboEmbarqueScreen(),
+        widget: const ReciboEmbarqueScreen(),
+      ),
+      ModuleScreenDTO(
+        label: 'Transf. Internas',
+        route: TransferenciasInternasScreen.routeName,
+        widget: const TransferenciasInternasScreen(),
       ),
     ];
 
