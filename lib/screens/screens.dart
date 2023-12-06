@@ -1,3 +1,4 @@
+export 'package:hope_app/screens/modules/transferencias_internas/show_transferencias_screen.dart';
 export 'package:hope_app/screens/modules/transferencias_internas_screen.dart';
 export 'package:hope_app/screens/modules/recibo_embarque/descarga_pallets_screen.dart';
 

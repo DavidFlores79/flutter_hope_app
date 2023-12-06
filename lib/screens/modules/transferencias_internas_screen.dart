@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/search/main_material_search_delegate.dart';
 import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:hope_app/widgets/widgets.dart';
@@ -62,9 +63,13 @@ class _TransferenciasInternasState extends State<TransferenciasInternas> {
                       key: transferenciasInternasProvider.formKey,
                       child: Column(
                         children: [
+                          ItemLabelValue(
+                              label: 'Referencia: ',
+                              value: transferenciasInternasProvider.referencia),
+                          const SizedBox(height: 15),
                           SearchMaterialFrom(
                               searchController: searchControllerFrom),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           if (transferenciasInternasProvider
                                   .materialSelectedFrom.numeroMaterial !=
                               null)
@@ -72,7 +77,7 @@ class _TransferenciasInternasState extends State<TransferenciasInternas> {
                               material: transferenciasInternasProvider
                                   .materialSelectedFrom,
                             ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           Row(
                             children: [
                               const Expanded(child: _QuantityFrom()),
@@ -80,25 +85,26 @@ class _TransferenciasInternasState extends State<TransferenciasInternas> {
                                 width: 15,
                               ),
                               _orgComprasFrom(
-                                  orgComprasFrom:
-                                      transferenciasInternasProvider.orgComprasFrom)
+                                  orgComprasFrom: transferenciasInternasProvider
+                                      .orgComprasFrom)
                             ],
                           ),
                           Divider(
-                            height: 70.0,
+                            height: 50.0,
                             thickness: 2.0,
                             color: ThemeProvider.lightColor,
                           ),
-                          SearchMaterialTo(searchController: searchControllerTo),
-                          const SizedBox(height: 15),
+                          SearchMaterialTo(
+                              searchController: searchControllerTo),
+                          const SizedBox(height: 10),
                           if (transferenciasInternasProvider
                                   .materialSelectedTo.numeroMaterial !=
                               null)
                             MaterialDescription(
-                              material:
-                                  transferenciasInternasProvider.materialSelectedTo,
+                              material: transferenciasInternasProvider
+                                  .materialSelectedTo,
                             ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           Row(
                             children: [
                               const Expanded(child: _QuantityTo()),
@@ -121,8 +127,38 @@ class _TransferenciasInternasState extends State<TransferenciasInternas> {
                         ],
                       ),
                     ),
-                    Expanded(child: Center(child: Text('Cuantas Transferencias ${transferenciasInternasProvider.transferencias.length}'))),
-                    SubmitTransfersButton(transferenciasInternasProvider:transferenciasInternasProvider),
+                    Expanded(
+                        child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        MaterialButton(
+                          onPressed: transferenciasInternasProvider
+                                  .transferencias.isEmpty
+                              ? null
+                              : () {
+                                  Navigator.pushNamed(
+                                      context, ShowTransfersScreen.routeName);
+                                },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          disabledColor: ThemeProvider.darkColor.withAlpha(150),
+                          elevation: 0,
+                          color: ThemeProvider.darkColor,
+                          // minWidth: double.infinity,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 10),
+                            child: Text(
+                              'Mostrar ${transferenciasInternasProvider.transferencias.length} Transferencia(s)',
+                              style: TextStyle(color: ThemeProvider.whiteColor),
+                            ),
+                          ),
+                        )
+                      ],
+                    )),
+                    SubmitTransfersButton(
+                        transferenciasInternasProvider:
+                            transferenciasInternasProvider),
                   ],
                 ),
               );
@@ -375,25 +411,23 @@ class AddTransferBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      onPressed: (transferenciasInternasProvider.isLoading)
-          ? null
-          : () async {
-              if (!transferenciasInternasProvider.isValidForm()) return;
-              FocusScope.of(context).unfocus();
+      onPressed: () async {
+        if (!transferenciasInternasProvider.isValidForm()) return;
+        FocusScope.of(context).unfocus();
 
-              //hacer la peticion al backend
-              // final result = await transferenciasInternasProvider.storeTransfer();
-              final result = transferenciasInternasProvider.addTransfer();
-              print('Result $result');
-              if (result) {
-                transferenciasInternasProvider.materialSelectedFrom =
-                    Materials();
-                transferenciasInternasProvider.materialSelectedTo = Materials();
-                transferenciasInternasProvider.formKey.currentState!.reset();
-                searchControllerFrom.clear();
-                searchControllerTo.clear();
-              }
-            },
+        //hacer la peticion al backend
+        // final result = await transferenciasInternasProvider.storeTransfer();
+        final result = transferenciasInternasProvider.addTransfer();
+        print('Result $result');
+        if (result) {
+          transferenciasInternasProvider.materialSelectedFrom = Materials();
+          transferenciasInternasProvider.materialSelectedTo = Materials();
+          transferenciasInternasProvider.formKey.currentState!.reset();
+          searchControllerTo.text = '';
+          searchControllerFrom.clear();
+          searchControllerTo.clear();
+        }
+      },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       disabledColor: ThemeProvider.blueColor.withAlpha(150),
       elevation: 0,
@@ -426,15 +460,15 @@ class _MaterialDescriptionState extends State<MaterialDescription> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        LabelValueItem(
+        ItemLabelValue(
           label: 'Material: ',
           value: '${widget.material.numeroMaterial}',
         ),
-        LabelValueItem(
+        ItemLabelValue(
           label: 'Descripción: ',
           value: '${widget.material.textoBreve}',
         ),
-        LabelValueItem(
+        ItemLabelValue(
           label: 'UM: ',
           value: '${widget.material.unidadMedida}',
         ),
@@ -454,14 +488,16 @@ class SubmitTransfersButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
       child: MaterialButton(
-        onPressed: (transferenciasInternasProvider.isLoading)
+        onPressed: (transferenciasInternasProvider.isLoading ||
+                transferenciasInternasProvider.transferencias.isEmpty)
             ? null
             : () async {
                 FocusScope.of(context).unfocus();
 
                 //hacer la peticion al backend
                 // final result = await transferenciasInternasProvider.storeTransfer();
-                final result = await transferenciasInternasProvider.storeTransfers();
+                final result =
+                    await transferenciasInternasProvider.storeTransfers();
                 print('Result $result');
               },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -482,36 +518,6 @@ class SubmitTransfersButton extends StatelessWidget {
                 ),
         ),
       ),
-    );
-  }
-}
-
-class LabelValueItem extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const LabelValueItem({super.key, required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          flex: 1,
-          child: Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.w700),
-          ),
-        ),
-        Expanded(
-            flex: 2,
-            child: Text(
-              value,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-            )),
-      ],
     );
   }
 }

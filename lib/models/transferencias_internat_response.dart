@@ -6,12 +6,14 @@ class TransferenciasInternasResponse {
   String? status;
   List<Centros>? centrosUsuario;
   List<OrgCompras>? orgCompras;
+  String? userlog;
 
   TransferenciasInternasResponse({
     this.code,
     this.status,
     this.centrosUsuario,
     this.orgCompras,
+    this.userlog,
   });
 
   factory TransferenciasInternasResponse.fromJson(String str) =>
@@ -31,6 +33,7 @@ class TransferenciasInternasResponse {
             ? []
             : List<OrgCompras>.from(
                 json["org_compras"]!.map((x) => OrgCompras.fromMap(x))),
+        userlog: json["userlog"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -42,5 +45,6 @@ class TransferenciasInternasResponse {
         "org_compras": orgCompras == null
             ? []
             : List<dynamic>.from(orgCompras!.map((x) => x.toMap())),
+        "userlog": userlog,
       };
 }

@@ -29,6 +29,7 @@ class TransferenciaInternaProvider extends ChangeNotifier {
   String quantityFrom = '';
   String quantityTo = '';
   String orgComprasFrom = '1000';
+  String referencia = '';
   List<OrgCompras> _orgCompras = [];
   List<TransferenciaInterna> transferencias = [];
   String _orgComprasSelected = '';
@@ -134,6 +135,8 @@ class TransferenciaInternaProvider extends ChangeNotifier {
           centroDefault = transferenciasInternasResponse!.centrosUsuario!.first.idcentro!;
           orgCompras = transferenciasInternasResponse!.orgCompras!;
           orgComprasSelected = orgCompras.first.code!;
+          // $scope.referencia =  $scope.centroUsuario + "965" + $scope.userlog;
+          referencia = '${centroDefault}965${transferenciasInternasResponse!.userlog!}';
           transferencias = [];
           print('200: Catalogs ${response.body}');
           notifyListeners();
@@ -219,7 +222,7 @@ class TransferenciaInternaProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    final List transferenciasMap = transferencias.map((transferencia) => transferencia.toMap()).toList();
+    final List<Map<String, dynamic>> transferenciasMap = transferencias.map((transferencia) => transferencia.toMap()).toList();
     print(jsonEncode(transferenciasMap));
     // isLoading = false;
     // return false;
@@ -319,6 +322,7 @@ class TransferenciaInternaProvider extends ChangeNotifier {
       final TransferenciaInterna transferencia = TransferenciaInterna(
         de: A(
           numeroMaterial: materialSelectedFrom.numeroMaterial,
+          textoBreve: materialSelectedFrom.textoBreve,
           almacen: orgComprasFrom,
           cantidad: int.parse(quantityFrom),
           umeSap: materialSelectedFrom.umeSap,
@@ -326,6 +330,7 @@ class TransferenciaInternaProvider extends ChangeNotifier {
         ),
         a: A(
           numeroMaterial: materialSelectedTo.numeroMaterial,
+          textoBreve: materialSelectedFrom.textoBreve,
           almacen: orgComprasSelected,
           cantidad: int.parse(quantityTo),
           umeComercial: materialSelectedTo.umeComercial,
@@ -334,10 +339,10 @@ class TransferenciaInternaProvider extends ChangeNotifier {
         referencia: '12312312',
       );
       transferencias.add(transferencia);
-      Notifications.showSnackBar('Transferencia Agregada');
+      Notifications.showFloatingSnackBar('Transferencia Agregada');
       return true;
     } catch (e) {
-      Notifications.showSnackBar('Error: $e');
+      Notifications.showFloatingSnackBar('Error: $e');
       return false;
     }
 

@@ -131,6 +131,7 @@ class MyApp extends StatelessWidget {
         UnderConstructionScreen.routeName: (context) => const UnderConstructionScreen(),
         DescargaPalletsScreen.routeName: (context) => const DescargaPalletsScreen(),
         TransferenciasInternasScreen.routeName: (context) => const TransferenciasInternasScreen(),
+        ShowTransfersScreen.routeName: (context) => const ShowTransfersScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );
