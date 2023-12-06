@@ -30,10 +30,12 @@ class _ConsultaStockScreenState extends State<ConsultaStockScreen> {
     super.didChangeDependencies();
 
     // Llamamos a showDialog dentro de didChangeDependencies
+    final orientation = MediaQuery.of(context).orientation;
+
     if (!_dialogShown) {
       _dialogShown = true;
       Future.delayed(Duration.zero, () {
-        consultaStockModal(context);
+        if(orientation == Orientation.portrait) consultaStockModal(context);
       });
     }
   }
@@ -42,14 +44,16 @@ class _ConsultaStockScreenState extends State<ConsultaStockScreen> {
   Widget build(BuildContext context) {
     final consultaStockProvider = Provider.of<ConsultaStockProvider>(context);
     final materials = consultaStockProvider.materials;
+    final orientation = MediaQuery.of(context).orientation;
+
     return Scaffold(
       body: (materials!.isEmpty && !consultaStockProvider.isLoading)
-          ? Center(
+          ? (orientation == Orientation.portrait) ? Center(
               child: EmptyContainer(
                 assetImage: 'assets/images/modules/order-tracking.png',
                 text: "Sin resultados",
               ),
-            )
+            ) : EmptyContainer(assetImage: 'assets/images/icons/portrait.png', text: 'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.')
           : Column(
               children: [
                 (!consultaStockProvider.isLoading)
