@@ -160,9 +160,9 @@ class ME21NProvider extends ChangeNotifier {
           centrosUsuario = me21nResponse!.centrosUsuario;
           clases = me21nResponse!.clasesDocumento!;
           orgCompras = me21nResponse!.orgCompras!;
+          orgComprasSelected = orgCompras.first.code!;
           gpoCompras = me21nResponse!.gpoCompras!;
           claseDocumentoSelected = clases.first.code!;
-          orgComprasSelected = orgCompras.first.code!;
           centroDefault = centrosUsuario!.first.idcentro!;
           notifyListeners();
           break;

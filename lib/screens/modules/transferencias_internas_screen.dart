@@ -56,42 +56,75 @@ class _TransferenciasInternasState extends State<TransferenciasInternas> {
             Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                child: Form(
-                    child: Column(
+                child: Column(
                   children: [
-                    SearchMaterialFrom(searchController: searchControllerFrom),
-                    const SizedBox(height: 15),
-                    if (transferenciasInternasProvider
-                            .materialSelectedFrom.numeroMaterial !=
-                        null)
-                      MaterialDescription(
-                        material:
-                            transferenciasInternasProvider.materialSelectedFrom,
+                    Form(
+                      key: transferenciasInternasProvider.formKey,
+                      child: Column(
+                        children: [
+                          SearchMaterialFrom(
+                              searchController: searchControllerFrom),
+                          const SizedBox(height: 20),
+                          if (transferenciasInternasProvider
+                                  .materialSelectedFrom.numeroMaterial !=
+                              null)
+                            MaterialDescription(
+                              material: transferenciasInternasProvider
+                                  .materialSelectedFrom,
+                            ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              const Expanded(child: _QuantityFrom()),
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              _orgComprasFrom(
+                                  orgComprasFrom:
+                                      transferenciasInternasProvider.orgComprasFrom)
+                            ],
+                          ),
+                          Divider(
+                            height: 70.0,
+                            thickness: 2.0,
+                            color: ThemeProvider.lightColor,
+                          ),
+                          SearchMaterialTo(searchController: searchControllerTo),
+                          const SizedBox(height: 15),
+                          if (transferenciasInternasProvider
+                                  .materialSelectedTo.numeroMaterial !=
+                              null)
+                            MaterialDescription(
+                              material:
+                                  transferenciasInternasProvider.materialSelectedTo,
+                            ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              const Expanded(child: _QuantityTo()),
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              _OrgComprasDropdown(
+                                transferenciasInternasProvider:
+                                    transferenciasInternasProvider,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          AddTransferBtn(
+                            transferenciasInternasProvider:
+                                transferenciasInternasProvider,
+                            searchControllerFrom: searchControllerFrom,
+                            searchControllerTo: searchControllerTo,
+                          ),
+                        ],
                       ),
-                    const SizedBox(height: 15),
-                    const _QuantityFrom(),
-                    Divider(
-                      height: 70.0,
-                      thickness: 2.0,
-                      color: ThemeProvider.lightColor,
                     ),
-                    SearchMaterialTo(searchController: searchControllerTo),
-                    const SizedBox(height: 15),
-                    if (transferenciasInternasProvider
-                            .materialSelectedTo.numeroMaterial !=
-                        null)
-                      MaterialDescription(
-                        material:
-                            transferenciasInternasProvider.materialSelectedTo,
-                      ),
-                    const SizedBox(height: 15),
-                    const _QuantityTo(),
-                    const SizedBox(height: 15),
-                    SubmitButton(
-                        transferenciasInternasProvider:
-                            transferenciasInternasProvider),
+                    Expanded(child: Center(child: Text('Cuantas Transferencias ${transferenciasInternasProvider.transferencias.length}'))),
+                    SubmitTransfersButton(transferenciasInternasProvider:transferenciasInternasProvider),
                   ],
-                )),
+                ),
               );
       },
     );
@@ -132,7 +165,11 @@ class _SearchMaterialFromState extends State<SearchMaterialFrom> {
     final materialProvider = Provider.of<MaterialProvider>(context);
     final transferenciasInternasProvider =
         Provider.of<TransferenciaInternaProvider>(context);
-    widget.searchController.text = transferenciasInternasProvider.materialSelectedFrom.numeroMaterial ?? '';
+    widget.searchController.text = (transferenciasInternasProvider
+                .materialSelectedFrom.numeroMaterial !=
+            null)
+        ? transferenciasInternasProvider.materialSelectedFrom.numeroMaterial!
+        : '';
 
     return TextFormField(
       readOnly: true,
@@ -147,7 +184,7 @@ class _SearchMaterialFromState extends State<SearchMaterialFrom> {
       onTap: () async {
         await showSearch(
           context: context,
-          delegate: MainMaterialSearchDelegate(),
+          delegate: MainMaterialSearchDelegate('me21n'),
         );
 
         if (materialProvider.materialSelected.numeroMaterial != '') {
@@ -184,7 +221,11 @@ class _SearchMaterialToState extends State<SearchMaterialTo> {
     final materialProvider = Provider.of<MaterialProvider>(context);
     final transferenciasInternasProvider =
         Provider.of<TransferenciaInternaProvider>(context);
-    widget.searchController.text = transferenciasInternasProvider.materialSelectedTo.numeroMaterial ?? '';
+    widget.searchController.text =
+        (transferenciasInternasProvider.materialSelectedTo.numeroMaterial !=
+                null)
+            ? transferenciasInternasProvider.materialSelectedTo.numeroMaterial!
+            : '';
 
     return TextFormField(
       readOnly: true,
@@ -199,7 +240,7 @@ class _SearchMaterialToState extends State<SearchMaterialTo> {
       onTap: () async {
         await showSearch(
           context: context,
-          delegate: MainMaterialSearchDelegate(),
+          delegate: MainMaterialSearchDelegate('me21n'),
         );
 
         if (materialProvider.materialSelected.numeroMaterial != '') {
@@ -233,7 +274,8 @@ class _QuantityFromState extends State<_QuantityFrom> {
   final TextEditingController _qtyController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final transferenciasInternasProvider = Provider.of<TransferenciaInternaProvider>(context);
+    final transferenciasInternasProvider =
+        Provider.of<TransferenciaInternaProvider>(context);
 
     return TextFormField(
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -281,7 +323,8 @@ class _QuantityToState extends State<_QuantityTo> {
   final TextEditingController _qtyController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final transferenciasInternasProvider = Provider.of<TransferenciaInternaProvider>(context);
+    final transferenciasInternasProvider =
+        Provider.of<TransferenciaInternaProvider>(context);
 
     return TextFormField(
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -318,11 +361,16 @@ class _QuantityToState extends State<_QuantityTo> {
   }
 }
 
-
-class SubmitButton extends StatelessWidget {
+class AddTransferBtn extends StatelessWidget {
   final TransferenciaInternaProvider transferenciasInternasProvider;
+  final TextEditingController searchControllerFrom;
+  final TextEditingController searchControllerTo;
 
-  const SubmitButton({super.key, required this.transferenciasInternasProvider});
+  const AddTransferBtn(
+      {super.key,
+      required this.transferenciasInternasProvider,
+      required this.searchControllerFrom,
+      required this.searchControllerTo});
 
   @override
   Widget build(BuildContext context) {
@@ -330,29 +378,34 @@ class SubmitButton extends StatelessWidget {
       onPressed: (transferenciasInternasProvider.isLoading)
           ? null
           : () async {
-              // if (!transferenciasInternasProvider.isValidForm()) return;
+              if (!transferenciasInternasProvider.isValidForm()) return;
               FocusScope.of(context).unfocus();
 
               //hacer la peticion al backend
-              final result =
-                  await transferenciasInternasProvider.storeTransfer();
+              // final result = await transferenciasInternasProvider.storeTransfer();
+              final result = transferenciasInternasProvider.addTransfer();
               print('Result $result');
+              if (result) {
+                transferenciasInternasProvider.materialSelectedFrom =
+                    Materials();
+                transferenciasInternasProvider.materialSelectedTo = Materials();
+                transferenciasInternasProvider.formKey.currentState!.reset();
+                searchControllerFrom.clear();
+                searchControllerTo.clear();
+              }
             },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       disabledColor: ThemeProvider.blueColor.withAlpha(150),
       elevation: 0,
       color: ThemeProvider.blueColor,
-      minWidth: double.infinity,
+      // minWidth: double.infinity,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
         child: transferenciasInternasProvider.isLoading
             ? const CupertinoActivityIndicator()
-            : const Text(
-                'Guardar',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
+            : Icon(
+                FontAwesomeIcons.plus,
+                color: ThemeProvider.whiteColor,
               ),
       ),
     );
@@ -390,6 +443,49 @@ class _MaterialDescriptionState extends State<MaterialDescription> {
   }
 }
 
+class SubmitTransfersButton extends StatelessWidget {
+  final TransferenciaInternaProvider transferenciasInternasProvider;
+
+  const SubmitTransfersButton(
+      {super.key, required this.transferenciasInternasProvider});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 30),
+      child: MaterialButton(
+        onPressed: (transferenciasInternasProvider.isLoading)
+            ? null
+            : () async {
+                FocusScope.of(context).unfocus();
+
+                //hacer la peticion al backend
+                // final result = await transferenciasInternasProvider.storeTransfer();
+                final result = await transferenciasInternasProvider.storeTransfers();
+                print('Result $result');
+              },
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        disabledColor: ThemeProvider.blueColor.withAlpha(150),
+        elevation: 0,
+        color: ThemeProvider.blueColor,
+        minWidth: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+          child: transferenciasInternasProvider.isLoading
+              ? const CupertinoActivityIndicator()
+              : const Text(
+                  'Contabilizar Todo',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+        ),
+      ),
+    );
+  }
+}
+
 class LabelValueItem extends StatelessWidget {
   final String label;
   final String value;
@@ -416,6 +512,70 @@ class LabelValueItem extends StatelessWidget {
               maxLines: 2,
             )),
       ],
+    );
+  }
+}
+
+class _orgComprasFrom extends StatelessWidget {
+  final String orgComprasFrom;
+
+  const _orgComprasFrom({super.key, required this.orgComprasFrom});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: TextFormField(
+        readOnly: true,
+        textAlign: TextAlign.center,
+        initialValue: orgComprasFrom,
+        decoration: InputDecorationsRounded.authInputDecorationRounded(
+          hintText: '',
+          labelText: 'Org. Compras',
+          color: ThemeProvider.blueColor,
+        ),
+      ),
+    );
+  }
+}
+
+class _OrgComprasDropdown extends StatelessWidget {
+  final TransferenciaInternaProvider transferenciasInternasProvider;
+
+  _OrgComprasDropdown(
+      {super.key, required this.transferenciasInternasProvider});
+
+  @override
+  Widget build(BuildContext context) {
+    final List<OrgCompras> orgCompras =
+        transferenciasInternasProvider.orgCompras;
+
+    return Expanded(
+      child: DropdownButtonFormField(
+        isExpanded: true,
+        decoration: InputDecorationsRounded.authInputDecorationRounded(
+            hintText: 'Org. Compras',
+            labelText: 'Org. Compras',
+            color: ThemeProvider.blueColor),
+        focusColor: ThemeProvider.blueColor,
+        value: transferenciasInternasProvider.orgComprasSelected,
+        onChanged: (String? newValue) {
+          transferenciasInternasProvider.orgComprasSelected = newValue!;
+        },
+        items: orgCompras.map<DropdownMenuItem<String>>((OrgCompras value) {
+          return DropdownMenuItem<String>(
+            value: value.code,
+            child: Align(
+              alignment: Alignment.center,
+              child: Text(
+                value.name!,
+                style: const TextStyle(fontSize: 14),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 }

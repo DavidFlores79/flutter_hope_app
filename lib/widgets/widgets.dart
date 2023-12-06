@@ -1,3 +1,4 @@
+export 'package:hope_app/widgets/org_compras_dropdown.dart';
 export 'package:hope_app/widgets/card_item_label_value.dart';
 export 'package:hope_app/widgets/centros_dropdown.dart';
 

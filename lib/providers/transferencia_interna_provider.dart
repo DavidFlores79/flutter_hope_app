@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/locator.dart';
@@ -27,6 +28,11 @@ class TransferenciaInternaProvider extends ChangeNotifier {
   Materials _materialSelectedTo = Materials();
   String quantityFrom = '';
   String quantityTo = '';
+  String orgComprasFrom = '1000';
+  List<OrgCompras> _orgCompras = [];
+  List<TransferenciaInterna> transferencias = [];
+  String _orgComprasSelected = '';
+
   final NavigationService _navigationService = locator<NavigationService>();
 
   final storage = const FlutterSecureStorage();
@@ -78,6 +84,20 @@ class TransferenciaInternaProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  String get orgComprasSelected => _orgComprasSelected;
+
+  set orgComprasSelected(String value) {
+    _orgComprasSelected = value;
+    notifyListeners();
+  }
+
+  List<OrgCompras> get orgCompras => _orgCompras;
+
+  set orgCompras(List<OrgCompras> value) {
+    _orgCompras = value;
+    // notifyListeners();
+  }
+
   TransferenciaInternaProvider() {
     print('TransferenciaInterna Provider inicializado');
   }
@@ -88,6 +108,7 @@ class TransferenciaInternaProvider extends ChangeNotifier {
     result = false;
     print('Peticion Trans.Internas - Get Catalogs');
     _endPoint = '/api/v1/transferenciasinternas';
+    orgCompras = [];
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -110,8 +131,10 @@ class TransferenciaInternaProvider extends ChangeNotifier {
           isLoadingCatalogs = false;
           transferenciasInternasResponse =
               TransferenciasInternasResponse.fromJson(response.body);
-          centroDefault =
-              transferenciasInternasResponse!.centrosUsuario!.first.idcentro!;
+          centroDefault = transferenciasInternasResponse!.centrosUsuario!.first.idcentro!;
+          orgCompras = transferenciasInternasResponse!.orgCompras!;
+          orgComprasSelected = orgCompras.first.code!;
+          transferencias = [];
           print('200: Catalogs ${response.body}');
           notifyListeners();
           break;
@@ -182,9 +205,11 @@ class TransferenciaInternaProvider extends ChangeNotifier {
     return result;
   }
 
-  Future<bool> storeTransfer() async {
-    print('Peticion Transferencia Interna');
+  Future<bool> storeTransfers() async {
+    print('Peticion Store Transferencia Interna');
     _endPoint = '/api/v1/transferenciasinternas';
+    isLoading = true;
+    result = false;
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -194,14 +219,10 @@ class TransferenciaInternaProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    final Map<String, dynamic> queryParameters = {
-      'material_from': materialSelectedFrom,
-      'material_to': materialSelectedTo,
-      'centro': centroDefault,
-    };
-
-    print(queryParameters);
-    return false;
+    final List transferenciasMap = transferencias.map((transferencia) => transferencia.toMap()).toList();
+    print(jsonEncode(transferenciasMap));
+    // isLoading = false;
+    // return false;
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
@@ -209,12 +230,17 @@ class TransferenciaInternaProvider extends ChangeNotifier {
       isLoading = true;
 
       final response = await http.post(url,
-          headers: headers, body: {}).timeout(const Duration(seconds: 30));
+          headers: headers, body: jsonEncode(transferenciasMap)).timeout(const Duration(seconds: 30));
 
       switch (response.statusCode) {
         case 200:
           isLoading = false;
+          result = true;
           print('200: ${response.body}');
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showFloatingSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          transferencias = [];
           notifyListeners();
           break;
         case 401:
@@ -230,6 +256,7 @@ class TransferenciaInternaProvider extends ChangeNotifier {
           break;
         case 404:
           isLoading = false;
+          result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showFloatingSnackBar(Preferences.truncateMessage(
               serverResponse?.message ?? 'Error Desconocido.'));
@@ -257,11 +284,13 @@ class TransferenciaInternaProvider extends ChangeNotifier {
           break;
         case 500:
           isLoading = false;
+          result = false;
           Notifications.showFloatingSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
           isLoading = false;
+          result = false;
       }
       notifyListeners();
     } catch (e) {
@@ -283,6 +312,35 @@ class TransferenciaInternaProvider extends ChangeNotifier {
     } else {
       return false;
     }
+  }
+
+  bool addTransfer() {
+    try {
+      final TransferenciaInterna transferencia = TransferenciaInterna(
+        de: A(
+          numeroMaterial: materialSelectedFrom.numeroMaterial,
+          almacen: orgComprasFrom,
+          cantidad: int.parse(quantityFrom),
+          umeSap: materialSelectedFrom.umeSap,
+          umeComercial: materialSelectedFrom.umeComercial,
+        ),
+        a: A(
+          numeroMaterial: materialSelectedTo.numeroMaterial,
+          almacen: orgComprasSelected,
+          cantidad: int.parse(quantityTo),
+          umeComercial: materialSelectedTo.umeComercial,
+          umeSap: materialSelectedTo.umeSap,
+        ),
+        referencia: '12312312',
+      );
+      transferencias.add(transferencia);
+      Notifications.showSnackBar('Transferencia Agregada');
+      return true;
+    } catch (e) {
+      Notifications.showSnackBar('Error: $e');
+      return false;
+    }
+
   }
 
   logout() async {

@@ -5,6 +5,10 @@ import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class MainMaterialSearchDelegate extends SearchDelegate {
+  final String moduleName;
+
+  MainMaterialSearchDelegate(this.moduleName);
+
   @override
   String get searchFieldLabel => 'Buscar Material Prov';
 
@@ -46,7 +50,7 @@ class MainMaterialSearchDelegate extends SearchDelegate {
       return const emptyContainer();
     }
 
-    materialProvider.getMaterialsByQuery(query, centroDefault);
+    materialProvider.getMaterialsByQuery(query, centroDefault, moduleName);
 
     return StreamBuilder(
       stream: materialProvider.materialStream,

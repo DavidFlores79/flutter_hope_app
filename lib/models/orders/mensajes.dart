@@ -1,3 +1,9 @@
+// ignore: slash_for_doc_comments
+/**
+ * Creado por: David Amilcar Flores Castillo
+ * el 05/12/2023
+ */
+
 import 'dart:convert';
 
 class Mensaje {

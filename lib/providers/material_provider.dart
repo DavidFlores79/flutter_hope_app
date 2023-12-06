@@ -58,9 +58,9 @@ class MaterialProvider extends ChangeNotifier {
   }
 
   //Peticiones API
-  Future<List<Materials>> searchMaterials(String query, String centroDefault ) async {
+  Future<List<Materials>> searchMaterials(String query, String centroDefault, String moduleName ) async {
     print('Peticion API Search');
-    _endPoint = '/api/v1/me21n/search';
+    _endPoint = '/api/v1/$moduleName/search';
     String numeroMaterial = '';
     String textoBreve = '';
 
@@ -267,11 +267,11 @@ class MaterialProvider extends ChangeNotifier {
     return materials!;
   }
 
-  void getMaterialsByQuery(String query, String centroDefault) {
+  void getMaterialsByQuery(String query, String centroDefault, String moduleName) {
     debouncer.value = '';
     debouncer.onValue = (value) async {
       print('hay valor a buscar $value');
-      final results = await searchMaterials(value, centroDefault);
+      final results = await searchMaterials(value, centroDefault, moduleName);
       _materialStreamController.add(results);
     };
 

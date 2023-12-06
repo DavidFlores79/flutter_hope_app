@@ -87,14 +87,24 @@ class _SolpedScreenState extends State<SolpedScreen> {
                               onTap: () async {
                                 await showSearch(
                                   context: context,
-                                  delegate: MainMaterialSearchDelegate(),
+                                  delegate: MainMaterialSearchDelegate('solped'),
                                 );
 
-                                if (materialProvider.materialSelected.numeroMaterial !=
-                                    '') {
+                                final numeroMaterial = materialProvider
+                                    .materialSelected.numeroMaterial;
+                                final tipoMaterial = materialProvider
+                                    .materialSelected.tipoMaterial;
+                                print('Tipo de Material $tipoMaterial');
+
+                                if (numeroMaterial != '' &&
+                                    tipoMaterial != 'ZACT') {
                                   _searchController.text = solpedProvider
                                           .materialSelected.numeroMaterial ??
                                       '';
+                                  if (tipoMaterial == 'ZACT') {
+                                    Notifications.showSnackBar(
+                                        'Tipo de Material $tipoMaterial inválido.');
+                                  }
                                 } else {
                                   _searchController.clear();
                                 }
@@ -106,7 +116,8 @@ class _SolpedScreenState extends State<SolpedScreen> {
                               },
                             ),
                             const SizedBox(height: 20),
-                            (materialProvider.materialSelected.textoBreve == null)
+                            (materialProvider.materialSelected.textoBreve ==
+                                    null)
                                 ? Container()
                                 : Column(
                                     crossAxisAlignment:
@@ -277,7 +288,8 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                 ),
                               ),
                             ),
-                            (materialProvider.materialSelected.textoBreve == null)
+                            (materialProvider.materialSelected.textoBreve ==
+                                    null)
                                 ? const Column(
                                     children: [
                                       SizedBox(height: 15),

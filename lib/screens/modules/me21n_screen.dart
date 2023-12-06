@@ -636,7 +636,7 @@ class _SearchMaterialState extends State<SearchMaterial> {
       onTap: () async {
         await showSearch(
           context: context,
-          delegate: MainMaterialSearchDelegate(),
+          delegate: MainMaterialSearchDelegate('me21n'),
         );
 
         if (materialProvider.materialSelected.numeroMaterial != '') {
