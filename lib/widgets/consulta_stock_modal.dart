@@ -8,8 +8,9 @@ import 'package:provider/provider.dart';
 import '../ui/input_decorations_rounded.dart';
 
 Future consultaStockModal(BuildContext context) {
+  final orientation = MediaQuery.of(context).orientation;
   
-  return showDialog(
+  return (orientation == Orientation.portrait) ? showDialog(
     barrierDismissible: true,
     barrierColor: Colors.transparent,
     context: context,
@@ -119,7 +120,7 @@ Future consultaStockModal(BuildContext context) {
               ],
       );
     },
-  );
+  ) : Future(() => null);
 }
 
 class CentrosUsuario extends StatelessWidget {
