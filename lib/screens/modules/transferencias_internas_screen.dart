@@ -7,6 +7,7 @@ import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/search/main_material_search_delegate.dart';
+import 'package:hope_app/search/transfers_material_search_delegate.dart';
 import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
@@ -220,7 +221,7 @@ class _SearchMaterialFromState extends State<SearchMaterialFrom> {
       onTap: () async {
         await showSearch(
           context: context,
-          delegate: MainMaterialSearchDelegate('me21n'),
+          delegate: TransferMaterialSearchDelegate(esDE: true),
         );
 
         if (materialProvider.materialSelected.numeroMaterial != '') {
@@ -276,7 +277,7 @@ class _SearchMaterialToState extends State<SearchMaterialTo> {
       onTap: () async {
         await showSearch(
           context: context,
-          delegate: MainMaterialSearchDelegate('me21n'),
+          delegate: TransferMaterialSearchDelegate(esDE: false),
         );
 
         if (materialProvider.materialSelected.numeroMaterial != '') {

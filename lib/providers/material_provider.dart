@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/helpers/debouncer.dart';
@@ -267,6 +268,111 @@ class MaterialProvider extends ChangeNotifier {
     return materials!;
   }
 
+  Future<List<Materials>> searchTransferMaterials(String query, bool esDe) async {
+    print('Peticion Transferencias Search Material');
+    _endPoint = '/api/v1/transferenciasinternas/search';
+    String numeroMaterial = '';
+    String textoBreve = '';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    if (queryHasNumbers(query)) {
+      numeroMaterial = query;
+    } else {
+      textoBreve = query;
+    }
+
+    final Map<String, dynamic> queryParameters = {
+      'numero_material': numeroMaterial,
+      'texto_breve': textoBreve,
+      'es_DE': esDe,
+    };
+
+    print(queryParameters);
+
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+
+    try {
+      isLoading = true;
+      materials = [];
+
+      final response = await http
+          .post(url, headers: headers, body: jsonEncode(queryParameters))
+          .timeout(const Duration(seconds: 30));
+
+      switch (response.statusCode) {
+        case 200:
+          isLoading = false;
+          print('200: ${response.body}');
+          materialResponse = MaterialResponse.fromJson(response.body);
+          materials = materialResponse?.materials;
+          notifyListeners();
+          break;
+        case 401:
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          isLoading = false;
+          materials = [];
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(Preferences.truncateMessage(serverResponse?.message ?? 'Error Desconocido.'));
+          notifyListeners();
+          print('404 ${serverResponse?.message}');
+          break;
+        case 422:
+          isLoading = false;
+          result = false;
+          print('422: ${response.body}');
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
+          break;
+        case 500:
+          isLoading = false;
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          materials = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return materials!;
+  }
+
   void getMaterialsByQuery(String query, String centroDefault, String moduleName) {
     debouncer.value = '';
     debouncer.onValue = (value) async {
@@ -301,6 +407,23 @@ class MaterialProvider extends ChangeNotifier {
     );
   }
 
+  void getTransferMaterialsByQuery(String query, bool esDE) {
+    debouncer.value = '';
+    debouncer.onValue = (value) async {
+      print('hay valor a buscar $value');
+      final results = await searchTransferMaterials(query, esDE);
+      _materialStreamController.add(results);
+    };
+
+    final timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+      debouncer.value = query;
+    });
+
+    Future.delayed(const Duration(milliseconds: 301)).then(
+      (value) => timer.cancel(),
+    );
+  }
+
   bool queryHasNumbers(String query) {
     // Comprueba si el String solo contiene números
     if (RegExp(r'^[0-9]+$').hasMatch(query)) {
@@ -315,4 +438,5 @@ class MaterialProvider extends ChangeNotifier {
     Preferences.apiUser = '';
     _navigationService.navigateTo(LoginScreen.routeName);
   }
+
 }
