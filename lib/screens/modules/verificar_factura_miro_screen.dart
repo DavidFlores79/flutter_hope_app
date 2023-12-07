@@ -25,7 +25,7 @@ class VerificarFacturaMiroScreen extends StatelessWidget {
       backgroundColor: Preferences.isDarkMode
           ? ThemeProvider.lightColor
           : ThemeProvider.whiteColor,
-      body: (orientation == Orientation.landscape)
+      body: (orientation == Orientation.landscape && Preferences.deviceModel != 'iPad')
           ? EmptyContainer(
               assetImage: 'assets/images/icons/portrait.png',
               text:
@@ -137,7 +137,7 @@ class VerificarFacturaMiroScreen extends StatelessWidget {
                                   width: double.infinity,
                                   height: double.infinity,
                                   image: AssetImage(
-                                      'assets/images/icons/migo.png'),
+                                      'assets/images/icons/miro.png'),
                                 ),
                               ),
                             ),
@@ -648,7 +648,7 @@ class _verificarButton extends StatelessWidget {
         Provider.of<VerificacionFacturaMiroProvider>(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 30),
       width: double.infinity,
       height: 50,
       child: ElevatedButton(

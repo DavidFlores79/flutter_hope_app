@@ -5,7 +5,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:hope_app/ui/notifications.dart';
+import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class MigoScreen extends StatefulWidget {
@@ -22,141 +24,131 @@ class _MigoScreenState extends State<MigoScreen> {
   Widget build(BuildContext context) {
     final migoProvider = Provider.of<MigoProvider>(context);
     final Color myColor = ThemeProvider.lightColor;
+    final orientation = MediaQuery.of(context).orientation;
     bool response = false;
 
     return Scaffold(
       backgroundColor: Preferences.isDarkMode
           ? ThemeProvider.lightColor
           : ThemeProvider.whiteColor,
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            color: Preferences.isDarkMode
-                ? ThemeProvider.lightColor
-                : ThemeProvider.whiteColor,
-            child: Form(
-              key: migoProvider.formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 25),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 4,
-                            child: TextFormField(
-                              autofocus: true,
-                              autocorrect: false,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              keyboardType: TextInputType.number,
-                              textAlign: TextAlign.center,
-                              maxLength: 10,
-                              decoration: InputDecoration(
-                                hintText: '45xxxxxxxx',
-                                hintStyle: TextStyle(
-                                  color: Colors.grey[400],
-                                ),
-                                labelText: 'Pedido',
-                                labelStyle: TextStyle(
-                                  color: ThemeProvider.lightColor,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: ThemeProvider.blueColor,
-                                  ),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: ThemeProvider.blueColor,
-                                  ),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: ThemeProvider.blueColor,
-                                  ),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                              onChanged: (value) =>
-                                  migoProvider.numeroPedido = value,
-                              validator: (value) {
-                                return (value != null && value.length == 10)
-                                    ? null
-                                    : 'Debe contener 10 numeros.';
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: MaterialButton(
-                              onPressed: migoProvider.isLoading
-                                  ? null
-                                  : () async {
-                                      if (!migoProvider.isValidForm()) return;
-                                      FocusScope.of(context).unfocus();
-
-                                      //hacer la peticion al backend
-                                      //DEV: 4500002493
-                                      //QA: 4500087697
-                                      response = await migoProvider
-                                          .getPedido(migoProvider.numeroPedido);
+      body: (orientation == Orientation.landscape &&
+              Preferences.deviceModel != 'iPad')
+          ? EmptyContainer(
+              assetImage: 'assets/images/icons/portrait.png',
+              text:
+                  'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.')
+          : Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  color: Preferences.isDarkMode
+                      ? ThemeProvider.lightColor
+                      : ThemeProvider.whiteColor,
+                  child: Form(
+                    key: migoProvider.formKey,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 25),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 4,
+                                  child: TextFormField(
+                                    autofocus: true,
+                                    autocorrect: false,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    keyboardType: TextInputType.number,
+                                    textAlign: TextAlign.center,
+                                    maxLength: 10,
+                                    decoration: InputDecorationsRounded
+                                        .authInputDecorationRounded(
+                                      hintText: '45xxxxxxxx',
+                                      labelText: 'Pedido',
+                                      color: ThemeProvider.blueColor,
+                                    ),
+                                    onChanged: (value) =>
+                                        migoProvider.numeroPedido = value,
+                                    validator: (value) {
+                                      return (value != null &&
+                                              value.length == 10)
+                                          ? null
+                                          : 'Debe contener 10 numeros.';
                                     },
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              disabledColor: Colors.grey[500],
-                              elevation: 0,
-                              color: ThemeProvider.blueColor,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 17),
-                                child: Icon(
-                                  Icons.search,
-                                  color: ThemeProvider.whiteColor,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: MaterialButton(
+                                    onPressed: migoProvider.isLoading
+                                        ? null
+                                        : () async {
+                                            if (!migoProvider.isValidForm())
+                                              return;
+                                            FocusScope.of(context).unfocus();
+
+                                            //hacer la peticion al backend
+                                            //DEV: 4500002493
+                                            //QA: 4500087697
+                                            response =
+                                                await migoProvider.getPedido(
+                                                    migoProvider.numeroPedido);
+                                          },
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    disabledColor: Colors.grey[500],
+                                    elevation: 0,
+                                    color: ThemeProvider.blueColor,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 17),
+                                      child: Icon(
+                                        Icons.search,
+                                        color: ThemeProvider.whiteColor,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: (migoProvider.isLoading)
+                      ? Center(
+                          child: SpinKitCubeGrid(
+                            color: ThemeProvider.blueColor,
+                          ),
+                        )
+                      : (migoProvider.result)
+                          ? PedidoBox(
+                              pedido: migoProvider.migoResponse.pedidoMigo!,
+                              posiciones: [],
+                            )
+                          : const SizedBox(
+                              width: 300,
+                              height: 300,
+                              child: Center(
+                                child: Image(
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  image: AssetImage(
+                                      'assets/images/icons/migo.png'),
                                 ),
                               ),
                             ),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
-          Expanded(
-            child: (migoProvider.isLoading)
-                ? Center(
-                    child: SpinKitCubeGrid(
-                      color: ThemeProvider.blueColor,
-                    ),
-                  )
-                : (migoProvider.result)
-                    ? PedidoBox(
-                        pedido: migoProvider.migoResponse.pedidoMigo!,
-                        posiciones: [],
-                      )
-                    : const SizedBox(
-                        width: 300,
-                        height: 300,
-                        child: Center(
-                          child: Image(
-                            width: double.infinity,
-                            height: double.infinity,
-                            image: AssetImage('assets/images/icons/migo.png'),
-                          ),
-                        ),
-                      ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -267,7 +259,7 @@ class ContabilizarButton extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 30),
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
