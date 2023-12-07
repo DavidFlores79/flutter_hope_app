@@ -4,8 +4,18 @@ import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:intl/intl.dart';
 
 class DateContainer extends StatefulWidget {
+  final String hintText1;
+  final String labelText1;
+  final String hintText2;
+  final String labelText2;
   final ChangeNotifier provider;
-  const DateContainer({super.key, required this.provider});
+  const DateContainer(
+      {super.key,
+      required this.provider,
+      required this.hintText1,
+      required this.labelText1,
+      required this.hintText2,
+      required this.labelText2});
 
   @override
   State<DateContainer> createState() => DateContainerState();
@@ -16,6 +26,7 @@ class DateContainerState extends State<DateContainer> {
   final TextEditingController _dateController2 = TextEditingController();
   String fechaInicio = "";
   final fechaFin = "";
+
   dynamic dynamicProvider;
   @override
   void initState() {
@@ -39,8 +50,8 @@ class DateContainerState extends State<DateContainer> {
             controller: _dateController,
             readOnly: true,
             decoration: InputDecorationsRounded.authInputDecorationRounded(
-              hintText: 'Fecha inicio',
-              labelText: 'Fecha inicio',
+              hintText: widget.hintText1,
+              labelText: widget.labelText1,
               suffixIcon: Icons.calendar_month,
               color: ThemeProvider.blueColor,
             ),
@@ -97,8 +108,8 @@ class DateContainerState extends State<DateContainer> {
             controller: _dateController2,
             readOnly: true,
             decoration: InputDecorationsRounded.authInputDecorationRounded(
-              hintText: 'Fecha fin',
-              labelText: 'Fecha fin',
+              hintText: widget.hintText2,
+              labelText: widget.labelText2,
               suffixIcon: Icons.calendar_month,
               color: ThemeProvider.blueColor,
             ),
