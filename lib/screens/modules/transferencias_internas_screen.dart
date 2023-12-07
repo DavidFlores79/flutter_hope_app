@@ -7,6 +7,7 @@ import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/search/transfers_material_search_delegate.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
@@ -19,9 +20,15 @@ class TransferenciasInternasScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
-    
+
     return Scaffold(
-      body: (orientation == Orientation.portrait) ? const TransferenciasInternas() : EmptyContainer(assetImage: 'assets/images/icons/portrait.png', text: 'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.'),
+      // TODO: Configurar el screen para Tablet, mostrar inputs en horizontal
+      body: (orientation == Orientation.landscape && Preferences.deviceModel != 'iPad')
+          ? EmptyContainer(
+              assetImage: 'assets/images/icons/portrait.png',
+              text:
+                  'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.')
+          : const TransferenciasInternas(),
     );
   }
 }

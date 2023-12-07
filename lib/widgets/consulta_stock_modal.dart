@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:provider/provider.dart';
 
 import '../ui/input_decorations_rounded.dart';
@@ -10,7 +11,9 @@ import '../ui/input_decorations_rounded.dart';
 Future consultaStockModal(BuildContext context) {
   final orientation = MediaQuery.of(context).orientation;
   
-  return (orientation == Orientation.portrait) ? showDialog(
+  // mostrar si es igual a iPad o (si es portrait)
+  // TODO: Configurar el screen para Tablet, mostrar inputs en horizontal
+  return (orientation == Orientation.portrait || Preferences.deviceModel == 'iPad') ? showDialog(
     barrierDismissible: true,
     barrierColor: Colors.transparent,
     context: context,

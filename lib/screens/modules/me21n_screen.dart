@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
@@ -26,12 +25,12 @@ class ME21NScreen extends StatelessWidget {
     final orientation = MediaQuery.of(context).orientation;
     print('Orientation: $orientation');
     return Scaffold(
-      body: (orientation == Orientation.portrait)
-          ? const CreateOrder()
-          : EmptyContainer(
+      body: (orientation == Orientation.landscape && Preferences.deviceModel != 'iPad' && Preferences.deviceModel != 'Tablet')
+          ? EmptyContainer(
               assetImage: 'assets/images/icons/portrait.png',
               text:
-                  'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.'),
+                  'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.')
+          : const CreateOrder(),
       floatingActionButton: FloatingActionButton(
         child: const Icon(FontAwesomeIcons.arrowsRotate),
         onPressed: () => {

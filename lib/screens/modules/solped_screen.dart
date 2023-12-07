@@ -30,6 +30,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
     final materialProvider = Provider.of<MaterialProvider>(context);
     final liberarsolpedProvider = Provider.of<LiberarSolpedProvider>(context);
     final posiciones = solpedProvider.posiciones;
+    final orientation = MediaQuery.of(context).orientation;
 
     // if(tipo_material === "ZACT"){
     //   if (isNaN(activo_fijo)) {
@@ -49,7 +50,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                   color: ThemeProvider.blueColor,
                 ),
               )
-            : Column(
+            : (orientation == Orientation.portrait || Preferences.deviceModel == 'iPad' || Preferences.deviceModel == 'Tablet') ? Column(
                 children: [
                   Container(
                     decoration: BoxDecoration(
@@ -115,7 +116,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                     : 'Por favor agrega un material para crear el Pedido.';
                               },
                             ),
-                            const SizedBox(height: 20),
+                            
                             (materialProvider.materialSelected.textoBreve ==
                                     null)
                                 ? Container()
@@ -123,6 +124,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
+                                      const SizedBox(height: 20),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -229,7 +231,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                       ),
                                     ],
                                   ),
-                            const SizedBox(height: 35),
+                            const SizedBox(height: 15),
                             MaterialButton(
                               onPressed: (solpedProvider.isLoading)
                                   ? null
@@ -333,7 +335,10 @@ class _SolpedScreenState extends State<SolpedScreen> {
                         }),
                   ),
                 ],
-              ),
+              ) : EmptyContainer(
+              assetImage: 'assets/images/icons/portrait.png',
+              text:
+                  'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.'),
       ),
     );
   }

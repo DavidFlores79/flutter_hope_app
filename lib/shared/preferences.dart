@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +20,7 @@ class Preferences {
   static String _oneSignalAppId = '7edc135c-d979-4e44-b761-4e523d31f65b';
   static String _onesignalUserId = '';
   static String _clientImage = '';
+  static String _deviceModel = '';
 
   static String get activacionServer {
     return _prefs.getString('activacionServer') ?? _activacionServer;
@@ -135,6 +139,15 @@ class Preferences {
     _prefs.setString('clientImage', value);
   }
 
+  static String get deviceModel {
+    return _prefs.getString('deviceModel') ?? _deviceModel;
+  }
+
+  static set deviceModel(String value) {
+    _deviceModel = value;
+    _prefs.setString('deviceModel', value);
+  }
+
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
   }
@@ -223,12 +236,28 @@ class Preferences {
     // Pad with zeros to the left until reaching the desired length
     return number.padLeft(length, '0');
   }
-  
+
   static String truncateMessage(String message) {
     if (message.length > 60) {
       return '${message.substring(0, 60)}...';
     } else {
       return message;
+    }
+  }
+
+  static void getDeviceModel() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      if(androidInfo.displayMetrics.widthPx > 600 || androidInfo.displayMetrics.heightPx > 600){
+        deviceModel = 'Tablet';
+      } else {
+        deviceModel = 'Phone';
+      }
+    }
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      deviceModel = iosInfo.model;
     }
   }
 }
