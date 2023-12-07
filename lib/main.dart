@@ -78,6 +78,15 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<ConsultaStockProvider>(
           create: (context) => ConsultaStockProvider(),
         ),
+        ChangeNotifierProvider<ReciboEmbarqueProvider>(
+          create: (context) => ReciboEmbarqueProvider(),
+        ),
+        ChangeNotifierProvider<TransferenciaInternaProvider>(
+          create: (context) => TransferenciaInternaProvider(),
+        ),
+        ChangeNotifierProvider<VerificacionFacturaMiroProvider>(
+          create: (context) => VerificacionFacturaMiroProvider(),
+        ),
       ],
       child: const MyApp(),
     );
@@ -122,8 +131,12 @@ class MyApp extends StatelessWidget {
         MonitorSolpedScreen.routeName: (context) => MonitorSolpedScreen(),
         ME21NScreen.routeName: (context) => ME21NScreen(),
         ConsultaStockScreen.routeName: (context) => ConsultaStockScreen(),
-        UnderConstructionScreen.routeName: (context) =>
-            const UnderConstructionScreen(),
+        UnderConstructionScreen.routeName: (context) => const UnderConstructionScreen(),
+        DescargaPalletsScreen.routeName: (context) => const DescargaPalletsScreen(),
+        TransferenciasInternasScreen.routeName: (context) => const TransferenciasInternasScreen(),
+        ShowTransfersScreen.routeName: (context) => const ShowTransfersScreen(),
+          VerificarFacturaMiroScreen.routeName: (context) =>
+            const VerificarFacturaMiroScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );

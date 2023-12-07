@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/locator.dart';
 import 'package:hope_app/models/models.dart';
+import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
@@ -66,6 +67,7 @@ class ModulosProvider extends ChangeNotifier {
               UnauthenticatedResponse.fromJson(response.body);
           Notifications.showSnackBar(
               unauthenticatedResponse?.message ?? 'Error de Autenticación.');
+          logout();
           break;
         case 404:
           isLoading = false;
@@ -96,5 +98,11 @@ class ModulosProvider extends ChangeNotifier {
       notifyListeners();
     }
     return result;
+  }
+
+  logout() async {
+    await storage.deleteAll();
+    Preferences.apiUser = '';
+    _navigationService.navigateTo(LoginScreen.routeName);
   }
 }

@@ -3,13 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:provider/provider.dart';
 
 import '../ui/input_decorations_rounded.dart';
 
 Future consultaStockModal(BuildContext context) {
-
-  return showDialog(
+  final orientation = MediaQuery.of(context).orientation;
+  
+  // mostrar si es igual a iPad o (si es portrait)
+  // TODO: Configurar el screen para Tablet, mostrar inputs en horizontal
+  return (orientation == Orientation.portrait || Preferences.deviceModel == 'iPad') ? showDialog(
     barrierDismissible: true,
     barrierColor: Colors.transparent,
     context: context,
@@ -27,64 +31,66 @@ Future consultaStockModal(BuildContext context) {
           "Consultar",
           textAlign: TextAlign.center,
         ),
-        content: Form(
-          key: consultaStockProvider.formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                autofocus: true,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                keyboardType: TextInputType.number,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                  TextInputFormatter.withFunction((oldValue, newValue) {
-                    final text = newValue.text;
-                    return text.isEmpty
-                        ? newValue
-                        : int.tryParse(text) == null
-                            ? oldValue
-                            : newValue;
-                  }),
-                ],
-                maxLength: 18,
-                validator: (value) {
-                  return (value != null)
-                      ? null
-                      : 'Por favor agrega un material.';
-                },
-                onChanged: (value) {
-                  print(value);
-                  consultaStockProvider.material = value;
-                },
-                decoration: InputDecorationsRounded.authInputDecorationRounded(
-                  hintText: 'Artículo (opcional)',
-                  labelText: 'Artículo',
-                  color: ThemeProvider.blueColor,
+        content: SingleChildScrollView(
+          child: Form(
+            key: consultaStockProvider.formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  autofocus: true,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      final text = newValue.text;
+                      return text.isEmpty
+                          ? newValue
+                          : int.tryParse(text) == null
+                              ? oldValue
+                              : newValue;
+                    }),
+                  ],
+                  maxLength: 18,
+                  validator: (value) {
+                    return (value != null)
+                        ? null
+                        : 'Por favor agrega un material.';
+                  },
+                  onChanged: (value) {
+                    print(value);
+                    consultaStockProvider.material = value;
+                  },
+                  decoration: InputDecorationsRounded.authInputDecorationRounded(
+                    hintText: 'Artículo (opcional)',
+                    labelText: 'Artículo',
+                    color: ThemeProvider.blueColor,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                autofocus: true,
-                autocorrect: false,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                keyboardType: TextInputType.text,
-                textAlign: TextAlign.center,
-                maxLength: 10,
-                decoration: InputDecorationsRounded.authInputDecorationRounded(
-                    hintText: 'Grupo de artículo (opcional)',
-                    labelText: 'Grupo de Artículo',
-                    color: ThemeProvider.blueColor),
-                onChanged: (value) =>
-                    consultaStockProvider.grupoArticulo = value,
-                validator: (value) {
-                  return (value != null) ? null : 'Al menos 3 caracteres.';
-                },
-              ),
-              const SizedBox(height: 10),
-              CentrosUsuario(miProvider: consultaStockProvider),
-            ],
+                const SizedBox(height: 10),
+                TextFormField(
+                  autofocus: true,
+                  autocorrect: false,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  keyboardType: TextInputType.text,
+                  textAlign: TextAlign.center,
+                  maxLength: 10,
+                  decoration: InputDecorationsRounded.authInputDecorationRounded(
+                      hintText: 'Grupo de artículo (opcional)',
+                      labelText: 'Grupo de Artículo',
+                      color: ThemeProvider.blueColor),
+                  onChanged: (value) =>
+                      consultaStockProvider.grupoArticulo = value,
+                  validator: (value) {
+                    return (value != null) ? null : 'Al menos 3 caracteres.';
+                  },
+                ),
+                const SizedBox(height: 10),
+                CentrosUsuario(miProvider: consultaStockProvider),
+              ],
+            ),
           ),
         ),
         actions: <Widget>[
@@ -117,7 +123,7 @@ Future consultaStockModal(BuildContext context) {
               ],
       );
     },
-  );
+  ) : Future(() => null);
 }
 
 class CentrosUsuario extends StatelessWidget {

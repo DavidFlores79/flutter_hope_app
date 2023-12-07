@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
@@ -190,9 +191,7 @@ class _LoginForm extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
               child: loginForm.isLoading
-                  ? CircularProgressIndicator.adaptive(
-                      backgroundColor: ThemeProvider.whiteColor,
-                    )
+                  ? const CupertinoActivityIndicator()
                   : const Text(
                       'Iniciar Sesión',
                       style: TextStyle(color: Colors.white),

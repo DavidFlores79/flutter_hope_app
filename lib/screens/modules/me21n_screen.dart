@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
@@ -26,12 +25,12 @@ class ME21NScreen extends StatelessWidget {
     final orientation = MediaQuery.of(context).orientation;
     print('Orientation: $orientation');
     return Scaffold(
-      body: (orientation == Orientation.portrait)
-          ? const CreateOrder()
-          : EmptyContainer(
+      body: (orientation == Orientation.landscape && Preferences.deviceModel != 'iPad' && Preferences.deviceModel != 'Tablet')
+          ? EmptyContainer(
               assetImage: 'assets/images/icons/portrait.png',
               text:
-                  'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.'),
+                  'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.')
+          : const CreateOrder(),
       floatingActionButton: FloatingActionButton(
         child: const Icon(FontAwesomeIcons.arrowsRotate),
         onPressed: () => {
@@ -109,7 +108,7 @@ class _CreateOrderState extends State<CreateOrder> {
                 const SizedBox(height: 15),
                 Row(
                   children: [
-                    CentrosUsuarioDropdown(miProvider: me21nProvider),
+                    CentrosUsuarioDrop(provider: me21nProvider),
                     const SizedBox(width: 10),
                     _gpoCompras(gpoCompras: me21nProvider.gpoCompras),
                     SizedBox(
@@ -564,72 +563,6 @@ class OrgComprasDropdown extends StatelessWidget {
   }
 }
 
-class CentrosUsuarioDropdown extends StatelessWidget {
-  final ME21NProvider miProvider;
-
-  CentrosUsuarioDropdown({super.key, required this.miProvider});
-
-  @override
-  Widget build(BuildContext context) {
-    final List<Centros> centrosUsuario = miProvider.centrosUsuario!;
-
-    return Expanded(
-      child: DropdownButtonFormField(
-        isExpanded: true,
-        decoration: InputDecoration(
-          labelText: 'Centros',
-          labelStyle: TextStyle(
-            color: ThemeProvider.lightColor,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: ThemeProvider.blueColor,
-            ),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: ThemeProvider.blueColor,
-            ),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: ThemeProvider.blueColor,
-            ),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 10,
-            horizontal: 15,
-          ),
-        ),
-        focusColor: ThemeProvider.blueColor,
-        value: miProvider.centroDefault,
-        onChanged: (miProvider.posiciones!.isEmpty)
-            ? (String? newValue) {
-                miProvider.centroDefault = newValue!;
-              }
-            : null,
-        items: centrosUsuario.map<DropdownMenuItem<String>>((Centros value) {
-          return DropdownMenuItem<String>(
-            value: value.idcentro,
-            child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                value.idcentro!,
-                style: const TextStyle(fontSize: 14),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
 class _gpoCompras extends StatelessWidget {
   final String gpoCompras;
 
@@ -702,7 +635,7 @@ class _SearchMaterialState extends State<SearchMaterial> {
       onTap: () async {
         await showSearch(
           context: context,
-          delegate: MainMaterialSearchDelegate(),
+          delegate: MainMaterialSearchDelegate('me21n'),
         );
 
         if (materialProvider.materialSelected.numeroMaterial != '') {

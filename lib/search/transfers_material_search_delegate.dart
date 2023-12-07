@@ -4,10 +4,10 @@ import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
-class MainMaterialSearchDelegate extends SearchDelegate {
-  final String moduleName;
+class TransferMaterialSearchDelegate extends SearchDelegate {
+  final bool esDE;
 
-  MainMaterialSearchDelegate(this.moduleName);
+  TransferMaterialSearchDelegate({required this.esDE});
 
   @override
   String get searchFieldLabel => 'Buscar Material Prov';
@@ -44,13 +44,12 @@ class MainMaterialSearchDelegate extends SearchDelegate {
   @override
   Widget buildSuggestions(BuildContext context) {
     final materialProvider = Provider.of<MaterialProvider>(context, listen: false);
-    const centroDefault = '0040';
-
+    
     if (query.isEmpty) {
       return const emptyContainer();
     }
 
-    materialProvider.getMaterialsByQuery(query, centroDefault, moduleName);
+    materialProvider.getTransferMaterialsByQuery(query, esDE);
 
     return StreamBuilder(
       stream: materialProvider.materialStream,

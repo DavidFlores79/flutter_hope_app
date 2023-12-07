@@ -20,6 +20,8 @@ class ModuleScreen extends StatelessWidget {
         Provider.of<MonitorSolpedProvider>(context, listen: false);
     final liberarSolpedProvider =
         Provider.of<LiberarSolpedProvider>(context, listen: false);
+    final verificacionFacturaMiroProvider =
+        Provider.of<VerificacionFacturaMiroProvider>(context, listen: true);
 
     List<ModuleScreenDTO> items = [
       ModuleScreenDTO(
@@ -32,7 +34,8 @@ class ModuleScreen extends StatelessWidget {
         route: LiberarSolpedScreen.routeName,
         widget: LiberarSolpedScreen(),
         icon: FontAwesomeIcons.calendar,
-        onPressedCallback: (BuildContext context) => showDatesModal(context, liberarSolpedProvider),
+        onPressedCallback: (BuildContext context) =>
+            showDatesModal(context, liberarSolpedProvider),
       ),
       ModuleScreenDTO(
         label: 'MIGO',
@@ -44,7 +47,8 @@ class ModuleScreen extends StatelessWidget {
         route: MonitorSolpedScreen.routeName,
         widget: MonitorSolpedScreen(),
         icon: FontAwesomeIcons.calendar,
-        onPressedCallback: (BuildContext context) => showDatesModal(context, monitorSolpedProvider),
+        onPressedCallback: (BuildContext context) =>
+            showDatesModal(context, monitorSolpedProvider),
       ),
       ModuleScreenDTO(
         label: 'Creación de Pedidos',
@@ -62,7 +66,25 @@ class ModuleScreen extends StatelessWidget {
       ModuleScreenDTO(
         label: 'Recibo Embarque',
         route: ReciboEmbarqueScreen.routeName,
-        widget: ReciboEmbarqueScreen(),
+        widget: const ReciboEmbarqueScreen(),
+      ),
+      ModuleScreenDTO(
+        label: 'Transf. Internas',
+        route: TransferenciasInternasScreen.routeName,
+        widget: const TransferenciasInternasScreen(),
+      ),
+      ModuleScreenDTO(
+        label: 'Verificar Factura (Miro)',
+        route: VerificarFacturaMiroScreen.routeName,
+        widget: const VerificarFacturaMiroScreen(),
+        icon: verificacionFacturaMiroProvider.result != false
+            ? FontAwesomeIcons.calendar
+            : null,
+        onPressedCallback: (BuildContext context) {
+          if (verificacionFacturaMiroProvider.result != false) {
+            showDatesModalMiro(context, verificacionFacturaMiroProvider);
+          }
+        },
       ),
     ];
 

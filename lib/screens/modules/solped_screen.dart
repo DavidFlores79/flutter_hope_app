@@ -30,6 +30,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
     final materialProvider = Provider.of<MaterialProvider>(context);
     final liberarsolpedProvider = Provider.of<LiberarSolpedProvider>(context);
     final posiciones = solpedProvider.posiciones;
+    final orientation = MediaQuery.of(context).orientation;
 
     // if(tipo_material === "ZACT"){
     //   if (isNaN(activo_fijo)) {
@@ -49,7 +50,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                   color: ThemeProvider.blueColor,
                 ),
               )
-            : Column(
+            : (orientation == Orientation.portrait || Preferences.deviceModel == 'iPad' || Preferences.deviceModel == 'Tablet') ? Column(
                 children: [
                   Container(
                     decoration: BoxDecoration(
@@ -87,14 +88,24 @@ class _SolpedScreenState extends State<SolpedScreen> {
                               onTap: () async {
                                 await showSearch(
                                   context: context,
-                                  delegate: MainMaterialSearchDelegate(),
+                                  delegate: MainMaterialSearchDelegate('solped'),
                                 );
 
-                                if (materialProvider.materialSelected.numeroMaterial !=
-                                    '') {
+                                final numeroMaterial = materialProvider
+                                    .materialSelected.numeroMaterial;
+                                final tipoMaterial = materialProvider
+                                    .materialSelected.tipoMaterial;
+                                print('Tipo de Material $tipoMaterial');
+
+                                if (numeroMaterial != '' &&
+                                    tipoMaterial != 'ZACT') {
                                   _searchController.text = solpedProvider
                                           .materialSelected.numeroMaterial ??
                                       '';
+                                  if (tipoMaterial == 'ZACT') {
+                                    Notifications.showSnackBar(
+                                        'Tipo de Material $tipoMaterial inválido.');
+                                  }
                                 } else {
                                   _searchController.clear();
                                 }
@@ -105,13 +116,15 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                     : 'Por favor agrega un material para crear el Pedido.';
                               },
                             ),
-                            const SizedBox(height: 20),
-                            (materialProvider.materialSelected.textoBreve == null)
+                            
+                            (materialProvider.materialSelected.textoBreve ==
+                                    null)
                                 ? Container()
                                 : Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
+                                      const SizedBox(height: 20),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -218,7 +231,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                       ),
                                     ],
                                   ),
-                            const SizedBox(height: 35),
+                            const SizedBox(height: 15),
                             MaterialButton(
                               onPressed: (solpedProvider.isLoading)
                                   ? null
@@ -277,7 +290,8 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                 ),
                               ),
                             ),
-                            (materialProvider.materialSelected.textoBreve == null)
+                            (materialProvider.materialSelected.textoBreve ==
+                                    null)
                                 ? const Column(
                                     children: [
                                       SizedBox(height: 15),
@@ -321,7 +335,10 @@ class _SolpedScreenState extends State<SolpedScreen> {
                         }),
                   ),
                 ],
-              ),
+              ) : EmptyContainer(
+              assetImage: 'assets/images/icons/portrait.png',
+              text:
+                  'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.'),
       ),
     );
   }
