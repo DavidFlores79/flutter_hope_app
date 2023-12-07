@@ -16,3 +16,4 @@ export 'package:hope_app/providers/recibo_embarque_provider.dart';
 export 'package:hope_app/providers/solped_provider.dart';
 export 'package:hope_app/providers/supplier_provider.dart';
 export 'package:hope_app/providers/theme_provider.dart';
+export 'package:hope_app/providers/verificar_factura_miro_provider.dart';

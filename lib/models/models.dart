@@ -23,3 +23,5 @@ export 'package:hope_app/models/posiciones.dart';
 export 'package:hope_app/models/proveedores_response.dart';
 export 'package:hope_app/models/server_response.dart';
 export 'package:hope_app/models/solped_response.dart';
+export 'package:hope_app/models/verificacion_factura_miro_response.dart';
+export 'package:hope_app/models/verifiacacion_factura_miro_request.dart';

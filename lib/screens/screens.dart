@@ -22,4 +22,5 @@ export 'package:hope_app/screens/profile_screen.dart';
 export 'package:hope_app/screens/register_screen.dart';
 export 'package:hope_app/screens/settings_screen.dart';
 export 'package:hope_app/screens/under_construction_screen.dart';
+export 'package:hope_app/screens/modules/verificar_factura_miro_screen.dart';
 
