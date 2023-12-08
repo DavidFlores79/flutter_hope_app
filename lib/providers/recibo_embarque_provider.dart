@@ -392,6 +392,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
+    embarqueSelected.horaInicio = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(embarqueSelected.horaInicio!));
     print('******** EMBARQUE A CONTABILIZAR **********');
     print(embarqueSelected.toJson());
 
@@ -408,7 +409,6 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
           isLoading = false;
           print('200: Contabilizar Embarque ${response.body}');
           Notifications.showFloatingSnackBar(serverResponse!.message!);
-          searchEmbarques();
           notifyListeners();
           break;
         case 400:

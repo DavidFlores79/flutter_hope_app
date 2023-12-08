@@ -68,10 +68,12 @@ class ValidatorResponse {
 class Errors {
   List<String>? motivoRechazo;
   List<String>? cuentaMayor;
+  List<String>? horaInicio;
 
   Errors({
     this.motivoRechazo,
-    this.cuentaMayor
+    this.cuentaMayor,
+    this.horaInicio
   });
 
   factory Errors.fromJson(String str) => Errors.fromMap(json.decode(str));
@@ -85,6 +87,9 @@ class Errors {
         cuentaMayor: json["cuenta_mayor"] == null
             ? []
             : List<String>.from(json["cuenta_mayor"]!.map((x) => x)),
+        horaInicio: json["hora_inicio"] == null
+            ? []
+            : List<String>.from(json["hora_inicio"]!.map((x) => x)),
       );
 
   Map<String, dynamic> toMap() => {
@@ -94,6 +99,9 @@ class Errors {
         "cuenta_mayor": cuentaMayor == null
             ? []
             : List<dynamic>.from(cuentaMayor!.map((x) => x)),
+        "hora_inicio": horaInicio == null
+            ? []
+            : List<dynamic>.from(horaInicio!.map((x) => x)),
       };
 }
 
