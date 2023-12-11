@@ -63,7 +63,7 @@ Future showDatesModal(BuildContext context, ChangeNotifier provider) {
                       ),
                       onPressed: () async {
                         try {
-                          await (provider as dynamic).getSolpeds();
+                          await (provider as dynamic).searchByDates();
                           // ignore: use_build_context_synchronously
                           Navigator.pop(context);
                           // Resto de tu lógica con el resultado

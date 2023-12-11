@@ -1,3 +1,4 @@
+export 'package:hope_app/providers/monitor_inventario_tienda_provider.dart';
 export 'package:hope_app/providers/transferencia_interna_provider.dart';
 
 export 'package:hope_app/providers/consulta_stock_provider.dart';

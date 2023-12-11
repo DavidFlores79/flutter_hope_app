@@ -19,11 +19,11 @@ class MonitorSolpedScreen extends StatelessWidget {
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () => solpedMonitorProvider.getSolpeds(),
+        onRefresh: () => solpedMonitorProvider.searchByDates(),
         child: FutureBuilder<List<Posicion>>(
           // Llamada al método async desde el Provider
           future: (futureExecuted != true)
-              ? solpedMonitorProvider.getSolpeds()
+              ? solpedMonitorProvider.searchByDates()
               : Future.value(pedidos),
           builder: (context, snapshot) {
             print('futureExecuted $futureExecuted');

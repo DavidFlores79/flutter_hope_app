@@ -22,6 +22,8 @@ class ModuleScreen extends StatelessWidget {
         Provider.of<LiberarSolpedProvider>(context, listen: false);
     final verificacionFacturaMiroProvider =
         Provider.of<VerificacionFacturaMiroProvider>(context, listen: true);
+    final monitorInvTiendaProvider =
+        Provider.of<MonitorInventarioTiendaProvider>(context, listen: false);
 
     List<ModuleScreenDTO> items = [
       ModuleScreenDTO(
@@ -85,6 +87,14 @@ class ModuleScreen extends StatelessWidget {
             showDatesModalMiro(context, verificacionFacturaMiroProvider);
           }
         },
+      ),
+      ModuleScreenDTO(
+        label: 'Monitor Inventario',
+        route: MonitorInventarioTiendaScreen.routeName,
+        widget: const MonitorInventarioTiendaScreen(),
+        icon: FontAwesomeIcons.calendar,
+        onPressedCallback: (BuildContext context) =>
+            showDatesModal(context, monitorInvTiendaProvider),
       ),
     ];
 

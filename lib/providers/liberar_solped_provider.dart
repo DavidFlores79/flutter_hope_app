@@ -61,7 +61,7 @@ class LiberarSolpedProvider extends ChangeNotifier {
     return formKey.currentState?.validate() ?? false;
   }
 
-  Future<List<Posicion>> getSolpeds() async {
+  Future<List<Posicion>> searchByDates() async {
     isLoading = true;
     result = false;
     print('Peticion LIberar Solped - Search');

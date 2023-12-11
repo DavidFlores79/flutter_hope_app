@@ -66,9 +66,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Servidor: ${Preferences.apiServer}',
-                        style: const TextStyle(
+                      const Text(
+                        'Servidor: ITSoft.mx',
+                        style: TextStyle(
                           fontSize: 16,
                           overflow: TextOverflow.ellipsis,
                           height: 2,
@@ -90,13 +90,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           height: 2,
                         ),
                       ),
-                      Text(
-                        'One Signal ID: ${Preferences.onesignalUserId}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          height: 2,
-                        ),
-                      ),
+                      // Text(
+                      //   'One Signal ID: ${Preferences.onesignalUserId}',
+                      //   style: const TextStyle(
+                      //     fontSize: 16,
+                      //     height: 2,
+                      //   ),
+                      // ),
                       const SizedBox(
                         height: 20,
                       ),

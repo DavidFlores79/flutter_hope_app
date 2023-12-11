@@ -2,18 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hope_app/helpers/debouncer.dart';
 import 'package:hope_app/locator.dart';
 import 'package:hope_app/models/models.dart';
-import 'package:hope_app/screens/login_screen.dart';
+import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-class MonitorSolpedProvider extends ChangeNotifier {
+class MonitorInventarioTiendaProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  bool _isLoadingCatalogs = false;
   bool _isLoading = false;
   final String _apiUrl = Preferences.apiServer;
   final String _proyectName = Preferences.projectName;
@@ -21,44 +21,48 @@ class MonitorSolpedProvider extends ChangeNotifier {
   String jwtToken = '';
   ServerResponse? serverResponse;
   bool result = false;
-  SolpedResponse? solpedResponse;
-  String claseDocumento = 'ZADQ';
-  List<Posicion>? pedidos = [];
-  late String fecha1 = DateFormat('yyyy-MM-dd')
-      .format(DateTime.now().subtract(const Duration(days: 1)));
-
-  late String fecha2 = DateFormat('yyyy-MM-dd').format(DateTime.now());
-
-  final debouncer = Debouncer(duration: const Duration(milliseconds: 700));
-
+  String fecha1 = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String fecha2 = DateFormat('yyyy-MM-dd').format(DateTime.now());
   final NavigationService _navigationService = locator<NavigationService>();
 
   final storage = const FlutterSecureStorage();
-
-  MonitorSolpedProvider() {
-    // ignore: avoid_print
-    print('Monitor Solped  provider inicializado');
-    // searchByDates();
-  }
-
-  get isLoading => _isLoading;
-  set isLoading(value) {
-    _isLoading = value;
-  }
 
   bool isValidForm() {
     return formKey.currentState?.validate() ?? false;
   }
 
-  Future<List<Posicion>> searchByDates() async {
-    // print(fecha1);
-    // print(fecha2);
-    isLoading = true;
+  get isLoading => _isLoading;
 
-    // ignore: avoid_print
-    print("Voy a buscar solpeds");
+  set isLoading(value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  bool get isLoadingCatalogs => _isLoadingCatalogs;
+
+  set isLoadingCatalogs(bool value) {
+    _isLoadingCatalogs = value;
+  }
+
+  int _selectedIndex = 0;
+
+  int get selectedIndex => _selectedIndex;
+
+  set selectedIndex(int selectedIndex) {
+    _selectedIndex = selectedIndex;
+    notifyListeners();
+  }
+
+  MonitorInventarioTiendaProvider() {
+    print('MonitorInventarioTienda Provider inicializado');
+  }
+
+  //Peticiones API
+  Future<bool> searchByDates() async {
+    isLoadingCatalogs = true;
     result = false;
-    _endPoint = '/api/v1/monitor-solped';
+    print('Peticion getInventarios - Search');
+    _endPoint = '/api/v1/monitorinvtienda/buscar-inventarios';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -69,10 +73,11 @@ class MonitorSolpedProvider extends ChangeNotifier {
     };
 
     Map<String, dynamic> dataRaw = {
-      'clase': 'ZADQ',
       'fecha_inicio': fecha1,
-      'fecha_fin': fecha2,
+      'fecha_final': fecha2,
     };
+
+    print(dataRaw);
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
@@ -80,40 +85,45 @@ class MonitorSolpedProvider extends ChangeNotifier {
       final response = await http
           .post(url, headers: headers, body: jsonEncode(dataRaw))
           .timeout(const Duration(seconds: 20));
-      pedidos = [];
 
-      // print(response.body);
       switch (response.statusCode) {
         case 200:
+          print('Estatus: $isLoading');
           result = true;
-          solpedResponse = SolpedResponse.fromJson(response.body);
-          pedidos = solpedResponse?.posiciones;
-          print(pedidos);
-          // if (pedidos?.isNotEmpty == true) {
-          //   Notifications.showSnackBar('Solpeds Encontrados');
-          // } else {
-          //   Notifications.showSnackBar('No se encontraron Solpeds Encontrados');
-          // }
-
-          break;
-        case 401:
-          if (response.body.contains('code')) {
-            serverResponse = ServerResponse.fromJson(response.body);
-            Notifications.showSnackBar(
-                serverResponse?.message ?? 'Error de Autenticación.');
-          } else {
-            logout();
-            print('logout');
-          }
+          isLoadingCatalogs = false;
+          print('200: Search Inventarios ${response.body}');
+          notifyListeners();
           break;
         case 400:
-          print('Estatus: ${response.statusCode}');
-          final solpedResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(solpedResponse.message!);
-          print('Error Liberando: ${solpedResponse.message}');
+          isLoadingCatalogs = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print('400: ${response.body}');
+          break;
+        case 401:
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          isLoadingCatalogs = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoadingCatalogs = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print('404: ${response.body}');
           break;
         case 422:
-          isLoading = false;
+          isLoadingCatalogs = false;
           result = false;
           print('422: ${response.body}');
           ValidatorResponse validatorResponse =
@@ -134,19 +144,26 @@ class MonitorSolpedProvider extends ChangeNotifier {
           notifyListeners();
           break;
         case 500:
-          Notifications.showSnackBar('500 Server Error');
+          isLoadingCatalogs = false;
+          print('500: ${response.body}');
+          Notifications.showSnackBar('500 Server Error.');
           break;
         default:
-          print(response.body);
+          print('Default: ${response.body}');
+          isLoadingCatalogs = false;
+          result = false;
       }
-      //getOrdenes();
+      notifyListeners();
     } catch (e) {
       print('Error $e');
-      Notifications.showSnackBar(e.toString());
+      isLoadingCatalogs = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
     }
-    notifyListeners();
-    isLoading = false;
-    return pedidos!;
+    return result;
   }
 
   logout() async {
