@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,6 +16,7 @@ class Preferences {
   static bool _isActive = false;
   static String _expirationDate = '1979-04-10 00:00:00';
   static String _licenseExp = '1979-04-10 00:00:00';
+  static String _code = '';
   static bool _isDarkMode = false;
   static bool _isModulesActive = true;
   static String _oneSignalAppId = '7edc135c-d979-4e44-b761-4e523d31f65b';
@@ -148,6 +150,15 @@ class Preferences {
     _prefs.setString('deviceModel', value);
   }
 
+  static String get code {
+    return _prefs.getString('code') ?? _code;
+  }
+
+  static set code(String value) {
+    _code = value;
+    _prefs.setString('code', value);
+  }
+
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
   }
@@ -249,7 +260,8 @@ class Preferences {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      if(androidInfo.displayMetrics.widthPx > 600 || androidInfo.displayMetrics.heightPx > 600){
+      if (androidInfo.displayMetrics.widthPx > 600 ||
+          androidInfo.displayMetrics.heightPx > 600) {
         deviceModel = 'Tablet';
       } else {
         deviceModel = 'Phone';
@@ -259,5 +271,15 @@ class Preferences {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
       deviceModel = iosInfo.model;
     }
+  }
+
+  static deleteLicence() async {
+    await const FlutterSecureStorage().deleteAll();
+    apiUser = '';
+    apiServer = '172.17.1.45';
+    expirationDate = '1979-04-10 00:00:00';
+    licenseExp = '1979-04-10 00:00:00';
+    isDarkMode = false;
+    code = '';
   }
 }

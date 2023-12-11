@@ -114,13 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ThemeProvider.blueColor),
                             ),
                             onPressed: () async {
-                              await const FlutterSecureStorage().deleteAll();
-                              Preferences.apiUser = '';
-                              Preferences.apiServer = '172.17.1.45';
-                              Preferences.expirationDate =
-                                  '1979-04-10 00:00:00';
-                              Preferences.licenseExp = '1979-04-10 00:00:00';
-                              Preferences.isDarkMode = false;
+                              await Preferences.deleteLicence();
                               // ignore: use_build_context_synchronously
                               Navigator.pushReplacementNamed(
                                   context, ActivationScreen.routeName);
