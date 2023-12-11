@@ -23,7 +23,6 @@ class _MonitorInventarioTiendaScreenState extends State<MonitorInventarioTiendaS
     monitorInvTienda.searchByDates();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Consumer<MonitorInventarioTiendaProvider>(
