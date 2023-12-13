@@ -12,6 +12,8 @@ class MonitorInventarioResponse {
     String? message;
     List<Inventario>? inventarios;
     String? messageUpdateCodbar;
+    Inventario? inventario;
+    String? messageUpdate;
 
     MonitorInventarioResponse({
         this.code,
@@ -19,6 +21,8 @@ class MonitorInventarioResponse {
         this.message,
         this.inventarios,
         this.messageUpdateCodbar,
+        this.inventario,
+        this.messageUpdate,
     });
 
     factory MonitorInventarioResponse.fromJson(String str) => MonitorInventarioResponse.fromMap(json.decode(str));
@@ -31,6 +35,8 @@ class MonitorInventarioResponse {
         message: json["message"],
         inventarios: json["inventarios"] == null ? [] : List<Inventario>.from(json["inventarios"]!.map((x) => Inventario.fromMap(x))),
         messageUpdateCodbar: json["messageUpdateCodbar"],
+        inventario: json["inventario"] == null ? null : Inventario.fromMap(json["inventario"]),
+        messageUpdate: json["messageUpdate"],
     );
 
     Map<String, dynamic> toMap() => {
@@ -39,6 +45,8 @@ class MonitorInventarioResponse {
         "message": message,
         "inventarios": inventarios == null ? [] : List<dynamic>.from(inventarios!.map((x) => x.toMap())),
         "messageUpdateCodbar": messageUpdateCodbar,
+        "inventario": inventario?.toMap(),
+        "messageUpdate": messageUpdate,
     };
 }
 
@@ -46,7 +54,7 @@ class Inventario {
     int? id;
     int? centroId;
     String? documento;
-    DateTime? fecha;
+    String? fecha;
     String? horaInicio;
     String? horaFin;
     int? estatus;
@@ -77,7 +85,7 @@ class Inventario {
         id: json["id"],
         centroId: json["centro_id"],
         documento: json["documento"],
-        fecha: json["fecha"] == null ? null : DateTime.parse(json["fecha"]),
+        fecha: json["fecha"],
         horaInicio: json["hora_inicio"],
         horaFin: json["hora_fin"],
         estatus: json["estatus"],
@@ -91,7 +99,7 @@ class Inventario {
         "id": id,
         "centro_id": centroId,
         "documento": documento,
-        "fecha": "${fecha!.year.toString().padLeft(4, '0')}-${fecha!.month.toString().padLeft(2, '0')}-${fecha!.day.toString().padLeft(2, '0')}",
+        "fecha": fecha,
         "hora_inicio": horaInicio,
         "hora_fin": horaFin,
         "estatus": estatus,

@@ -94,7 +94,7 @@ class MonitorSolpedProvider extends ChangeNotifier {
           // } else {
           //   Notifications.showSnackBar('No se encontraron Solpeds Encontrados');
           // }
-
+          notifyListeners();
           break;
         case 401:
           if (response.body.contains('code')) {

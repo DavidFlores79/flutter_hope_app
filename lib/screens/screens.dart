@@ -1,3 +1,5 @@
+export 'package:hope_app/screens/modules/monitor_inventario/detalle_inventario_screen.dart';
+
 export 'package:hope_app/screens/about_screen.dart';
 export 'package:hope_app/screens/activation_screen.dart';
 export 'package:hope_app/screens/auth_token_screen.dart';

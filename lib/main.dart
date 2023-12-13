@@ -141,6 +141,7 @@ class MyApp extends StatelessWidget {
           VerificarFacturaMiroScreen.routeName: (context) =>
             const VerificarFacturaMiroScreen(),
         MonitorInventarioTiendaScreen.routeName: (context) => const MonitorInventarioTiendaScreen(),
+        DetallesInventarioScreen.routeName: (context) => const DetallesInventarioScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );

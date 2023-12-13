@@ -20,9 +20,14 @@ class MonitorInventarioTiendaProvider extends ChangeNotifier {
   String _endPoint = '/api/v1/mi-endpoint';
   String jwtToken = '';
   ServerResponse? serverResponse;
+  MonitorInventarioResponse? monitorInventarioResponse;
   bool result = false;
   String fecha1 = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String fecha2 = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  List<Inventario> inventarios = [];
+  Inventario inventarioSelected = Inventario();
+  Inventario inventario = Inventario();
+  List<int> posicionesSelected = [];
   final NavigationService _navigationService = locator<NavigationService>();
 
   final storage = const FlutterSecureStorage();
@@ -63,6 +68,8 @@ class MonitorInventarioTiendaProvider extends ChangeNotifier {
     result = false;
     print('Peticion getInventarios - Search');
     _endPoint = '/api/v1/monitorinvtienda/buscar-inventarios';
+    inventarios = [];
+    posicionesSelected = [];
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -92,6 +99,118 @@ class MonitorInventarioTiendaProvider extends ChangeNotifier {
           result = true;
           isLoadingCatalogs = false;
           print('200: Search Inventarios ${response.body}');
+          monitorInventarioResponse = MonitorInventarioResponse.fromJson(response.body);
+          inventarios = monitorInventarioResponse!.inventarios!;
+          notifyListeners();
+          break;
+        case 400:
+          isLoadingCatalogs = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print('400: ${response.body}');
+          break;
+        case 401:
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          isLoadingCatalogs = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoadingCatalogs = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print('404: ${response.body}');
+          break;
+        case 422:
+          isLoadingCatalogs = false;
+          result = false;
+          print('422: ${response.body}');
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
+
+          Notifications.showSnackBar(messages);
+          notifyListeners();
+          break;
+        case 500:
+          isLoadingCatalogs = false;
+          print('500: ${response.body}');
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoadingCatalogs = false;
+          result = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoadingCatalogs = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return result;
+  }
+
+  Future<bool> getInventario() async {
+    isLoadingCatalogs = true;
+    result = false;
+    print('Peticion getInventario BD - Search');
+    _endPoint = '/api/v1/monitorinvtienda/get-inventario';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    Map<String, dynamic> dataRaw = {
+      'id': inventarioSelected.id
+    };
+
+    print(dataRaw);
+
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+
+    try {
+      final response = await http
+          .post(url, headers: headers, body: jsonEncode(dataRaw))
+          .timeout(const Duration(seconds: 20));
+
+      switch (response.statusCode) {
+        case 200:
+          print('Estatus: $isLoading');
+          result = true;
+          isLoadingCatalogs = false;
+          print('200: GetInventario ${inventarioSelected.id}: ${response.body}');
+          monitorInventarioResponse = MonitorInventarioResponse.fromJson(response.body);
+          inventario = monitorInventarioResponse!.inventario!;
+          Notifications.showFloatingSnackBar(monitorInventarioResponse!.messageUpdate!);
           notifyListeners();
           break;
         case 400:

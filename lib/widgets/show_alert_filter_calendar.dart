@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hope_app/providers/theme_provider.dart';
@@ -5,7 +6,6 @@ import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/widgets/date_container.dart';
 
 Future showDatesModal(BuildContext context, ChangeNotifier provider) {
-  // bool isLoading = (provider as dynamic).isLoading;
 
   return showDialog(
     barrierDismissible: true,
@@ -57,9 +57,11 @@ Future showDatesModal(BuildContext context, ChangeNotifier provider) {
                 ),
                 onPressed: () async {
                   try {
-                    await (provider as dynamic).searchByDates();
-                    // ignore: use_build_context_synchronously
                     Navigator.pop(context);
+                    (provider as dynamic).isLoading = true;
+                    await (provider as dynamic).searchByDates();
+                    (provider as dynamic).isLoading = false;
+                    // ignore: use_build_context_synchronously
                     // Resto de tu lógica con el resultado
                   } catch (error) {
                     print('Error al obtener Solpeds: $error');
