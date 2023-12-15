@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/show_alert_filter_calendar.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,7 @@ class ModuleScreen extends StatelessWidget {
     final verificacionFacturaMiroProvider =
         Provider.of<VerificacionFacturaMiroProvider>(context, listen: true);
     final monitorInvTiendaProvider =
-        Provider.of<MonitorInventarioTiendaProvider>(context, listen: false);
+        Provider.of<MonitorInventarioTiendaProvider>(context);
 
     List<ModuleScreenDTO> items = [
       ModuleScreenDTO(
@@ -95,6 +96,7 @@ class ModuleScreen extends StatelessWidget {
         icon: FontAwesomeIcons.calendar,
         onPressedCallback: (BuildContext context) =>
             showDatesModal(context, monitorInvTiendaProvider),
+        floatingActionButton: const MonitorInvFloatingActionButton(),
       ),
     ];
 
@@ -115,6 +117,7 @@ class ModuleScreen extends StatelessWidget {
         ],
       ),
       body: moduleScreen.widget,
+      floatingActionButton: moduleScreen.floatingActionButton,
     );
   }
 }

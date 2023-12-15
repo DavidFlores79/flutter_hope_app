@@ -14,6 +14,7 @@ class MonitorInventarioResponse {
     String? messageUpdateCodbar;
     Inventario? inventario;
     String? messageUpdate;
+    List<DetalleDetalle>? materialDetalles;
 
     MonitorInventarioResponse({
         this.code,
@@ -23,6 +24,7 @@ class MonitorInventarioResponse {
         this.messageUpdateCodbar,
         this.inventario,
         this.messageUpdate,
+        this.materialDetalles,
     });
 
     factory MonitorInventarioResponse.fromJson(String str) => MonitorInventarioResponse.fromMap(json.decode(str));
@@ -37,6 +39,8 @@ class MonitorInventarioResponse {
         messageUpdateCodbar: json["messageUpdateCodbar"],
         inventario: json["inventario"] == null ? null : Inventario.fromMap(json["inventario"]),
         messageUpdate: json["messageUpdate"],
+        materialDetalles: json["material_detalles"] == null ? [] : List<DetalleDetalle>.from(json["material_detalles"]!.map((x) => DetalleDetalle.fromMap(x))),
+        
     );
 
     Map<String, dynamic> toMap() => {
@@ -47,6 +51,7 @@ class MonitorInventarioResponse {
         "messageUpdateCodbar": messageUpdateCodbar,
         "inventario": inventario?.toMap(),
         "messageUpdate": messageUpdate,
+        "material_detalles": materialDetalles == null ? [] : List<dynamic>.from(materialDetalles!.map((x) => x.toMap())),
     };
 }
 
@@ -279,5 +284,25 @@ class DetalleDetalle {
         "cantidad": cantidad,
         "mueble": mueble,
         "responsable": responsable,
+    };
+}
+
+class SaveInventarioRequest {
+    Inventario? inventario;
+
+    SaveInventarioRequest({
+        this.inventario,
+    });
+
+    factory SaveInventarioRequest.fromJson(String str) => SaveInventarioRequest.fromMap(json.decode(str));
+
+    String toJson() => json.encode(toMap());
+
+    factory SaveInventarioRequest.fromMap(Map<String, dynamic> json) => SaveInventarioRequest(
+        inventario: json["inventario"] == null ? null : Inventario.fromMap(json["inventario"]),
+    );
+
+    Map<String, dynamic> toMap() => {
+        "inventario": inventario?.toMap(),
     };
 }

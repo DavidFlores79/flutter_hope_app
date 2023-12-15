@@ -50,6 +50,7 @@ dependencies:
   flutter_slidable: ^3.0.0
   flutter_barcode_scanner: ^2.0.0
   device_info_plus: ^9.1.1
+  animated_text_kit: ^4.2.2
   
 
 dev_dependencies:

@@ -67,19 +67,21 @@ class _MonitorInvTiendaState extends State<MonitorInvTienda> {
             text:
                 'No hay inventarios para mostrar.\nPuede intentar con otras fechas.',
           )
-        : ListView.builder(
-            itemCount: monitorInvProvider.inventarios.length,
-            itemBuilder: (BuildContext context, int index) {
-              final inventario = monitorInvProvider.inventarios[index];
-
-              return InventarioCard(
-                  inventario: inventario,
-                  isSelected: (monitorInvProvider.posicionesSelected
-                          .contains(inventario.id))
-                      ? true
-                      : false);
-            },
-          );
+        : SlidableAutoCloseBehavior(
+          child: ListView.builder(
+              itemCount: monitorInvProvider.inventarios.length,
+              itemBuilder: (BuildContext context, int index) {
+                final inventario = monitorInvProvider.inventarios[index];
+        
+                return InventarioCard(
+                    inventario: inventario,
+                    isSelected: (monitorInvProvider.posicionesSelected
+                            .contains(inventario.id))
+                        ? true
+                        : false);
+              },
+            ),
+        );
   }
 }
 
@@ -168,14 +170,7 @@ class _InventarioCardState extends State<InventarioCard> {
           onChanged: (value) {
             setState(() {
               widget.isSelected = value!;
-              final posicionExiste = monitorInvProvider.posicionesSelected
-                  .contains(widget.inventario.id);
-
-              posicionExiste
-                  ? monitorInvProvider.posicionesSelected
-                      .remove(widget.inventario.id)
-                  : monitorInvProvider.posicionesSelected
-                      .add(widget.inventario.id!);
+              monitorInvProvider.togglePositionSelected(widget.inventario.id!);
             });
           },
         ),
