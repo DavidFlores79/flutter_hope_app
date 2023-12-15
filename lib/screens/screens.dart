@@ -1,3 +1,4 @@
+export 'package:hope_app/screens/modules/inventario_tienda_screen.dart';
 export 'package:hope_app/screens/modules/monitor_inventario/detalle_inventario_screen.dart';
 
 export 'package:hope_app/screens/about_screen.dart';

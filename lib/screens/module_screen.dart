@@ -90,6 +90,11 @@ class ModuleScreen extends StatelessWidget {
         },
       ),
       ModuleScreenDTO(
+        label: 'Inventario IM',
+        route: InventarioTiendaScreen.routeName,
+        widget: const InventarioTiendaScreen(),
+      ),
+      ModuleScreenDTO(
         label: 'Monitor Inventario',
         route: MonitorInventarioTiendaScreen.routeName,
         widget: const MonitorInventarioTiendaScreen(),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hope_app/locator.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
+import 'package:hope_app/ui/notifications.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/widgets.dart';
@@ -14,6 +16,7 @@ class ActivationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final activationService = Provider.of<ActivationService>(context);
+    final NavigationService _navigationService = locator<NavigationService>();
 
     final GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
 
@@ -33,7 +36,7 @@ class ActivationScreen extends StatelessWidget {
               return const CircularProgressIndicator.adaptive();
             }
             final isLicenseExpired = snapshot.data ?? true;
-
+            print('isLicenseExpired: $isLicenseExpired');
             if (isLicenseExpired) {
               print('licencia vencida');
               return SingleChildScrollView(
@@ -83,7 +86,7 @@ class ActivationScreen extends StatelessWidget {
                               backgroundColor: MaterialStateProperty.all(
                                   const Color.fromARGB(255, 17, 92, 153)),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               // ignore: todo
                               // TODO: Imprimir valores del formulario
                               FocusScope.of(context).requestFocus(
@@ -94,29 +97,20 @@ class ActivationScreen extends StatelessWidget {
                               }
                               print(formValues);
 
-                              final result = Provider.of<ActivationService>(
-                                      context,
-                                      listen: false)
-                                  .getLicence(formValues['codigo']);
+                              try {
+                                final result =
+                                    await Provider.of<ActivationService>(
+                                            context,
+                                            listen: false)
+                                        .getLicence(formValues['codigo']);
 
-                              result.then((value) {
-                                print('Resultado: $value');
-                                if (value == true) {
-                                  Future.microtask(
-                                    () {
-                                      Navigator.pushReplacement(
-                                          context,
-                                          PageRouteBuilder(
-                                              pageBuilder: (context, animation,
-                                                      secondaryAnimation) =>
-                                                  const AuthTokenScreen(),
-                                              transitionDuration:
-                                                  const Duration(seconds: 0)));
-                                    },
-                                  );
+                                print('Resultado getLicence: $result');
+                                if (result == true) {
+                                  _navigationService.navigateTo(AuthTokenScreen.routeName);
                                 }
-                                return;
-                              });
+                              } catch (e) {
+                                Notifications.showSnackBar('Error: $e');
+                              }
                             },
                             child: const SizedBox(
                               width: double.infinity,
@@ -137,13 +131,8 @@ class ActivationScreen extends StatelessWidget {
             } else {
               Future.microtask(
                 () {
-                  Navigator.pushReplacement(
-                      context,
-                      PageRouteBuilder(
-                          pageBuilder:
-                              (context, animation, secondaryAnimation) =>
-                                  const AuthTokenScreen(),
-                          transitionDuration: const Duration(seconds: 0)));
+                  Navigator.pushReplacementNamed(
+                      context, AuthTokenScreen.routeName);
                 },
               );
             }
