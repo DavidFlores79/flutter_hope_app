@@ -1,3 +1,5 @@
+export 'package:hope_app/models/inventario/validate_material_with_center_response.dart';
+export 'package:hope_app/models/inventario/respuesta_api_response.dart';
 export 'package:hope_app/models/inventario/inventario_response.dart';
 
 export 'package:hope_app/models/activation_response.dart';

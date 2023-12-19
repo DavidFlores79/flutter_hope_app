@@ -56,7 +56,6 @@ class ActivationService extends ChangeNotifier {
           Preferences.licenseExp = activationResponse.license.finalDate;
           Preferences.code = codigo;
 
-          // Notifications.showSnackBar('${activationResponse.message} \n Actualizando configuración...');
           Notifications.showSnackBar('Actualizando configuración...');
           break;
         case 401:

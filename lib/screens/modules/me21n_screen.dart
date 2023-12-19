@@ -25,7 +25,9 @@ class ME21NScreen extends StatelessWidget {
     final orientation = MediaQuery.of(context).orientation;
     print('Orientation: $orientation');
     return Scaffold(
-      body: (orientation == Orientation.landscape && Preferences.deviceModel != 'iPad' && Preferences.deviceModel != 'Tablet')
+      body: (orientation == Orientation.landscape &&
+              Preferences.deviceModel != 'iPad' &&
+              Preferences.deviceModel != 'Tablet')
           ? EmptyContainer(
               assetImage: 'assets/images/icons/portrait.png',
               text:
@@ -782,7 +784,8 @@ class __QuantityState extends State<_Quantity> {
             final text = newValue.text;
             return text.isEmpty
                 ? newValue
-                : double.tryParse(text) == null
+                : (double.tryParse(text) == null ||
+                        (!RegExp(r'^\d*\.?\d{0,3}$').hasMatch(newValue.text)))
                     ? oldValue
                     : newValue;
           }),
