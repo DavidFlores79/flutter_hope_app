@@ -212,6 +212,9 @@ class ConfirmButton extends StatelessWidget {
                 final result =
                     await reciboEmbarqueProvider.contabilizarEmbarque();
                 if (result) {
+                  Future.delayed(const Duration(milliseconds: 600), () {
+                    reciboEmbarqueProvider.searchEmbarques();
+                  });
                   Future.microtask(() => Navigator.pop(context));
                 }
                 print('Result $result');

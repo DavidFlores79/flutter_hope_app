@@ -38,7 +38,7 @@ class MonitorSolpedProvider extends ChangeNotifier {
   MonitorSolpedProvider() {
     // ignore: avoid_print
     print('Monitor Solped  provider inicializado');
-    // getSolpeds();
+    // searchByDates();
   }
 
   get isLoading => _isLoading;
@@ -50,7 +50,7 @@ class MonitorSolpedProvider extends ChangeNotifier {
     return formKey.currentState?.validate() ?? false;
   }
 
-  Future<List<Posicion>> getSolpeds() async {
+  Future<List<Posicion>> searchByDates() async {
     // print(fecha1);
     // print(fecha2);
     isLoading = true;
@@ -94,7 +94,7 @@ class MonitorSolpedProvider extends ChangeNotifier {
           // } else {
           //   Notifications.showSnackBar('No se encontraron Solpeds Encontrados');
           // }
-
+          notifyListeners();
           break;
         case 401:
           if (response.body.contains('code')) {

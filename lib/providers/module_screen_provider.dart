@@ -23,6 +23,7 @@ class ModuleScreenDTO {
   Widget? iconData;
   IconData? icon;
   final void Function(BuildContext)? onPressedCallback;
+  Widget? floatingActionButton;
 
   ModuleScreenDTO({
     this.widget,
@@ -31,5 +32,6 @@ class ModuleScreenDTO {
     this.route,
     this.icon,
     this.onPressedCallback,
+    this.floatingActionButton
   });
 }

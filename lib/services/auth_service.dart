@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hope_app/locator.dart';
+import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:hope_app/ui/notifications.dart';
@@ -10,6 +13,7 @@ class AuthService extends ChangeNotifier {
   final String _apiUrl = Preferences.apiServer;
   final String _proyectName = Preferences.projectName;
   final storage = const FlutterSecureStorage();
+  final NavigationService _navigationService = locator<NavigationService>();
 
   Future<String?> loginUser(String nickname, String password) async {
     final Map<String, dynamic> authData = {
@@ -47,11 +51,16 @@ class AuthService extends ChangeNotifier {
     //print(decodedResp);
   }
 
-  Future logout() async {
+  // Future logout() async {
+  //   await storage.deleteAll();
+  //   Preferences.apiUser = '';
+  //   notifyListeners();
+  //   return;
+  // }
+  logout() async {
     await storage.deleteAll();
     Preferences.apiUser = '';
-    notifyListeners();
-    return;
+    _navigationService.navigateTo(LoginScreen.routeName);
   }
 
   Future<String> getToken() async {

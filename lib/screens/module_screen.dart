@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/show_alert_filter_calendar.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,8 @@ class ModuleScreen extends StatelessWidget {
         Provider.of<LiberarSolpedProvider>(context, listen: false);
     final verificacionFacturaMiroProvider =
         Provider.of<VerificacionFacturaMiroProvider>(context, listen: true);
+    final monitorInvTiendaProvider =
+        Provider.of<MonitorInventarioTiendaProvider>(context);
 
     List<ModuleScreenDTO> items = [
       ModuleScreenDTO(
@@ -86,6 +89,20 @@ class ModuleScreen extends StatelessWidget {
           }
         },
       ),
+      ModuleScreenDTO(
+        label: 'Inventario IM',
+        route: InventarioTiendaScreen.routeName,
+        widget: const InventarioTiendaScreen(),
+      ),
+      ModuleScreenDTO(
+        label: 'Monitor Inventario',
+        route: MonitorInventarioTiendaScreen.routeName,
+        widget: const MonitorInventarioTiendaScreen(),
+        icon: FontAwesomeIcons.calendar,
+        onPressedCallback: (BuildContext context) =>
+            showDatesModal(context, monitorInvTiendaProvider),
+        floatingActionButton: const MonitorInvFloatingActionButton(),
+      ),
     ];
 
     final ModuleScreenDTO moduleScreen = items.firstWhere(
@@ -105,6 +122,7 @@ class ModuleScreen extends StatelessWidget {
         ],
       ),
       body: moduleScreen.widget,
+      floatingActionButton: moduleScreen.floatingActionButton,
     );
   }
 }

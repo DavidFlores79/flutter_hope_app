@@ -6,20 +6,21 @@ class ThemeProvider extends ChangeNotifier {
   // Yellow	#ffc107
   // Green	#28a745
   // Teal	#20c997
-  static Color lightColor = const Color.fromRGBO(35, 35, 35, 0.9);
-  static Color darkColor = const Color.fromRGBO(240, 171, 0, 1);
-  static Color blueColor = const Color.fromARGB(255, 17, 92, 153);
-  static Color redColor = const Color.fromARGB(255, 255, 0, 0);
+  static Color lightColor = const Color(0xff343434);
+  static Color darkColor = const Color(0xfff0ab00);
+  static Color blueColor = const Color(0xff115c99);
+  static Color redColor = const Color(0xffFF0000);
   static Color lightRed = const Color(0xffD11149);
-  static Color aquaBlueColor = const Color.fromARGB(255, 49, 134, 160);
+  static Color aquaBlueColor = const Color(0xff3186a0);
   static Color whiteColor = Colors.white;
   static Color greyColor = const Color(0xff808080);
   static Color greenColor = const Color(0xff28a745);
+  static Color tealColor = const Color(0xff17a2b8);
 
   ThemeProvider({
     required isDarkmode,
-    lightColor = const Color.fromRGBO(35, 35, 35, 0.9),
-    darkColor = const Color.fromRGBO(240, 171, 0, 1),
+    lightColor = const Color(0xff343434),
+    darkColor = const Color(0xfff0ab00),
   }) : currentTheme = isDarkmode
             ? ThemeData.dark().copyWith(
                 appBarTheme: AppBarTheme(

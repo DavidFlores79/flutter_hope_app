@@ -87,6 +87,12 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<VerificacionFacturaMiroProvider>(
           create: (context) => VerificacionFacturaMiroProvider(),
         ),
+        ChangeNotifierProvider<MonitorInventarioTiendaProvider>(
+          create: (context) => MonitorInventarioTiendaProvider(),
+        ),
+        ChangeNotifierProvider<InventarioTiendaProvider>(
+          create: (context) => InventarioTiendaProvider(),
+        ),
       ],
       child: const MyApp(),
     );
@@ -137,6 +143,9 @@ class MyApp extends StatelessWidget {
         ShowTransfersScreen.routeName: (context) => const ShowTransfersScreen(),
           VerificarFacturaMiroScreen.routeName: (context) =>
             const VerificarFacturaMiroScreen(),
+        MonitorInventarioTiendaScreen.routeName: (context) => const MonitorInventarioTiendaScreen(),
+        DetallesInventarioScreen.routeName: (context) => const DetallesInventarioScreen(),
+        InventarioTiendaScreen.routeName: (context) => const InventarioTiendaScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );

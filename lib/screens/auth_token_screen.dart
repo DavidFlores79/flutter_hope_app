@@ -30,18 +30,6 @@ class AuthTokenScreen extends StatelessWidget {
               if (Preferences.apiUser == '') {
                 authService.logout();
               }
-              Future.microtask(
-                () {
-                  // Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-                  Navigator.pushReplacement(
-                      context,
-                      PageRouteBuilder(
-                          pageBuilder:
-                              (context, animation, secondaryAnimation) =>
-                                  const LoginScreen(),
-                          transitionDuration: const Duration(seconds: 0)));
-                },
-              );
             } else {
               orderProvider.getOrdenes();
               Future.microtask(

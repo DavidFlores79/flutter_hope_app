@@ -28,7 +28,6 @@ class _SolpedScreenState extends State<SolpedScreen> {
   Widget build(BuildContext context) {
     final solpedProvider = Provider.of<SolpedProvider>(context);
     final materialProvider = Provider.of<MaterialProvider>(context);
-    final liberarsolpedProvider = Provider.of<LiberarSolpedProvider>(context);
     final posiciones = solpedProvider.posiciones;
     final orientation = MediaQuery.of(context).orientation;
 
@@ -263,7 +262,7 @@ class _SolpedScreenState extends State<SolpedScreen> {
                                           _searchController.clear();
                                           _qtyController.clear();
                                         });
-                                        liberarsolpedProvider.getSolpeds();
+                                        solpedProvider.getSolpeds();
                                         Notifications.showSnackBar(
                                             'Pedido creado correctamente.');
                                       }
