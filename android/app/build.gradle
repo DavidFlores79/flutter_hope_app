@@ -55,8 +55,8 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion 20
         targetSdkVersion 33
-        versionCode 6 //incrementar cada vez que se cambie en la PlayStore
-        versionName "1.7.6"
+        versionCode 7 //incrementar cada vez que se cambie en la PlayStore
+        versionName "1.8.2"
         multiDexEnabled true
     }
 
