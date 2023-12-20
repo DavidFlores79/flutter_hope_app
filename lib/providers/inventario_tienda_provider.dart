@@ -365,8 +365,8 @@ class InventarioTiendaProvider extends ChangeNotifier {
             validateMaterialWithCenter(
                 validateBarcodeResponse!.respuestaApi!.inventarios!.first);
           } else {
-            Notifications.showSnackBar(
-                '${validateBarcodeResponse!.respuestaApi!.trace}');
+            // Notifications.showSnackBar(
+            //     '${validateBarcodeResponse!.respuestaApi!.trace}');
             materialContado = validateBarcodeResponse!.articulo!;
           }
           notifyListeners();
