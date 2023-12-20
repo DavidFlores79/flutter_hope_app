@@ -201,12 +201,12 @@ class _SearchInventarioState extends State<SearchInventario> {
                                     color: ThemeProvider.blueColor,
                                   ),
                                   //TODO: comentar onChanged y descomentar OnTap
-                                  // onTap: () => scanQR(inventarioTiendaProvider,
-                                  //     widget.barCodeController),
-                                  onChanged: (value) {
-                                    inventarioTiendaProvider.barCode = value;
-                                    inventarioTiendaProvider.validateBarcode();
-                                  },
+                                  onTap: () => scanQR(inventarioTiendaProvider,
+                                      widget.barCodeController),
+                                  // onChanged: (value) {
+                                  //   inventarioTiendaProvider.barCode = value;
+                                  //   inventarioTiendaProvider.validateBarcode();
+                                  // },
                                   validator: (value) {
                                     print('valueBarcode $value');
                                     return (value != null)

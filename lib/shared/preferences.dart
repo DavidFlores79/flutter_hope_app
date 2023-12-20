@@ -260,8 +260,7 @@ class Preferences {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      if (androidInfo.displayMetrics.widthPx > 600 ||
-          androidInfo.displayMetrics.heightPx > 600) {
+      if (androidInfo.displayMetrics.sizeInches > 6.5) {
         deviceModel = 'Tablet';
       } else {
         deviceModel = 'Phone';
