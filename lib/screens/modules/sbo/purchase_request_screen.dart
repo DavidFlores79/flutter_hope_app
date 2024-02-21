@@ -38,6 +38,7 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
     super.initState();
     final purchaseRequestProvider = context.read<PurchaseRequestProvider>();
     purchaseRequestProvider.getCatalogs();
+    // purchaseRequestProvider.itemSelected = SBO_Item();
   }
 
   final TextEditingController _searchController = TextEditingController();
@@ -277,6 +278,8 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                                                   ?.reset();
                                               itemProvider.itemSelected =
                                                   SBO_Item();
+                                              purchaseRequestProvider
+                                                  .itemSelected = SBO_Item();
                                               _searchController.clear();
                                               _qtyController.clear();
                                             });
@@ -287,6 +290,8 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                                                   ?.reset();
                                               itemProvider.itemSelected =
                                                   SBO_Item();
+                                              purchaseRequestProvider
+                                                  .itemSelected = SBO_Item();
                                               _searchController.clear();
                                               _qtyController.clear();
                                             });

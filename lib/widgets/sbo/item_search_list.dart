@@ -108,6 +108,8 @@ class ItemCard extends StatelessWidget {
         onPressed: () {
           print('Artículo Selected: ${item.itemName}');
           purchaseRequestProvider.itemSelected = item;
+          purchaseRequestProvider.defaultWarehouse = purchaseRequestProvider
+              .itemSelected.itemWarehouseInfoCollection![0].warehouseCode!;
           Navigator.pop(context);
         },
       ),

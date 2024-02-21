@@ -5,7 +5,7 @@
  */
 import 'dart:convert';
 
-import 'package:hope_app/models/estatus.dart';
+import 'package:hope_app/models/models.dart';
 
 class PurchaseRequestResponse {
   int? code;
@@ -168,38 +168,5 @@ class DocumentLine {
         "created_at": createdAt,
         "updated_at": updatedAt,
         "status": status?.toMap(),
-      };
-}
-
-class SupplierSBO {
-  String? odataEtag;
-  String? cardCode;
-  String? cardName;
-  String? cardType;
-
-  SupplierSBO({
-    this.odataEtag,
-    this.cardCode,
-    this.cardName,
-    this.cardType,
-  });
-
-  factory SupplierSBO.fromJson(String str) =>
-      SupplierSBO.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory SupplierSBO.fromMap(Map<String, dynamic> json) => SupplierSBO(
-        odataEtag: json["odata.etag"],
-        cardCode: json["CardCode"],
-        cardName: json["CardName"],
-        cardType: json["CardType"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "odata.etag": odataEtag,
-        "CardCode": cardCode,
-        "CardName": cardName,
-        "CardType": cardType,
       };
 }

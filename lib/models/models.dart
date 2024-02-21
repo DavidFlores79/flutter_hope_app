@@ -1,3 +1,4 @@
+export 'package:hope_app/models/sbo/supplier/sbo_supplier_response.dart'; //SBO
 export 'package:hope_app/models/sbo/items/search_items_response.dart'; //SBO
 export 'package:hope_app/models/sbo/sbo_warehouse_response.dart'; //SBO
 export 'package:hope_app/models/sbo/items_response.dart'; //SBO
