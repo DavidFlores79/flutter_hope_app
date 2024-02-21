@@ -73,7 +73,6 @@ class SearchInventario extends StatefulWidget {
 }
 
 class _SearchInventarioState extends State<SearchInventario> {
-
   Future<void> scanQR(
       InventarioTiendaProvider inventarioProvider, barCodeController) async {
     String barcodeScanRes;
@@ -87,11 +86,12 @@ class _SearchInventarioState extends State<SearchInventario> {
 
     if (!mounted) return;
     print(barcodeScanRes);
-
-    inventarioProvider.barCode = barcodeScanRes;
     setState(() {
       barCodeController.text = (barcodeScanRes != '-1') ? barcodeScanRes : '';
-      inventarioProvider.validateBarcode();
+      if(barcodeScanRes != '-1') {
+        inventarioProvider.validateBarcode();
+        inventarioProvider.barCode = barcodeScanRes;
+      }
     });
   }
 
@@ -100,10 +100,9 @@ class _SearchInventarioState extends State<SearchInventario> {
     final inventarioTiendaProvider =
         Provider.of<InventarioTiendaProvider>(context);
 
-        setState(() {
+    setState(() {
       widget.barCodeController.text = inventarioTiendaProvider.barCode;
       widget.rackController.text = inventarioTiendaProvider.rack;
-      
     });
 
     print(
@@ -169,7 +168,8 @@ class _SearchInventarioState extends State<SearchInventario> {
                                   autovalidateMode:
                                       AutovalidateMode.onUserInteraction,
                                   keyboardType: TextInputType.text,
-                                  textCapitalization: TextCapitalization.characters,
+                                  textCapitalization:
+                                      TextCapitalization.characters,
                                   decoration: InputDecorationsRounded
                                       .authInputDecorationRounded(
                                           hintText: 'Mueble',
@@ -190,10 +190,7 @@ class _SearchInventarioState extends State<SearchInventario> {
                                 ),
                                 const SizedBox(height: 15),
                                 TextFormField(
-                                  // readOnly: true,
-                                  // maxLength: 20,
                                   controller: widget.barCodeController,
-                                  autofocus: (inventarioTiendaProvider.rack != '') ? true:false,
                                   autovalidateMode:
                                       AutovalidateMode.onUserInteraction,
                                   decoration: InputDecorationsRounded
@@ -276,12 +273,10 @@ class SearchInventoryBtn extends StatelessWidget {
               FocusScope.of(context).unfocus();
 
               //hacer la peticion al backend
-              final result =
-                  await inventarioTiendaProvider.searchInventory();
+              final result = await inventarioTiendaProvider.searchInventory();
               print('Result $result');
             },
-      shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       disabledColor: ThemeProvider.blueColor.withAlpha(150),
       elevation: 0,
       color: ThemeProvider.blueColor,
@@ -528,8 +523,9 @@ class _ConteoCiegoFormState extends State<ConteoCiegoForm> {
                   ),
                   const SizedBox(height: 15),
                   ConteoCiegoButtons(
-                      inventarioTiendaProvider:
-                          widget.inventarioTiendaProvider, rackController: widget.rackController, barCodeController: widget.barCodeController),
+                      inventarioTiendaProvider: widget.inventarioTiendaProvider,
+                      rackController: widget.rackController,
+                      barCodeController: widget.barCodeController),
                 ],
               ),
             ),
@@ -538,7 +534,6 @@ class _ConteoCiegoFormState extends State<ConteoCiegoForm> {
       ],
     );
   }
-
 }
 
 class ConteoCiegoButtons extends StatefulWidget {
@@ -546,7 +541,11 @@ class ConteoCiegoButtons extends StatefulWidget {
   final TextEditingController rackController;
   final TextEditingController barCodeController;
 
-  const ConteoCiegoButtons({super.key, required this.inventarioTiendaProvider, required this.barCodeController, required this.rackController});
+  const ConteoCiegoButtons(
+      {super.key,
+      required this.inventarioTiendaProvider,
+      required this.barCodeController,
+      required this.rackController});
 
   @override
   State<ConteoCiegoButtons> createState() => _ConteoCiegoButtonsState();
@@ -564,8 +563,8 @@ class _ConteoCiegoButtonsState extends State<ConteoCiegoButtons> {
                 : () async {
                     // if (!widget.inventarioTiendaProvider.isValidForm()) return;
                     FocusScope.of(context).unfocus();
-                    //hacer la peticion al backend
-                    print('Finalizar Conteo!!');
+                    //confirmar la peticion
+                    confirmStopCounting(context);
                   },
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -597,17 +596,19 @@ class _ConteoCiegoButtonsState extends State<ConteoCiegoButtons> {
                     FocusScope.of(context).unfocus();
                     //hacer la peticion al backend
                     print('Guardar Conteo!!');
-                    print(widget.inventarioTiendaProvider.materialContado.toJson());
+                    print(widget.inventarioTiendaProvider.materialContado
+                        .toJson());
                     final result =
                         await widget.inventarioTiendaProvider.saveCounting();
                     print('Result $result');
-                    if(result) {
+                    if (result) {
                       resetBlindCounting(widget.inventarioTiendaProvider);
                       setState(() {
                         // widget.rackController.text = '';
                         widget.barCodeController.text = '';
                       });
-                    };
+                    }
+                    ;
                   },
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -634,9 +635,99 @@ class _ConteoCiegoButtonsState extends State<ConteoCiegoButtons> {
   }
 }
 
+confirmStopCounting(BuildContext context) {
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return const StopCounting();
+    },
+  );
+
+}
+
 void resetBlindCounting(InventarioTiendaProvider inventarioTiendaProvider) {
   inventarioTiendaProvider.materialContado = IMdetalle();
   inventarioTiendaProvider.material = '';
   // inventarioTiendaProvider.rack = '';
   inventarioTiendaProvider.barCode = '';
+}
+
+class StopCounting extends StatefulWidget {
+  const StopCounting({super.key});
+
+  @override
+  State<StopCounting> createState() => _StopCountingState();
+}
+
+class _StopCountingState extends State<StopCounting> {
+  @override
+  Widget build(BuildContext context) {
+    final inventarioTiendaProvider =
+        Provider.of<InventarioTiendaProvider>(context);
+
+    return AlertDialog(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(10.0),
+        ),
+      ),
+      contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+      content: const SizedBox(
+        width: double.minPositive,
+        child: Text(
+          '¿Está seguro que desea finalizar el conteo del inventario?',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+        ),
+      ),
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: ThemeProvider.lightRed,
+                disabledForegroundColor: Colors.transparent,
+                disabledBackgroundColor: Colors.transparent,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                // fixedSize: Size((size.width / 5), 20),
+                foregroundColor: Colors.white,
+                backgroundColor: ThemeProvider.blueColor,
+                disabledForegroundColor: Colors.transparent,
+                disabledBackgroundColor: Colors.transparent,
+              ),
+              onPressed: () async {
+                try {
+                  Navigator.pop(context);
+                  print('Finalizar Conteo!!');
+                  endCounting(inventarioTiendaProvider);
+                  setState(() {});
+                } catch (error) {
+                  print('Error al recontar mueble: $error');
+                  Notifications.showFloatingSnackBar(
+                      'Error al recontar mueble: $error');
+                }
+              },
+              child: const Text('Confirmar'),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+}
+
+void endCounting(InventarioTiendaProvider inventarioTiendaProvider) {
+  inventarioTiendaProvider.inventarioResponse = InventarioResponse();
+  inventarioTiendaProvider.inventarios = [];
+  resetBlindCounting(inventarioTiendaProvider);
+  Notifications.showSnackBar('Conteo de Inventario Finalizado');
 }

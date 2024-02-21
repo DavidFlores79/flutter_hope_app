@@ -91,6 +91,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           height: 2,
                         ),
                       ),
+                      Text(
+                        'Dispositivo: ${Preferences.deviceModel}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          height: 2,
+                        ),
+                      ),
                       // Text(
                       //   'One Signal ID: ${Preferences.onesignalUserId}',
                       //   style: const TextStyle(
