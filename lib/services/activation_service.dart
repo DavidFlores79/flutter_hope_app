@@ -55,6 +55,7 @@ class ActivationService extends ChangeNotifier {
           //guardar el código para reusarlo cada vez que se abra la app
           Preferences.licenseExp = activationResponse.license.finalDate;
           Preferences.code = codigo;
+          Preferences.sapCode = activationResponse.sapCode!;
 
           Notifications.showSnackBar('Actualizando configuración...');
           break;

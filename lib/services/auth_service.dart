@@ -22,12 +22,12 @@ class AuthService extends ChangeNotifier {
     };
 
     final url = Uri.http(_apiUrl, '$_proyectName/api/login', authData);
-
+    print('URL: $url');
     try {
       final response = await http
           .post(url, body: json.encode(authData))
           .timeout(const Duration(seconds: 10));
-
+      print('response.statusCode ${response.statusCode}');
       final Map<String, dynamic> decodedResp = json.decode(response.body);
 
       if (decodedResp['code'] == 200) {

@@ -51,5 +51,21 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<!--restart_app-->
+	<key>CFBundleURLTypes</key>
+	<array>
+	<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLName</key>
+		<!-- You can find it on /ios/project.pbxproj - 'PRODUCT_BUNDLE_IDENTIFIER' -->
+		<string>mx.itsoft.hopeMovilApp</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+		<!-- Your app title -->
+		<string>Hope Móvil</string>
+		</array>
+	</dict>
+	</array>
 </dict>
 </plist>

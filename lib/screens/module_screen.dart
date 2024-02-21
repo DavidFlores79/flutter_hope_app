@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
-import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/show_alert_filter_calendar.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
@@ -103,6 +102,18 @@ class ModuleScreen extends StatelessWidget {
             showDatesModal(context, monitorInvTiendaProvider),
         floatingActionButton: const MonitorInvFloatingActionButton(),
       ),
+      // ****************** SAP BUSINESS ONE *******************
+      ModuleScreenDTO(
+        label: 'Solicitud de Compra',
+        route: PurchaseRequestScreen.routeName,
+        widget: const PurchaseRequestScreen(),
+      ),
+      ModuleScreenDTO(
+        label: 'Liberar Solicitud de Compra',
+        route: ReleasePurchaseRequestScreen.routeName,
+        widget: const ReleasePurchaseRequestScreen(),
+      ),
+      //****************** SAP BUSINESS ONE *********************
     ];
 
     final ModuleScreenDTO moduleScreen = items.firstWhere(

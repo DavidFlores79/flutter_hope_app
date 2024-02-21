@@ -6,6 +6,7 @@ import 'package:hope_app/shared/preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'package:restart_app/restart_app.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const String routeName = 'settings';
@@ -118,6 +119,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               // ignore: use_build_context_synchronously
                               Navigator.pushReplacementNamed(
                                   context, ActivationScreen.routeName);
+                              await Restart.restartApp();
                             },
                             child: Text(
                               'Borrar Licencia',

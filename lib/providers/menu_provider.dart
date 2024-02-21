@@ -55,7 +55,13 @@ class ModulosProvider extends ChangeNotifier {
           result = true;
           isLoading = false;
           final moduleResponse = ModuleResponse.fromJson(response.body);
-          categorias = moduleResponse.categoriasModulos;
+          // categorias = moduleResponse.categoriasModulos;
+
+          //TODO: Preguntar si la licencia es SBO
+          categorias = (Preferences.sapCode != 'SBO')
+              ? moduleResponse.categoriasModulos
+              : modifyRoutes(moduleResponse.categoriasModulos);
+
           notifyListeners();
           print('Categorias: $categorias');
           break;
@@ -98,6 +104,17 @@ class ModulosProvider extends ChangeNotifier {
       notifyListeners();
     }
     return result;
+  }
+
+  List<CategoriasModulo> modifyRoutes(List<CategoriasModulo> categorias) {
+    for (var categoria in categorias) {
+      for (var modulo in categoria.modulos) {
+        String ruta = modulo.ruta;
+        modulo.ruta = 'sbo-$ruta';
+      }
+    }
+
+    return categorias;
   }
 
   logout() async {

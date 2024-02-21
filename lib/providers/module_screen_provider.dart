@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hope_app/screens/screens.dart';
 
 class ModuleScreenProvider extends ChangeNotifier {
-
   ModuleScreenDTO _selectedScreen = ModuleScreenDTO(
     label: 'Under Construction',
     route: UnderConstructionScreen.routeName,
@@ -25,13 +24,12 @@ class ModuleScreenDTO {
   final void Function(BuildContext)? onPressedCallback;
   Widget? floatingActionButton;
 
-  ModuleScreenDTO({
-    this.widget,
-    this.label,
-    this.iconData,
-    this.route,
-    this.icon,
-    this.onPressedCallback,
-    this.floatingActionButton
-  });
+  ModuleScreenDTO(
+      {this.widget,
+      this.label,
+      this.iconData,
+      this.route,
+      this.icon,
+      this.onPressedCallback,
+      this.floatingActionButton});
 }

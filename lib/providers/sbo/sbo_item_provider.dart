@@ -1,19 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/helpers/debouncer.dart';
 import 'package:hope_app/locator.dart';
 import 'package:hope_app/models/models.dart';
-import 'package:hope_app/screens/login_screen.dart';
+import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 
-class LiberarSolpedProvider extends ChangeNotifier {
+class SBOItemProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   final String _apiUrl = Preferences.apiServer;
@@ -21,161 +19,51 @@ class LiberarSolpedProvider extends ChangeNotifier {
   String _endPoint = '/api/v1/mi-endpoint';
   String jwtToken = '';
   ServerResponse? serverResponse;
-  BuscarSolpedsResponse? solpedResponse;
-  List<Posicion>? pedidos = [];
-  List<int> _posicionesSelected = [];
-  String _motivoRechazo = '';
-  late String fecha1 = DateFormat('yyyy-MM-dd')
-      .format(DateTime.now().subtract(const Duration(days: 1)));
+  bool result = false;
+  SBO_ItemsResponse? itemsResponse;
+  SearchItemsResponse? searchItemsResponse;
+  List<SBO_Item>? items = [];
+  SBO_Item _itemSelected = SBO_Item();
+  String quantity = '';
 
-  late String fecha2 = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  SBO_Item get itemSelected => _itemSelected;
 
-  String get motivoRechazo => _motivoRechazo;
-
-  set motivoRechazo(String value) {
-    _motivoRechazo = value;
-  }
-
-  List<int> get posicionesSelected => _posicionesSelected;
-
-  set posicionesSelected(List<int> value) {
-    _posicionesSelected = value;
+  set itemSelected(SBO_Item value) {
+    _itemSelected = value;
     notifyListeners();
   }
 
-  bool result = false;
   final debouncer = Debouncer(duration: const Duration(milliseconds: 700));
+
+  final StreamController<List<SBO_Item>> _itemStreamController =
+      new StreamController.broadcast();
+
+  Stream<List<SBO_Item>> get itemStream => this._itemStreamController.stream;
+
   final NavigationService _navigationService = locator<NavigationService>();
+
   final storage = const FlutterSecureStorage();
 
-  LiberarSolpedProvider() {
-    print('Liberar Solped provider inicializado');
-    // searchByDates();
-  }
   get isLoading => _isLoading;
   set isLoading(value) {
     _isLoading = value;
+    notifyListeners();
   }
 
   bool isValidForm() {
     return formKey.currentState?.validate() ?? false;
   }
 
-  Future<List<Posicion>> searchByDates() async {
-    isLoading = true;
-    result = false;
-    print('Peticion LIberar Solped - Search');
-    _endPoint = '/api/v1/liberarsolped/buscar';
-
-    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
-
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $jwtToken'
-    };
-
-    Map<String, dynamic> dataRaw = {
-      'fecha_desde': fecha1,
-      'fecha_hasta': fecha2,
-    };
-
-    print(dataRaw);
-
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
-
-    try {
-      final response = await http
-          .post(url, headers: headers, body: jsonEncode(dataRaw))
-          .timeout(const Duration(seconds: 20));
-
-      switch (response.statusCode) {
-        case 200:
-          print('Estatus: $isLoading');
-          result = true;
-          isLoading = false;
-          print('200: Search Liberar Solped ${response.body}');
-          solpedResponse = BuscarSolpedsResponse.fromJson(response.body);
-          pedidos = solpedResponse!.pedidos;
-          notifyListeners();
-          break;
-        case 400:
-          isLoading = false;
-          serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido.');
-          notifyListeners();
-          print('400: ${response.body}');
-          break;
-        case 401:
-          if (!response.body.contains('code')) {
-            logout();
-            print('logout');
-            break;
-          }
-          isLoading = false;
-          result = false;
-          serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error de Autenticación.');
-          break;
-        case 404:
-          isLoading = false;
-          serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido.');
-          notifyListeners();
-          print('404: ${response.body}');
-          break;
-        case 422:
-          isLoading = false;
-          result = false;
-          print('422: ${response.body}');
-          ValidatorResponse validatorResponse =
-              ValidatorResponse.fromJson(response.body);
-          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
-          String messages = '${validatorResponse.message}\n';
-
-          Iterable<dynamic> values = errors.values;
-          for (final error in values) {
-            Iterable<dynamic> errorStrings = error;
-            for (final errorString in errorStrings) {
-              print('error: $errorString');
-              messages = '${messages + errorString}\n';
-            }
-          }
-
-          Notifications.showSnackBar(messages);
-          notifyListeners();
-          break;
-        case 500:
-          isLoading = false;
-          print('500: ${response.body}');
-          Notifications.showSnackBar('500 Server Error.');
-          break;
-        default:
-          print('Default: ${response.body}');
-          isLoading = false;
-          result = false;
-      }
-      notifyListeners();
-    } catch (e) {
-      print('Error $e');
-      isLoading = false;
-      if (e.toString().contains('TimeoutException')) {
-        Notifications.showSnackBar(
-            'Tiempo de espera agotado. Favor de reintentar');
-      }
-      notifyListeners();
-    }
-    return pedidos!;
+  SBOItemProvider() {
+    print('MaterialProvider inicializado');
   }
 
-  Future<List<Posicion>> releaseSolpeds() async {
-    isLoading = true;
-    result = false;
-    print('Peticion LIberar Solped - Aprobar');
-    _endPoint = '/api/v1/liberarsolped/aprobar';
+  //Peticiones API
+  Future<List<SBO_Item>> searchItems(String query, String moduleName) async {
+    print('Items API Search');
+    _endPoint = '/api/v1/$moduleName/search';
+    String itemCode = '';
+    String itemName = '';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -185,33 +73,33 @@ class LiberarSolpedProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    Map<String, dynamic> dataRaw = {
-      'fecha_desde': fecha1,
-      'fecha_hasta': fecha2,
-      'solped_seleccionados': posicionesSelected,
+    if (queryHasNumbers(query)) {
+      itemCode = query;
+    } else {
+      itemName = query;
+    }
+
+    final Map<String, dynamic> queryParameters = {
+      'item_code': itemCode,
+      'description': itemName,
     };
 
-    print(dataRaw);
-    print('Ordenes a Liberar ${posicionesSelected.length}');
-
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint', queryParameters);
 
     try {
-      final response = await http
-          .post(url, headers: headers, body: jsonEncode(dataRaw))
-          .timeout(const Duration(seconds: 20));
+      isLoading = true;
+      items = [];
 
-      posicionesSelected = [];
+      final response = await http
+          .get(url, headers: headers)
+          .timeout(const Duration(seconds: 30));
 
       switch (response.statusCode) {
         case 200:
-          result = true;
           isLoading = false;
-          print('200: Aprobar Liberar Solped ${response.body}');
-          solpedResponse = BuscarSolpedsResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              solpedResponse?.message ?? 'Registros Liberados correctamente.');
-          pedidos = solpedResponse!.pedidos;
+          print('200: ${response.body}');
+          searchItemsResponse = SearchItemsResponse.fromJson(response.body);
+          items = searchItemsResponse?.data;
           notifyListeners();
           break;
         case 401:
@@ -221,7 +109,7 @@ class LiberarSolpedProvider extends ChangeNotifier {
             break;
           }
           isLoading = false;
-          result = false;
+          items = [];
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
@@ -229,10 +117,10 @@ class LiberarSolpedProvider extends ChangeNotifier {
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido.');
+          Notifications.showSnackBar(Preferences.truncateMessage(
+              serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
-          print('404: ${response.body}');
+          print('404 ${serverResponse?.message}');
           break;
         case 422:
           isLoading = false;
@@ -251,19 +139,15 @@ class LiberarSolpedProvider extends ChangeNotifier {
               messages = '${messages + errorString}\n';
             }
           }
-
-          Notifications.showSnackBar(messages);
-          notifyListeners();
           break;
         case 500:
           isLoading = false;
-          print('500: ${response.body}');
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
           isLoading = false;
-          result = false;
+          items = [];
       }
       notifyListeners();
     } catch (e) {
@@ -275,14 +159,15 @@ class LiberarSolpedProvider extends ChangeNotifier {
       }
       notifyListeners();
     }
-    return pedidos!;
+    return items!;
   }
 
-  Future<List<Posicion>> rejectSolpeds() async {
-    isLoading = true;
-    result = false;
-    print('Peticion LIberar Solped - Rechazar');
-    _endPoint = '/api/v1/liberarsolped/rechazar';
+  Future<List<SBO_Item>> searchItemsBySupplier(
+      String query, String supplier, String centroDefault) async {
+    print('Peticion API Search Material Supplier');
+    _endPoint = '/api/v1/materials/supplier';
+    String itemCode = '';
+    String itemName = '';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -292,43 +177,38 @@ class LiberarSolpedProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    Map<String, dynamic> dataRaw = {
-      'fecha_desde': fecha1,
-      'fecha_hasta': fecha2,
-      'solped_seleccionados': posicionesSelected,
-      'motivo_rechazo': motivoRechazo
+    if (queryHasNumbers(query)) {
+      itemCode = query;
+    } else {
+      itemName = query;
+    }
+
+    final Map<String, dynamic> queryParameters = {
+      'item_code': itemCode,
+      'item_name': itemName,
+      'warehouse_code': centroDefault,
+      'supplier': supplier,
     };
 
-    print(dataRaw);
-    print('Ordenes a Rechazar ${posicionesSelected.length}');
+    print(queryParameters);
 
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint', queryParameters);
 
     try {
-      final response = await http
-          .post(url, headers: headers, body: jsonEncode(dataRaw))
-          .timeout(const Duration(seconds: 20));
+      isLoading = true;
+      items = [];
 
-      posicionesSelected = [];
+      final response = await http
+          .post(url, headers: headers)
+          .timeout(const Duration(seconds: 30));
 
       switch (response.statusCode) {
         case 200:
-          result = true;
           isLoading = false;
-          print('200: Rechazar Solped ${response.body}');
-          solpedResponse = BuscarSolpedsResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              solpedResponse?.message ?? 'Registros Rechazados correctamente.');
-          pedidos = solpedResponse!.pedidos;
+          print('200: ${response.body}');
+          itemsResponse = SBO_ItemsResponse.fromJson(response.body);
+          items = itemsResponse?.value;
           notifyListeners();
-          break;
-        case 400:
-          isLoading = false;
-          serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido.');
-          notifyListeners();
-          print('404: ${response.body}');
           break;
         case 401:
           if (!response.body.contains('code')) {
@@ -337,7 +217,7 @@ class LiberarSolpedProvider extends ChangeNotifier {
             break;
           }
           isLoading = false;
-          result = false;
+          items = [];
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
@@ -345,10 +225,10 @@ class LiberarSolpedProvider extends ChangeNotifier {
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido.');
+          Notifications.showSnackBar(Preferences.truncateMessage(
+              serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
-          print('404: ${response.body}');
+          print('404 ${serverResponse?.message}');
           break;
         case 422:
           isLoading = false;
@@ -367,26 +247,15 @@ class LiberarSolpedProvider extends ChangeNotifier {
               messages = '${messages + errorString}\n';
             }
           }
-
-          Notifications.showSnackBar(messages);
-          notifyListeners();
           break;
-        // isLoading = false;
-        // serverResponse = ServerResponse.fromJson(response.body);
-        // Notifications.showSnackBar(
-        //     serverResponse?.message ?? 'Error Desconocido.');
-        // notifyListeners();
-        // print('422: ${response.body}');
-        // break;
         case 500:
           isLoading = false;
-          print('500: ${response.body}');
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
           isLoading = false;
-          result = false;
+          items = [];
       }
       notifyListeners();
     } catch (e) {
@@ -398,7 +267,166 @@ class LiberarSolpedProvider extends ChangeNotifier {
       }
       notifyListeners();
     }
-    return pedidos!;
+    return items!;
+  }
+
+  Future<List<SBO_Item>> searchTransferItems(String query, bool esDe) async {
+    print('Peticion Transferencias Search Material');
+    _endPoint = '/api/v1/transferenciasinternas/search';
+    String itemCode = '';
+    String itemName = '';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    if (queryHasNumbers(query)) {
+      itemCode = query;
+    } else {
+      itemName = query;
+    }
+
+    final Map<String, dynamic> queryParameters = {
+      'item_code': itemCode,
+      'item_name': itemName,
+      'es_DE': esDe,
+    };
+
+    print(queryParameters);
+
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+
+    try {
+      isLoading = true;
+      items = [];
+
+      final response = await http
+          .post(url, headers: headers, body: jsonEncode(queryParameters))
+          .timeout(const Duration(seconds: 30));
+
+      switch (response.statusCode) {
+        case 200:
+          isLoading = false;
+          print('200: ${response.body}');
+          itemsResponse = SBO_ItemsResponse.fromJson(response.body);
+          items = itemsResponse?.value;
+          notifyListeners();
+          break;
+        case 401:
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          isLoading = false;
+          items = [];
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(Preferences.truncateMessage(
+              serverResponse?.message ?? 'Error Desconocido.'));
+          notifyListeners();
+          print('404 ${serverResponse?.message}');
+          break;
+        case 422:
+          isLoading = false;
+          result = false;
+          print('422: ${response.body}');
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
+          break;
+        case 500:
+          isLoading = false;
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          items = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return items!;
+  }
+
+  void getItemsByQuery(String query, String moduleName) {
+    debouncer.value = '';
+    debouncer.onValue = (value) async {
+      print('hay valor a buscar $value');
+      final results = await searchItems(value, moduleName);
+      _itemStreamController.add(results);
+    };
+
+    final timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+      debouncer.value = query;
+    });
+
+    Future.delayed(const Duration(milliseconds: 301)).then(
+      (value) => timer.cancel(),
+    );
+  }
+
+  void getItemsBySupplierQuery(
+      String query, String supplier, String centroDefault) {
+    debouncer.value = '';
+    debouncer.onValue = (value) async {
+      print('hay valor a buscar $value');
+      final results =
+          await searchItemsBySupplier(query, supplier, centroDefault);
+      _itemStreamController.add(results);
+    };
+
+    final timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+      debouncer.value = query;
+    });
+
+    Future.delayed(const Duration(milliseconds: 301)).then(
+      (value) => timer.cancel(),
+    );
+  }
+
+  void getTransferItemsByQuery(String query, bool esDE) {
+    debouncer.value = '';
+    debouncer.onValue = (value) async {
+      print('hay valor a buscar $value');
+      final results = await searchTransferItems(query, esDE);
+      _itemStreamController.add(results);
+    };
+
+    final timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+      debouncer.value = query;
+    });
+
+    Future.delayed(const Duration(milliseconds: 301)).then(
+      (value) => timer.cancel(),
+    );
   }
 
   bool queryHasNumbers(String query) {

@@ -24,10 +24,13 @@ class ModuleCard extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             print('Ruta ${modulos[index].ruta}');
-            final migoProvider = Provider.of<MigoProvider>(context, listen: false);
+            final migoProvider =
+                Provider.of<MigoProvider>(context, listen: false);
             migoProvider.isLoading = false;
             migoProvider.result = false;
-            final varificarFacturaMiroProvider =Provider.of<VerificacionFacturaMiroProvider>(context, listen: false);
+            final varificarFacturaMiroProvider =
+                Provider.of<VerificacionFacturaMiroProvider>(context,
+                    listen: false);
             varificarFacturaMiroProvider.result = false;
 
             Navigator.pushNamed(context, ModuleScreen.routeName,

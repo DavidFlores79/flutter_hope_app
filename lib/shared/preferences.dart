@@ -23,6 +23,7 @@ class Preferences {
   static String _onesignalUserId = '';
   static String _clientImage = '';
   static String _deviceModel = '';
+  static String _sapCode = '';
 
   static String get activacionServer {
     return _prefs.getString('activacionServer') ?? _activacionServer;
@@ -159,6 +160,15 @@ class Preferences {
     _prefs.setString('code', value);
   }
 
+  static String get sapCode {
+    return _prefs.getString('sapCode') ?? _sapCode;
+  }
+
+  static set sapCode(String value) {
+    _sapCode = value;
+    _prefs.setString('sapCode', value);
+  }
+
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
   }
@@ -277,9 +287,12 @@ class Preferences {
     await const FlutterSecureStorage().deleteAll();
     apiUser = '';
     apiServer = '172.17.1.45';
+    projectName = '/hopesucursales/public_html222';
     expirationDate = '1979-04-10 00:00:00';
     licenseExp = '1979-04-10 00:00:00';
     isDarkMode = false;
+    isActive = false;
     code = '';
+    sapCode = '';
   }
 }

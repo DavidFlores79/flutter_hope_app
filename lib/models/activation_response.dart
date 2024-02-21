@@ -19,6 +19,7 @@ class ActivationResponse {
     required this.message,
     required this.license,
     required this.clientImage,
+    this.sapCode,
   });
 
   int code;
@@ -26,6 +27,7 @@ class ActivationResponse {
   String message;
   License license;
   String clientImage;
+  String? sapCode;
 
   factory ActivationResponse.fromMap(Map<String, dynamic> json) =>
       ActivationResponse(
@@ -34,6 +36,7 @@ class ActivationResponse {
         message: json["message"],
         license: License.fromMap(json["license"]),
         clientImage: json["client_image"],
+        sapCode: json["sap_code"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -42,6 +45,7 @@ class ActivationResponse {
         "message": message,
         "license": license.toMap(),
         "client_image": clientImage,
+        "sap_code": sapCode,
       };
 }
 

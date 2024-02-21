@@ -93,6 +93,12 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<InventarioTiendaProvider>(
           create: (context) => InventarioTiendaProvider(),
         ),
+        ChangeNotifierProvider<PurchaseRequestProvider>(
+          create: (context) => PurchaseRequestProvider(),
+        ),
+        ChangeNotifierProvider<SBOItemProvider>(
+          create: (context) => SBOItemProvider(),
+        ),
       ],
       child: const MyApp(),
     );
@@ -137,15 +143,25 @@ class MyApp extends StatelessWidget {
         MonitorSolpedScreen.routeName: (context) => MonitorSolpedScreen(),
         ME21NScreen.routeName: (context) => ME21NScreen(),
         ConsultaStockScreen.routeName: (context) => ConsultaStockScreen(),
-        UnderConstructionScreen.routeName: (context) => const UnderConstructionScreen(),
-        DescargaPalletsScreen.routeName: (context) => const DescargaPalletsScreen(),
-        TransferenciasInternasScreen.routeName: (context) => const TransferenciasInternasScreen(),
+        UnderConstructionScreen.routeName: (context) =>
+            const UnderConstructionScreen(),
+        DescargaPalletsScreen.routeName: (context) =>
+            const DescargaPalletsScreen(),
+        TransferenciasInternasScreen.routeName: (context) =>
+            const TransferenciasInternasScreen(),
         ShowTransfersScreen.routeName: (context) => const ShowTransfersScreen(),
-          VerificarFacturaMiroScreen.routeName: (context) =>
+        VerificarFacturaMiroScreen.routeName: (context) =>
             const VerificarFacturaMiroScreen(),
-        MonitorInventarioTiendaScreen.routeName: (context) => const MonitorInventarioTiendaScreen(),
-        DetallesInventarioScreen.routeName: (context) => const DetallesInventarioScreen(),
-        InventarioTiendaScreen.routeName: (context) => const InventarioTiendaScreen(),
+        MonitorInventarioTiendaScreen.routeName: (context) =>
+            const MonitorInventarioTiendaScreen(),
+        DetallesInventarioScreen.routeName: (context) =>
+            const DetallesInventarioScreen(),
+        InventarioTiendaScreen.routeName: (context) =>
+            const InventarioTiendaScreen(),
+        PurchaseRequestScreen.routeName: (context) =>
+            const PurchaseRequestScreen(),
+        ReleasePurchaseRequestScreen.routeName: (context) =>
+            const ReleasePurchaseRequestScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );

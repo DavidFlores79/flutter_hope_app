@@ -190,7 +190,8 @@ class ConsultaStockProvider extends ChangeNotifier {
           result = true;
           isLoading = false;
           print('200: Search Consulta Stock ${response.body}');
-          final consultaStockResponse = ConsultaStockResponse.fromJson(response.body);
+          final consultaStockResponse =
+              ConsultaStockResponse.fromJson(response.body);
           materials = consultaStockResponse.stock?.detalleStock;
           print('${consultaStockResponse.stock?.detalleStock}');
           notifyListeners();
