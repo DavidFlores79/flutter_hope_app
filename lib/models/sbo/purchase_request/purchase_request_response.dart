@@ -170,3 +170,37 @@ class DocumentLine {
         "status": status?.toMap(),
       };
 }
+
+class StorePurchaseReqResponse {
+  int? code;
+  String? status;
+  String? message;
+  DocumentLine? data;
+
+  StorePurchaseReqResponse({
+    this.code,
+    this.status,
+    this.message,
+    this.data,
+  });
+
+  factory StorePurchaseReqResponse.fromJson(String str) =>
+      StorePurchaseReqResponse.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory StorePurchaseReqResponse.fromMap(Map<String, dynamic> json) =>
+      StorePurchaseReqResponse(
+        code: json["code"],
+        status: json["status"],
+        message: json["message"],
+        data: json["data"] == null ? null : DocumentLine.fromMap(json["data"]),
+      );
+
+  Map<String, dynamic> toMap() => {
+        "code": code,
+        "status": status,
+        "message": message,
+        "data": data?.toMap(),
+      };
+}

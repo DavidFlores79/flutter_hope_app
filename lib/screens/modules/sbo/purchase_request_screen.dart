@@ -241,7 +241,8 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                                             },
                                             onChanged: (value) {
                                               print(value);
-                                              // purchaseRequestProvider.quantity = value;
+                                              purchaseRequestProvider.quantity =
+                                                  value;
                                             },
                                             decoration: InputDecorationsRounded
                                                 .authInputDecorationRounded(
@@ -272,17 +273,7 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
 
                                           print('Result $result');
                                           if (!result) {
-                                            setState(() {
-                                              purchaseRequestProvider
-                                                  .formKey.currentState
-                                                  ?.reset();
-                                              itemProvider.itemSelected =
-                                                  SBO_Item();
-                                              purchaseRequestProvider
-                                                  .itemSelected = SBO_Item();
-                                              _searchController.clear();
-                                              _qtyController.clear();
-                                            });
+                                            setState(() {});
                                           } else {
                                             setState(() {
                                               purchaseRequestProvider
