@@ -277,111 +277,119 @@ class PurchaseRequestProvider extends ChangeNotifier {
     return result;
   }
 
-  Future<bool> updateSolped(DocumentLine posicion) async {
-    // isLoading = true;
-    // result = false;
-    // print('Peticion Solped - Update');
-    // _endPoint = '/api/v1/solped';
+  Future<bool> updateSolped(DocumentLine documentLine) async {
+    isLoading = true;
+    result = false;
+    print('Peticion Solped - Update');
+    _endPoint = '/api/v1/purchase-request';
 
-    // String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
-    // Map<String, String> headers = {
-    //   'Content-Type': 'application/json',
-    //   'Accept': 'application/json',
-    //   'Authorization': 'Bearer $jwtToken'
-    // };
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
 
-    // if (quantity == '') {
-    //   Notifications.showSnackBar('No se realizo ningún cambio');
-    //   return false;
-    // }
+    if (quantity == '') {
+      Notifications.showSnackBar('No se realizo ningún cambio');
+      return false;
+    }
 
-    // Map<String, dynamic> dataRaw = {
-    //   'id': posicion.id,
-    //   'cantidad': quantity,
-    //   'activo_fijo': null,
-    //   'comentarios': null,
-    // };
+    Map<String, dynamic> dataRaw = {
+      'id': documentLine.id,
+      'quantity': quantity,
+      'warehouse_code': documentLine.warehouseCode,
+      'inventory_uom': documentLine.inventoryUom,
+      'item_code': documentLine.itemCode,
+      'item_description': documentLine.itemDescription,
+    };
 
-    // print(dataRaw);
+    print(dataRaw);
 
-    // final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
-    // try {
-    //   final response = await http
-    //       .put(url, headers: headers, body: jsonEncode(dataRaw))
-    //       .timeout(const Duration(seconds: 20));
+    try {
+      final response = await http
+          .put(url, headers: headers, body: jsonEncode(dataRaw))
+          .timeout(const Duration(seconds: 20));
 
-    //   switch (response.statusCode) {
-    //     case 200:
-    //       result = true;
-    //       isLoading = false;
-    //       print('200: Update Solped ${response.body}');
-    //       solpedResponse = SolpedResponse.fromJson(response.body);
-    //       posiciones = solpedResponse!.posiciones;
-    //       notifyListeners();
-    //       break;
-    //     case 401:
-    //       if (!response.body.contains('code')) {
-    //         logout();
-    //         print('logout');
-    //         break;
-    //       }
-    //       isLoading = false;
-    //       result = false;
-    //       serverResponse = ServerResponse.fromJson(response.body);
-    //       Notifications.showSnackBar(
-    //           serverResponse?.message ?? 'Error de Autenticación.');
-    //       break;
-    //     case 404:
-    //       isLoading = false;
-    //       serverResponse = ServerResponse.fromJson(response.body);
-    //       Notifications.showSnackBar(
-    //           serverResponse?.message ?? 'Error Desconocido.');
-    //       notifyListeners();
-    //       print('404: ${response.body}');
-    //       break;
-    //     case 422:
-    //       isLoading = false;
-    //       result = false;
-    //       print('422: ${response.body}');
-    //       ValidatorResponse validatorResponse =
-    //           ValidatorResponse.fromJson(response.body);
-    //       final Map<String, dynamic> errors = validatorResponse.errors.toMap();
-    //       String messages = '${validatorResponse.message}\n';
+      switch (response.statusCode) {
+        case 200:
+          result = true;
+          isLoading = false;
+          print('200: Update Solped ${response.body}');
+          storePurchaseResponse =
+              StorePurchaseReqResponse.fromJson(response.body);
+          final DocumentLine documentLineUpdated = storePurchaseResponse!.data!;
+          documentLines = documentLines!
+              .map((docLine) => (documentLineUpdated.id == docLine.id)
+                  ? documentLineUpdated
+                  : docLine)
+              .toList();
+          notifyListeners();
+          break;
+        case 401:
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          isLoading = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print('404: ${response.body}');
+          break;
+        case 422:
+          isLoading = false;
+          result = false;
+          print('422: ${response.body}');
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
 
-    //       Iterable<dynamic> values = errors.values;
-    //       for (final error in values) {
-    //         Iterable<dynamic> errorStrings = error;
-    //         for (final errorString in errorStrings) {
-    //           print('error: $errorString');
-    //           messages = '${messages + errorString}\n';
-    //         }
-    //       }
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
 
-    //       Notifications.showSnackBar(messages);
-    //       notifyListeners();
-    //       break;
-    //     case 500:
-    //       isLoading = false;
-    //       print('500: ${response.body}');
-    //       Notifications.showSnackBar('500 Server Error.');
-    //       break;
-    //     default:
-    //       print('Default: ${response.body}');
-    //       isLoading = false;
-    //       result = false;
-    //   }
-    //   notifyListeners();
-    // } catch (e) {
-    //   print('Error $e');
-    //   isLoading = false;
-    //   if (e.toString().contains('TimeoutException')) {
-    //     Notifications.showSnackBar(
-    //         'Tiempo de espera agotado. Favor de reintentar');
-    //   }
-    //   notifyListeners();
-    // }
+          Notifications.showSnackBar(messages);
+          notifyListeners();
+          break;
+        case 500:
+          isLoading = false;
+          print('500: ${response.body}');
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          result = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
     return result;
   }
 

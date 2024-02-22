@@ -51,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 Text(
-                  apiUser.miPerfil.nombre,
+                  apiUser.miPerfil!.nombre!,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     overflow: TextOverflow.ellipsis,
@@ -80,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 Text(
-                  apiUser.email,
+                  apiUser.email!,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     overflow: TextOverflow.ellipsis,

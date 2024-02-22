@@ -29,7 +29,7 @@ class PopupMenuList extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           enabled: false,
           child: Text(
-            apiUser.nombre,
+            apiUser.nombre!,
             //style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
@@ -38,7 +38,7 @@ class PopupMenuList extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           enabled: false,
           child: Text(
-            apiUser.nickname,
+            apiUser.nickname!,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
@@ -55,7 +55,7 @@ class PopupMenuList extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: const Text('Logout'),
           onTap: () async {
-            await authService.logout();
+            await authService.cleanSessionId();
             // ignore: use_build_context_synchronously
             Navigator.pushReplacementNamed(context, LoginScreen.routeName);
           },

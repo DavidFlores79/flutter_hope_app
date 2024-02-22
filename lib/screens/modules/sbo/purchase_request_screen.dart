@@ -38,7 +38,6 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
     super.initState();
     final purchaseRequestProvider = context.read<PurchaseRequestProvider>();
     purchaseRequestProvider.getCatalogs();
-    // purchaseRequestProvider.itemSelected = SBO_Item();
   }
 
   final TextEditingController _searchController = TextEditingController();
@@ -518,6 +517,7 @@ class PositionCard extends StatelessWidget {
 editarSolped(context, DocumentLine line) {
   final purchaseRequestProvider =
       Provider.of<PurchaseRequestProvider>(context, listen: false);
+  purchaseRequestProvider.quantity = '';
 
   return showDialog(
     context: context,
@@ -547,10 +547,10 @@ editarSolped(context, DocumentLine line) {
             onPressed: () async {
               final result = await purchaseRequestProvider.updateSolped(line);
               if (result) {
-                // Notifications.showSnackBar(
-                //   purchaseRequestProvider.purchaseRequestResponse!.message ??
-                //       'Solped Actualizado',
-                // );
+                Notifications.showSnackBar(
+                  // purchaseRequestProvider.purchaseRequestResponse!.message ??
+                  'Pedido de Compra Actualizado',
+                );
               }
 
               Future.microtask(

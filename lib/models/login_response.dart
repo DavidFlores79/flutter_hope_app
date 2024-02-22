@@ -3,22 +3,24 @@
 
 import 'dart:convert';
 
-class LoginResponse {
-  LoginResponse({
-    required this.code,
-    required this.status,
-    required this.success,
-    required this.user,
-    required this.exp,
-    required this.jwt,
-  });
+import 'dart:convert';
 
-  int code;
-  String status;
-  bool success;
-  User user;
-  int exp;
-  String jwt;
+class LoginResponse {
+  int? code;
+  String? status;
+  bool? success;
+  User? user;
+  String? jwt;
+  int? exp;
+
+  LoginResponse({
+    this.code,
+    this.status,
+    this.success,
+    this.user,
+    this.jwt,
+    this.exp,
+  });
 
   factory LoginResponse.fromJson(String str) =>
       LoginResponse.fromMap(json.decode(str));
@@ -29,55 +31,65 @@ class LoginResponse {
         code: json["code"],
         status: json["status"],
         success: json["success"],
-        user: User.fromMap(json["user"]),
-        exp: json["exp"],
+        user: json["user"] == null ? null : User.fromMap(json["user"]),
         jwt: json["jwt"],
+        exp: json["exp"],
       );
 
   Map<String, dynamic> toMap() => {
         "code": code,
         "status": status,
         "success": success,
-        "user": user.toMap(),
-        "exp": exp,
+        "user": user?.toMap(),
         "jwt": jwt,
+        "exp": exp,
       };
 }
 
 class User {
+  int? id;
+  String? nombre;
+  String? apellido;
+  String? nickname;
+  String? email;
+  int? perfilId;
+  String? tipoTrabajador;
+  String? tipoUsuarioSap;
+  dynamic idUsuarioSap;
+  dynamic formatoTienda;
+  dynamic ceco;
+  dynamic telefono;
+  dynamic deviceToken;
+  dynamic fechaBaja;
+  int? bloqueado;
+  int? estatus;
+  String? sessionId;
+  String? lastActivity;
+  String? createdAt;
+  MiPerfil? miPerfil;
+
   User({
-    required this.id,
-    required this.nombre,
-    required this.apellido,
-    required this.nickname,
-    required this.email,
-    required this.perfilId,
-    required this.tipoTrabajador,
+    this.id,
+    this.nombre,
+    this.apellido,
+    this.nickname,
+    this.email,
+    this.perfilId,
+    this.tipoTrabajador,
+    this.tipoUsuarioSap,
+    this.idUsuarioSap,
+    this.formatoTienda,
     this.ceco,
     this.telefono,
-    this.fechaBaja,
-    required this.bloqueado,
-    required this.estatus,
-    required this.createdAt,
     this.deviceToken,
-    required this.miPerfil,
+    this.fechaBaja,
+    this.bloqueado,
+    this.estatus,
+    this.sessionId,
+    this.lastActivity,
+    this.createdAt,
+    this.miPerfil,
   });
-
-  int id;
-  String nombre;
-  String apellido;
-  String nickname;
-  String email;
-  int perfilId;
-  String tipoTrabajador;
-  String? ceco;
-  String? telefono;
-  String? fechaBaja;
-  int bloqueado;
-  int estatus;
-  String createdAt;
-  String? deviceToken;
-  MiPerfil miPerfil;
 
   factory User.fromJson(String str) => User.fromMap(json.decode(str));
 
@@ -91,14 +103,21 @@ class User {
         email: json["email"],
         perfilId: json["perfil_id"],
         tipoTrabajador: json["tipo_trabajador"],
+        tipoUsuarioSap: json["tipo_usuario_sap"],
+        idUsuarioSap: json["id_usuario_sap"],
+        formatoTienda: json["formato_tienda"],
         ceco: json["ceco"],
         telefono: json["telefono"],
+        deviceToken: json["device_token"],
         fechaBaja: json["fecha_baja"],
         bloqueado: json["bloqueado"],
         estatus: json["estatus"],
+        sessionId: json["session_id"],
+        lastActivity: json["last_activity"],
         createdAt: json["created_at"],
-        deviceToken: json["device_token"],
-        miPerfil: MiPerfil.fromMap(json["mi_perfil"]),
+        miPerfil: json["mi_perfil"] == null
+            ? null
+            : MiPerfil.fromMap(json["mi_perfil"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -109,31 +128,36 @@ class User {
         "email": email,
         "perfil_id": perfilId,
         "tipo_trabajador": tipoTrabajador,
+        "tipo_usuario_sap": tipoUsuarioSap,
+        "id_usuario_sap": idUsuarioSap,
+        "formato_tienda": formatoTienda,
         "ceco": ceco,
         "telefono": telefono,
+        "device_token": deviceToken,
         "fecha_baja": fechaBaja,
         "bloqueado": bloqueado,
         "estatus": estatus,
+        "session_id": sessionId,
+        "last_activity": lastActivity,
         "created_at": createdAt,
-        "device_token": deviceToken,
-        "mi_perfil": miPerfil.toMap(),
+        "mi_perfil": miPerfil?.toMap(),
       };
 }
 
 class MiPerfil {
-  MiPerfil({
-    required this.id,
-    required this.nombre,
-    this.descripcion,
-    required this.visible,
-    required this.estatus,
-  });
+  int? id;
+  String? nombre;
+  dynamic descripcion;
+  int? visible;
+  int? estatus;
 
-  int id;
-  String nombre;
-  String? descripcion;
-  int visible;
-  int estatus;
+  MiPerfil({
+    this.id,
+    this.nombre,
+    this.descripcion,
+    this.visible,
+    this.estatus,
+  });
 
   factory MiPerfil.fromJson(String str) => MiPerfil.fromMap(json.decode(str));
 
