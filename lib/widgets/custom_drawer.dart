@@ -106,6 +106,8 @@ class buildFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final socketService = Provider.of<SocketService>(context);
+
     return Container(
       padding: EdgeInsets.only(bottom: 30),
       child: Align(
@@ -124,7 +126,8 @@ class buildFooter extends StatelessWidget {
               leading: const Icon(FontAwesomeIcons.arrowRightFromBracket),
               title: const Text('Logout', style: TextStyle(fontSize: 20)),
               onTap: () async {
-                await authService.logout();
+                await authService.cleanSessionId();
+                socketService.disconnect();
                 // ignore: use_build_context_synchronously
                 Navigator.pushReplacementNamed(context, LoginScreen.routeName);
               },

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/home_screen.dart';
-import 'package:hope_app/screens/login_screen.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +13,7 @@ class AuthTokenScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final socketService = Provider.of<SocketService>(context);
     final orderProvider = Provider.of<PedidosProvider>(context);
 
     return Scaffold(
@@ -31,6 +31,7 @@ class AuthTokenScreen extends StatelessWidget {
                 authService.logout();
               }
             } else {
+              socketService.connect();
               orderProvider.getOrdenes();
               Future.microtask(
                 () {

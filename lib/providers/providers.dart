@@ -1,5 +1,3 @@
-export 'package:hope_app/providers/sbo/sbo_item_provider.dart'; //SBO
-
 export 'package:hope_app/providers/consulta_stock_provider.dart';
 export 'package:hope_app/providers/inventario_tienda_provider.dart';
 export 'package:hope_app/providers/liberar_solped_provider.dart';
@@ -16,6 +14,7 @@ export 'package:hope_app/providers/onesignal_provider.dart';
 export 'package:hope_app/providers/pedidos_provider.dart';
 export 'package:hope_app/providers/recibo_embarque_provider.dart';
 export 'package:hope_app/providers/sbo/purchase_request_provider.dart'; //SBO
+export 'package:hope_app/providers/sbo/sbo_item_provider.dart'; //SBO
 export 'package:hope_app/providers/solped_provider.dart';
 export 'package:hope_app/providers/supplier_provider.dart';
 export 'package:hope_app/providers/theme_provider.dart';

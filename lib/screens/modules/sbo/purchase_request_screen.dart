@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/search/sbo/main_item_search_delegate.dart';
+import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations_rounded.dart';
 import 'package:hope_app/ui/notifications.dart';
@@ -45,6 +46,7 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
 
   @override
   Widget build(BuildContext context) {
+    final socketService = Provider.of<SocketService>(context, listen: false);
     final purchaseRequestProvider =
         Provider.of<PurchaseRequestProvider>(context);
     final itemProvider = Provider.of<SBOItemProvider>(context);
@@ -271,9 +273,13 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                                                   .createSolped();
 
                                           print('Result $result');
-                                          if (!result) {
-                                            setState(() {});
-                                          } else {
+                                          if (result) {
+                                            socketService.sendWsMessage(
+                                              'purchase-request',
+                                              'store',
+                                              purchaseRequestProvider
+                                                  .newDocumentLine,
+                                            );
                                             setState(() {
                                               purchaseRequestProvider
                                                   .formKey.currentState
@@ -369,6 +375,7 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
 
   confirmarEliminar(BuildContext context, purchaseRequestProvider,
       DocumentLine documentLine) {
+    final socketService = Provider.of<SocketService>(context, listen: false);
     print('Eliminar ${documentLine.id} ??');
     return showDialog(
       context: context,
@@ -416,6 +423,17 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                     .deleteSolped(documentLine.id!);
                 print('Eliminado! $result');
                 if (result) {
+                  socketService.sendWsMessage(
+                    'purchase-request',
+                    'delete',
+                    purchaseRequestProvider.newDocumentLine,
+                    'Registro eliminado!',
+                  );
+                  // socketService.emit('purchase-request', {
+                  //   'message': 'Registro eliminado!',
+                  //   'type': 'delete',
+                  //   'data': purchaseRequestProvider.newDocumentLine,
+                  // });
                   Navigator.pop(context);
                 }
               },
@@ -517,6 +535,7 @@ class PositionCard extends StatelessWidget {
 editarSolped(context, DocumentLine line) {
   final purchaseRequestProvider =
       Provider.of<PurchaseRequestProvider>(context, listen: false);
+  final socketService = Provider.of<SocketService>(context, listen: false);
   purchaseRequestProvider.quantity = '';
 
   return showDialog(
@@ -547,6 +566,16 @@ editarSolped(context, DocumentLine line) {
             onPressed: () async {
               final result = await purchaseRequestProvider.updateSolped(line);
               if (result) {
+                socketService.sendWsMessage(
+                    'purchase-request',
+                    'update',
+                    purchaseRequestProvider.newDocumentLine,
+                    'Registro actualizado!');
+                // socketService.emit('purchase-request', {
+                //   'message': 'Registro actualizado!',
+                //   'type': 'update',
+                //   'data': purchaseRequestProvider.newDocumentLine,
+                // });
                 Notifications.showSnackBar(
                   // purchaseRequestProvider.purchaseRequestResponse!.message ??
                   'Pedido de Compra Actualizado',

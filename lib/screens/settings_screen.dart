@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/activation_screen.dart';
+import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -31,6 +33,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final sesionExpire = getFormatedDate(Preferences.expirationDate, 'hh:mm a');
     final licenseExpire =
         getFormatedDate(Preferences.licenseExp, 'MMMM dd, yyyy');
+    final socketService = Provider.of<SocketService>(context);
 
     return Scaffold(
       body: SafeArea(
@@ -98,13 +101,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           height: 2,
                         ),
                       ),
-                      // Text(
-                      //   'One Signal ID: ${Preferences.onesignalUserId}',
-                      //   style: const TextStyle(
-                      //     fontSize: 16,
-                      //     height: 2,
-                      //   ),
-                      // ),
+                      Row(
+                        children: [
+                          const Text(
+                            'WSS:',
+                            style: TextStyle(
+                              fontSize: 16,
+                              height: 2,
+                            ),
+                          ),
+                          const SizedBox(width: 15),
+                          (socketService.serverStatus == ServerStatus.onLine)
+                              ? Icon(
+                                  FontAwesomeIcons.solidCircleCheck,
+                                  color: ThemeProvider.greenColor,
+                                )
+                              : Icon(
+                                  FontAwesomeIcons.solidCircleXmark,
+                                  color: ThemeProvider.darkColor,
+                                )
+                        ],
+                      ),
                       const SizedBox(
                         height: 20,
                       ),

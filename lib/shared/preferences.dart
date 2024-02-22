@@ -24,6 +24,7 @@ class Preferences {
   static String _clientImage = '';
   static String _deviceModel = '';
   static String _sapCode = '';
+  static String wssServer = '172.17.1.45';
 
   static String get activacionServer {
     return _prefs.getString('activacionServer') ?? _activacionServer;

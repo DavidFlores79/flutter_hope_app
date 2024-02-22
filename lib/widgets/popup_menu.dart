@@ -11,6 +11,7 @@ class PopupMenuList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context, listen: false);
+    final socketService = Provider.of<SocketService>(context, listen: false);
     User apiUser = User.fromJson(Preferences.apiUser);
 
     return PopUpMenu(
@@ -56,6 +57,7 @@ class PopupMenuList extends StatelessWidget {
           child: const Text('Logout'),
           onTap: () async {
             await authService.cleanSessionId();
+            socketService.disconnect();
             // ignore: use_build_context_synchronously
             Navigator.pushReplacementNamed(context, LoginScreen.routeName);
           },

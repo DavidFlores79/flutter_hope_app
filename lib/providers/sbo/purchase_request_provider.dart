@@ -28,6 +28,7 @@ class PurchaseRequestProvider extends ChangeNotifier {
   SBO_ItemsResponse? itemResponse;
   List<SBO_Warehouse>? warehouses = [];
   String defaultWarehouse = '';
+  DocumentLine newDocumentLine = DocumentLine();
   List<DocumentLine>? documentLines = [];
   List<DocumentLine> documentLinesSelected = [];
   List<SBO_Item>? items = [];
@@ -91,7 +92,7 @@ class PurchaseRequestProvider extends ChangeNotifier {
         case 200:
           result = true;
           isLoading = false;
-          print('200: get Catalogs ${response.body}');
+          print('200: PurchaseRequest GetCatalogs ${response.body}');
           purchaseRequestResponse =
               PurchaseRequestResponse.fromJson(response.body);
           documentLines = purchaseRequestResponse!.data;
@@ -165,7 +166,7 @@ class PurchaseRequestProvider extends ChangeNotifier {
   Future<bool> createSolped() async {
     isLoading = true;
     result = false;
-    print('Peticion Solped - Create');
+    print('PurchaseRequest - Store');
     _endPoint = '/api/v1/purchase-request';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
@@ -206,10 +207,11 @@ class PurchaseRequestProvider extends ChangeNotifier {
         case 200:
           result = true;
           isLoading = false;
-          print('200: Create Solped ${response.body}');
+          print('200: PurchaseRequest Store ${response.body}');
           storePurchaseResponse =
               StorePurchaseReqResponse.fromJson(response.body);
-          documentLines!.add(storePurchaseResponse!.data!);
+          newDocumentLine = storePurchaseResponse!.data!;
+          documentLines!.add(newDocumentLine);
           notifyListeners();
           break;
         case 401:
@@ -280,7 +282,7 @@ class PurchaseRequestProvider extends ChangeNotifier {
   Future<bool> updateSolped(DocumentLine documentLine) async {
     isLoading = true;
     result = false;
-    print('Peticion Solped - Update');
+    print('PurchaseRequest - Update');
     _endPoint = '/api/v1/purchase-request';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
@@ -318,13 +320,13 @@ class PurchaseRequestProvider extends ChangeNotifier {
         case 200:
           result = true;
           isLoading = false;
-          print('200: Update Solped ${response.body}');
+          print('200: PurchaseRequest Update ${response.body}');
           storePurchaseResponse =
               StorePurchaseReqResponse.fromJson(response.body);
-          final DocumentLine documentLineUpdated = storePurchaseResponse!.data!;
+          newDocumentLine = storePurchaseResponse!.data!;
           documentLines = documentLines!
-              .map((docLine) => (documentLineUpdated.id == docLine.id)
-                  ? documentLineUpdated
+              .map((docLine) => (newDocumentLine.id == docLine.id)
+                  ? newDocumentLine
                   : docLine)
               .toList();
           notifyListeners();
@@ -393,101 +395,98 @@ class PurchaseRequestProvider extends ChangeNotifier {
     return result;
   }
 
-  Future<bool> deleteSolped(int id) async {
-    // isLoading = true;
-    // result = false;
-    // print('Peticion Solped - Delete');
-    // _endPoint = '/api/v1/solped';
+  Future<bool> deleteSolped(int docId) async {
+    isLoading = true;
+    result = false;
+    print('PurchaseRequest - DELETE');
+    _endPoint = '/api/v1/purchase-request';
 
-    // String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
-    // Map<String, String> headers = {
-    //   'Content-Type': 'application/json',
-    //   'Accept': 'application/json',
-    //   'Authorization': 'Bearer $jwtToken'
-    // };
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
 
-    // Map<String, dynamic> dataRaw = {
-    //   'id': '$id',
-    // };
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint/$docId');
 
-    // final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    try {
+      final response = await http
+          .delete(url, headers: headers)
+          .timeout(const Duration(seconds: 20));
 
-    // try {
-    //   final response = await http
-    //       .delete(url, headers: headers, body: jsonEncode(dataRaw))
-    //       .timeout(const Duration(seconds: 20));
+      switch (response.statusCode) {
+        case 200:
+          result = true;
+          isLoading = false;
+          print('200: Delete PurchaseRequest ${response.body}');
+          storePurchaseResponse =
+              StorePurchaseReqResponse.fromJson(response.body);
+          newDocumentLine = storePurchaseResponse!.data!;
+          notifyListeners();
+          break;
+        case 401:
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          isLoading = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print('404: ${response.body}');
+          break;
+        case 422:
+          isLoading = false;
+          result = false;
+          print('422: ${response.body}');
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
 
-    //   switch (response.statusCode) {
-    //     case 200:
-    //       result = true;
-    //       isLoading = false;
-    //       print('200: DeleteSolped ${response.body}');
-    //       solpedResponse = SolpedResponse.fromJson(response.body);
-    //       posiciones = solpedResponse?.posiciones;
-    //       notifyListeners();
-    //       break;
-    //     case 401:
-    //       if (!response.body.contains('code')) {
-    //         logout();
-    //         print('logout');
-    //         break;
-    //       }
-    //       isLoading = false;
-    //       result = false;
-    //       serverResponse = ServerResponse.fromJson(response.body);
-    //       Notifications.showSnackBar(
-    //           serverResponse?.message ?? 'Error de Autenticación.');
-    //       break;
-    //     case 404:
-    //       isLoading = false;
-    //       serverResponse = ServerResponse.fromJson(response.body);
-    //       Notifications.showSnackBar(
-    //           serverResponse?.message ?? 'Error Desconocido.');
-    //       notifyListeners();
-    //       print('404: ${response.body}');
-    //       break;
-    //     case 422:
-    //       isLoading = false;
-    //       result = false;
-    //       print('422: ${response.body}');
-    //       ValidatorResponse validatorResponse =
-    //           ValidatorResponse.fromJson(response.body);
-    //       final Map<String, dynamic> errors = validatorResponse.errors.toMap();
-    //       String messages = '${validatorResponse.message}\n';
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
 
-    //       Iterable<dynamic> values = errors.values;
-    //       for (final error in values) {
-    //         Iterable<dynamic> errorStrings = error;
-    //         for (final errorString in errorStrings) {
-    //           print('error: $errorString');
-    //           messages = '${messages + errorString}\n';
-    //         }
-    //       }
-
-    //       Notifications.showSnackBar(messages);
-    //       notifyListeners();
-    //       break;
-    //     case 500:
-    //       isLoading = false;
-    //       print('500: ${response.body}');
-    //       Notifications.showSnackBar('500 Server Error.');
-    //       break;
-    //     default:
-    //       print('Default: ${response.body}');
-    //       isLoading = false;
-    //       result = false;
-    //   }
-    //   notifyListeners();
-    // } catch (e) {
-    //   print('Error $e');
-    //   isLoading = false;
-    //   if (e.toString().contains('TimeoutException')) {
-    //     Notifications.showSnackBar(
-    //         'Tiempo de espera agotado. Favor de reintentar');
-    //   }
-    //   notifyListeners();
-    // }
+          Notifications.showSnackBar(messages);
+          notifyListeners();
+          break;
+        case 500:
+          isLoading = false;
+          print('500: ${response.body}');
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          result = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
     return result;
   }
 
