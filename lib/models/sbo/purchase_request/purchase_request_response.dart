@@ -68,6 +68,7 @@ class DocumentLine {
   String? price;
   dynamic rejectionText;
   String? comments;
+  bool? modified;
   String? createdBy;
   dynamic releasedBy;
   String? requestedAt;
@@ -96,6 +97,7 @@ class DocumentLine {
     this.price,
     this.rejectionText,
     this.comments,
+    this.modified,
     this.createdBy,
     this.releasedBy,
     this.requestedAt,
@@ -130,6 +132,7 @@ class DocumentLine {
         price: json["price"],
         rejectionText: json["rejection_text"],
         comments: json["comments"],
+        modified: json["modified"],
         createdBy: json["created_by"],
         releasedBy: json["released_by"],
         requestedAt: json["requested_at"],
@@ -159,6 +162,7 @@ class DocumentLine {
         "price": price,
         "rejection_text": rejectionText,
         "comments": comments,
+        "modified": modified,
         "created_by": createdBy,
         "released_by": releasedBy,
         "requested_at": requestedAt,

@@ -495,6 +495,9 @@ class PurchaseRequestCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => editarSolped(context, line),
       child: ListTile(
+        tileColor: (line.modified != null && line.modified != false)
+            ? Colors.blue.shade100
+            : Colors.transparent,
         minVerticalPadding: 20,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

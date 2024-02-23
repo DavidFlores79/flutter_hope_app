@@ -493,6 +493,7 @@ class PurchaseRequestProvider extends ChangeNotifier {
   void updateDocumentLine(DocumentLine updatedLine) {
     updatedLine.quantity =
         double.parse(updatedLine.quantity!).toStringAsFixed(3);
+    updatedLine.modified = true;
     int index = documentLines!.indexWhere((line) => line.id == updatedLine.id);
 
     if (index != -1) {
