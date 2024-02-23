@@ -506,7 +506,8 @@ class PurchaseRequestProvider extends ChangeNotifier {
   }
 
   void addDocumentLine(DocumentLine createdLine) {
-    if (documentLines!.any((line) => line.id == createdLine.id)) {
+    int index = documentLines!.indexWhere((line) => line.id == createdLine.id);
+    if (index == -1) {
       print('lo agrego');
       documentLines!.add(createdLine);
       notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
