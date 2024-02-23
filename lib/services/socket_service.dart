@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/models/models.dart';
+import 'package:hope_app/shared/preferences.dart';
 
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -17,16 +19,18 @@ class SocketService with ChangeNotifier {
   Function get emit => _socket.emit;
   bool get socketConnected => _socket.connected;
 
-  void connect() {
+  final storage = const FlutterSecureStorage();
+
+  void connect() async {
     // Dart client
-    _socket = IO.io('http://172.17.1.45:3001', {
+    String wssToken = await storage.read(key: 'wssToken') ?? '';
+    String wssServer = Preferences.wssServer;
+
+    _socket = IO.io(wssServer, {
       'transports': ['websocket'],
       'autoConnect': true,
-      // 'forceNew': true,
-      'extraHeaders': {
-        'x-token':
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2NWM3ODljMTMzODE1ZDRmNzY1NzUxNGQiLCJpYXQiOjE3MDg2MTIzNjksImV4cCI6MTcwODY5ODc2OX0.Bwvo5K0kNslKZ6zH7hYS8zRWnGp34LHsK35J2TFTvJs'
-      },
+      'forceNew': true,
+      'extraHeaders': {'x-token': wssToken},
     });
 
     _socket.on('connect', (_) {

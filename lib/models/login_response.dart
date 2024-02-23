@@ -3,14 +3,13 @@
 
 import 'dart:convert';
 
-import 'dart:convert';
-
 class LoginResponse {
   int? code;
   String? status;
   bool? success;
   User? user;
   String? jwt;
+  Wss? wss;
   int? exp;
 
   LoginResponse({
@@ -19,6 +18,7 @@ class LoginResponse {
     this.success,
     this.user,
     this.jwt,
+    this.wss,
     this.exp,
   });
 
@@ -33,6 +33,7 @@ class LoginResponse {
         success: json["success"],
         user: json["user"] == null ? null : User.fromMap(json["user"]),
         jwt: json["jwt"],
+        wss: json["wss"] == null ? null : Wss.fromMap(json["wss"]),
         exp: json["exp"],
       );
 
@@ -42,6 +43,7 @@ class LoginResponse {
         "success": success,
         "user": user?.toMap(),
         "jwt": jwt,
+        "wss": wss?.toMap(),
         "exp": exp,
       };
 }
@@ -177,5 +179,29 @@ class MiPerfil {
         "descripcion": descripcion,
         "visible": visible,
         "estatus": estatus,
+      };
+}
+
+class Wss {
+  String? server;
+  String? token;
+
+  Wss({
+    this.server,
+    this.token,
+  });
+
+  factory Wss.fromJson(String str) => Wss.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory Wss.fromMap(Map<String, dynamic> json) => Wss(
+        server: json["server"],
+        token: json["token"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "server": server,
+        "token": token,
       };
 }

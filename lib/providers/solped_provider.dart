@@ -408,11 +408,11 @@ class SolpedProvider extends ChangeNotifier {
     print(dataRaw);
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
-
+    print('url: $url');
     try {
       final response = await http
           .put(url, headers: headers, body: jsonEncode(dataRaw))
-          .timeout(const Duration(seconds: 20));
+          .timeout(const Duration(seconds: 30));
 
       switch (response.statusCode) {
         case 200:

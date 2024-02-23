@@ -43,7 +43,7 @@ class MonitorSolpedScreen extends StatelessWidget {
                 height: 20,
               ),
               solpedMonitorProvider.isLoading
-                  ? const  Expanded(
+                  ? const Expanded(
                       child: Center(
                         child: CupertinoActivityIndicator(),
                       ),
@@ -158,7 +158,7 @@ class SlidableSimple extends StatelessWidget {
                   Row(
                     children: [
                       const Text(
-                        'Libero: ',
+                        'Liberó: ',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text('${pedido.usuarioLiberacion}'),
@@ -247,7 +247,7 @@ showPosicion(context, Posicion pedido) {
                           alignment: CrossAxisAlignment.start,
                         ),
                         _solpedField(
-                          label: 'Libero:',
+                          label: 'Liberó:',
                           value: pedido.usuarioLiberacion!,
                           alignment: CrossAxisAlignment.start,
                         ),

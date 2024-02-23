@@ -47,10 +47,9 @@ class OneSignalProvider extends ChangeNotifier {
     OneSignal.Notifications.addClickListener((event) {
       print("Clicked notification: \n${event.notification}");
 
-          Notifications.showSnackBar(
+      Notifications.showSnackBar(
         'Se hizo CLICK!!!! ${event.notification.body}',
       );
-
     });
 
     OneSignal.Notifications.addForegroundWillDisplayListener((event) {

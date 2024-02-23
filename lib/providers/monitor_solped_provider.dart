@@ -139,7 +139,6 @@ class MonitorSolpedProvider extends ChangeNotifier {
         default:
           print(response.body);
       }
-      //getOrdenes();
     } catch (e) {
       print('Error $e');
       Notifications.showSnackBar(e.toString());

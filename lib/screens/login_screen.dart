@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/widgets.dart';
@@ -162,10 +163,11 @@ class _LoginForm extends StatelessWidget {
 
                     if (loginMessage == 'true') {
                       socketService.connect();
-                      oneSignalProvider.saveUpdateId();
-                      final result = await pedidosProvider.getOrdenes();
-                      print('EL RESULTADO!!!!!!!!! $result');
-                      mp.items.elementAt(1).enabled = result;
+                      await oneSignalProvider.saveUpdateId();
+                      //llamar solo cuando sea SAP 4HANA
+                      if (Preferences.sapCode != 'SBO') {
+                        await pedidosProvider.getOrdenes();
+                      }
                       Future.microtask(
                         () {
                           Navigator.pushReplacement(

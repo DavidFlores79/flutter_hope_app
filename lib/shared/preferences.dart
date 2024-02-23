@@ -24,7 +24,7 @@ class Preferences {
   static String _clientImage = '';
   static String _deviceModel = '';
   static String _sapCode = '';
-  static String wssServer = '172.17.1.45';
+  static String _wssServer = '172.17.1.45';
 
   static String get activacionServer {
     return _prefs.getString('activacionServer') ?? _activacionServer;
@@ -33,6 +33,15 @@ class Preferences {
   static set activacionServer(String value) {
     _activacionServer = value;
     _prefs.setString('activacionServer', value);
+  }
+
+  static String get wssServer {
+    return _prefs.getString('wssServer') ?? _wssServer;
+  }
+
+  static set wssServer(String value) {
+    _wssServer = value;
+    _prefs.setString('wssServer', value);
   }
 
   static String get activacionRoute {

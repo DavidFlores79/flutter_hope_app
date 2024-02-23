@@ -28,7 +28,9 @@ class PedidosProvider extends ChangeNotifier {
 
   PedidosProvider() {
     print('Ordenes provider inicializado');
-    getOrdenes();
+    print('Preferences.sapCode ${Preferences.sapCode}');
+    //llamar solo cuando sea SAP 4HANA
+    if (Preferences.sapCode != 'SBO') getOrdenes();
   }
 
   Future<bool> getOrdenes() async {
@@ -53,6 +55,8 @@ class PedidosProvider extends ChangeNotifier {
       final response = await http
           .post(url, headers: headers)
           .timeout(const Duration(seconds: 20));
+
+      print(response.body);
 
       switch (response.statusCode) {
         case 200:
@@ -176,7 +180,6 @@ class PedidosProvider extends ChangeNotifier {
         default:
           print(response.body);
       }
-      //getOrdenes();
     } catch (e) {
       print('Error $e');
       Notifications.showSnackBar(e.toString());

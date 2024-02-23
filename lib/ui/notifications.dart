@@ -7,6 +7,7 @@ class Notifications {
       GlobalKey<ScaffoldMessengerState>();
 
   static showSnackBar(String message) {
+    print('showSnackBar message ************* $message **********');
     final snackBar = SnackBar(
         backgroundColor: Preferences.isDarkMode
             ? ThemeProvider.darkColor
@@ -22,6 +23,7 @@ class Notifications {
   }
 
   static showFloatingSnackBar(String message) {
+    print('showFloatingSnackBar message ************* $message **********');
     final snackBar = SnackBar(
         backgroundColor: Preferences.isDarkMode
             ? ThemeProvider.darkColor

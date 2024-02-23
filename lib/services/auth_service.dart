@@ -52,10 +52,22 @@ class AuthService extends ChangeNotifier {
       switch (response.statusCode) {
         case 200:
           result = "true";
-          print('200: Update Solped ${response.body}');
+          print('200: Login ${response.body}');
           loginResponse = LoginResponse.fromJson(response.body);
           //guardar el token y la info del usuario
-          await storage.write(key: 'jwtToken', value: loginResponse!.jwt);
+          await storage.write(
+            key: 'jwtToken',
+            value: loginResponse!.jwt,
+          );
+
+          if (loginResponse!.wss != null) {
+            await storage.write(
+              key: 'wssToken',
+              value: loginResponse!.wss!.token,
+            );
+            Preferences.wssServer = loginResponse!.wss!.server ?? '';
+          }
+
           Preferences.apiUser = jsonEncode(decodedResp['user']);
           Preferences.expirationDate =
               Preferences.timestampToDate(loginResponse!.exp!);
