@@ -29,7 +29,7 @@ class SocketService with ChangeNotifier {
     _socket = IO.io(wssServer, {
       'transports': ['websocket'],
       'autoConnect': true,
-      'forceNew': true,
+      // 'forceNew': true,
       'extraHeaders': {'x-token': wssToken},
     });
 

@@ -96,6 +96,8 @@ class PurchaseRequestProvider extends ChangeNotifier {
           purchaseRequestResponse =
               PurchaseRequestResponse.fromJson(response.body);
           documentLines = purchaseRequestResponse!.data;
+          quantity = '';
+          itemSelected = SBO_Item();
           notifyListeners();
           break;
         case 401:
@@ -424,6 +426,7 @@ class PurchaseRequestProvider extends ChangeNotifier {
           storePurchaseResponse =
               StorePurchaseReqResponse.fromJson(response.body);
           newDocumentLine = storePurchaseResponse!.data!;
+          removeDocumentLine(newDocumentLine);
           notifyListeners();
           break;
         case 401:
@@ -503,8 +506,11 @@ class PurchaseRequestProvider extends ChangeNotifier {
   }
 
   void addDocumentLine(DocumentLine createdLine) {
-    documentLines!.add(createdLine);
-    notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
+    if (documentLines!.any((line) => line.id == createdLine.id)) {
+      print('lo agrego');
+      documentLines!.add(createdLine);
+      notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
+    }
   }
 
   void removeDocumentLine(DocumentLine lineToDelete) {
