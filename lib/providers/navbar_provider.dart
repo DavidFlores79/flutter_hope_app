@@ -10,12 +10,6 @@ class NavbarProvider extends ChangeNotifier {
       widget: const MenuModulesScreen(),
       enabled: true,
     ),
-    // NavbarDTO(
-    //   label: 'Ordenes',
-    //   iconData: const Icon(FontAwesomeIcons.newspaper),
-    //   widget: const PedidosScreen(),
-    //   enabled: true,
-    // ),
     NavbarDTO(
       label: 'Configuración',
       iconData: const Icon(FontAwesomeIcons.gears),

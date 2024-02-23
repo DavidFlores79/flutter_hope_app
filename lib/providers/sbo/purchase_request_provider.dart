@@ -490,6 +490,30 @@ class PurchaseRequestProvider extends ChangeNotifier {
     return result;
   }
 
+  void updateDocumentLine(DocumentLine updatedLine) {
+    updatedLine.quantity =
+        double.parse(updatedLine.quantity!).toStringAsFixed(3);
+    int index = documentLines!.indexWhere((line) => line.id == updatedLine.id);
+
+    if (index != -1) {
+      documentLines![index] = updatedLine;
+      notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
+    }
+  }
+
+  void addDocumentLine(DocumentLine createdLine) {
+    documentLines!.add(createdLine);
+    notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
+  }
+
+  void removeDocumentLine(DocumentLine lineToDelete) {
+    int index = documentLines!.indexWhere((line) => line.id == lineToDelete.id);
+    if (index != -1) {
+      documentLines!.removeAt(index);
+      notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
+    }
+  }
+
   bool queryHasNumbers(String query) {
     // Comprueba si el String solo contiene números
     if (RegExp(r'^[0-9]+$').hasMatch(query)) {
