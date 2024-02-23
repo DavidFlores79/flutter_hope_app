@@ -12,7 +12,6 @@ import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/empty_container.dart';
 import 'package:hope_app/widgets/status_label.dart';
 import 'package:provider/provider.dart';
-import 'package:socket_io_common/src/util/event_emitter.dart';
 
 class PurchaseRequestScreen extends StatelessWidget {
   static const String routeName = 'sbo-solped';
@@ -255,8 +254,19 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                                               keyboardType:
                                                   TextInputType.number,
                                               inputFormatters: <TextInputFormatter>[
-                                                FilteringTextInputFormatter
-                                                    .allow(RegExp(r'[0-9.]')),
+                                                if (purchaseRequestProvider
+                                                            .itemSelected
+                                                            .inventoryUOM ==
+                                                        'PZA' ||
+                                                    purchaseRequestProvider
+                                                            .itemSelected
+                                                            .inventoryUOM ==
+                                                        'Pieza')
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                else
+                                                  FilteringTextInputFormatter
+                                                      .allow(RegExp(r'[0-9.]')),
                                                 TextInputFormatter.withFunction(
                                                     (oldValue, newValue) {
                                                   final text = newValue.text;
@@ -267,6 +277,18 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                                                           ? oldValue
                                                           : newValue;
                                                 }),
+                                                // FilteringTextInputFormatter
+                                                //     .allow(RegExp(r'[0-9.]')),
+                                                // TextInputFormatter.withFunction(
+                                                //     (oldValue, newValue) {
+                                                //   final text = newValue.text;
+                                                //   return text.isEmpty
+                                                //       ? newValue
+                                                //       : double.tryParse(text) ==
+                                                //               null
+                                                //           ? oldValue
+                                                //           : newValue;
+                                                // }),
                                               ],
                                               validator: (value) {
                                                 return (value != null &&
@@ -393,7 +415,9 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                                         purchaseRequestProvider, documentLine);
                                   },
                                   onDismissed: (DismissDirection direction) {
-                                    print('Eliminado ${index}');
+                                    print('Eliminado Index ******* ${index}');
+                                    purchaseRequestProvider.documentLines!
+                                        .removeAt(index);
                                   },
                                   child:
                                       PurchaseRequestCard(line: documentLine),
@@ -414,7 +438,7 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
   confirmarEliminar(BuildContext context, purchaseRequestProvider,
       DocumentLine documentLine) {
     final socketService = Provider.of<SocketService>(context, listen: false);
-    print('Eliminar ${documentLine.id} ??');
+    // print('Eliminar ${documentLine.id} ??');
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -725,7 +749,10 @@ class UpdateContent extends StatelessWidget {
               initialValue: double.parse(line.quantity!).toString(),
               keyboardType: TextInputType.number,
               inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                if (line.inventoryUom == 'PZA' || line.inventoryUom == 'Pieza')
+                  FilteringTextInputFormatter.digitsOnly
+                else
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                 TextInputFormatter.withFunction((oldValue, newValue) {
                   final text = newValue.text;
                   return text.isEmpty
@@ -734,6 +761,15 @@ class UpdateContent extends StatelessWidget {
                           ? oldValue
                           : newValue;
                 }),
+                // FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                // TextInputFormatter.withFunction((oldValue, newValue) {
+                //   final text = newValue.text;
+                //   return text.isEmpty
+                //       ? newValue
+                //       : double.tryParse(text) == null
+                //           ? oldValue
+                //           : newValue;
+                // }),
               ],
               validator: (value) {
                 return (value != null && value.isNotEmpty)
