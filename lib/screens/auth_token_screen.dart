@@ -32,10 +32,6 @@ class AuthTokenScreen extends StatelessWidget {
               }
             } else {
               socketService.connect();
-              //llamar solo cuando sea SAP 4HANA
-              if (Preferences.sapCode != 'SBO') {
-                orderProvider.getOrdenes();
-              }
               Future.microtask(
                 () {
                   // Navigator.pushReplacementNamed(context, LoginScreen.routeName);

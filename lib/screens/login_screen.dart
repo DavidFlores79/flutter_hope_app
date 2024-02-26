@@ -164,10 +164,6 @@ class _LoginForm extends StatelessWidget {
                     if (loginMessage == 'true') {
                       socketService.connect();
                       await oneSignalProvider.saveUpdateId();
-                      //llamar solo cuando sea SAP 4HANA
-                      if (Preferences.sapCode != 'SBO') {
-                        await pedidosProvider.getOrdenes();
-                      }
                       Future.microtask(
                         () {
                           Navigator.pushReplacement(
@@ -182,7 +178,9 @@ class _LoginForm extends StatelessWidget {
                         },
                       );
                     } else {
-                      Notifications.showSnackBar(loginMessage.toString());
+                      if (loginMessage != null && loginMessage != 'null') {
+                        Notifications.showSnackBar(loginMessage);
+                      }
                       loginForm.isLoading = false;
                     }
                   },

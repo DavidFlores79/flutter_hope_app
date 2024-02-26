@@ -44,7 +44,7 @@ class AuthService extends ChangeNotifier {
     try {
       final response = await http
           .post(url, body: json.encode(authData), headers: headers)
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 20));
       print('response ${response.body}');
 
       final Map<String, dynamic> decodedResp = json.decode(response.body);
@@ -139,7 +139,7 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
       return result;
     } catch (e) {
-      print('500: $e');
+      print('500 ***: $e');
       if (e.toString().contains('TimeoutException')) {
         Notifications.showSnackBar('Tiempo de espera agotado');
       }

@@ -43,4 +43,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+#David Flores
 key.properties
+ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme
+ios/Runner.xcodeproj/project.pbxproj
+ios/Podfile.lock
