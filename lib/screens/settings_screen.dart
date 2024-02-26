@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hope_app/models/models.dart';
+import 'package:hope_app/models/sbo/purchase_request/purchase_request_response.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/activation_screen.dart';
 import 'package:hope_app/services/services.dart';
@@ -33,7 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final sesionExpire = getFormatedDate(Preferences.expirationDate, 'hh:mm a');
     final licenseExpire =
         getFormatedDate(Preferences.licenseExp, 'MMMM dd, yyyy');
-    final socketService = Provider.of<SocketService>(context);
+    final socketService = Provider.of<SocketService>(context, listen: false);
 
     return Scaffold(
       body: SafeArea(
@@ -138,13 +140,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               backgroundColor: MaterialStateProperty.all(
                                   ThemeProvider.blueColor),
                             ),
-                            onPressed: () async {
-                              await Preferences.deleteLicence();
-                              // ignore: use_build_context_synchronously
-                              Navigator.pushReplacementNamed(
-                                  context, ActivationScreen.routeName);
-                              await Restart.restartApp();
-                            },
+                            onPressed: () => confirmDeleteLicence(context),
                             child: Text(
                               'Borrar Licencia',
                               style: TextStyle(
@@ -170,4 +166,92 @@ getFormatedDate(String string, String format) {
   final date = DateTime.parse(string);
   final timeFormat = DateFormat(format);
   return timeFormat.format(date);
+}
+
+confirmDeleteLicence(BuildContext context) {
+  final socketService = Provider.of<SocketService>(context, listen: false);
+  socketService.sendWsLog(
+    'system-log',
+    null,
+    'presionó el boton (Borrar Licencia)',
+  );
+
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Center(
+          child: Text(
+            'Eliminar Licencia',
+            style: TextStyle(
+              color: ThemeProvider.lightColor,
+              fontFamily: 'Roboto',
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+        content: const SizedBox(
+          width: double.minPositive,
+          child: Text(
+            '¿Está seguro que desea eliminar la licencia? \n\nEsto reiniciará su aplicación.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+          ),
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: ThemeProvider.lightRed,
+                  disabledForegroundColor: Colors.transparent,
+                  disabledBackgroundColor: Colors.transparent,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  // fixedSize: Size((size.width / 5), 20),
+                  foregroundColor: Colors.white,
+                  backgroundColor: ThemeProvider.blueColor,
+                  disabledForegroundColor: Colors.transparent,
+                  disabledBackgroundColor: Colors.transparent,
+                ),
+                onPressed: () async {
+                  try {
+                    await Preferences.deleteLicence();
+                    socketService.sendWsLog(
+                      'system-log',
+                      null,
+                      'borró su Licencia',
+                    );
+                    // ignore: use_build_context_synchronously
+                    Navigator.pushReplacementNamed(
+                        context, ActivationScreen.routeName);
+                    await Restart.restartApp();
+                  } catch (error) {
+                    print('Error al eliminar licencia $error');
+                  }
+                },
+                child: const Text('Confirmar'),
+              ),
+            ],
+          )
+        ],
+      );
+    },
+  );
 }

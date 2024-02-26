@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:provider/provider.dart';
 
@@ -35,6 +36,13 @@ class ModuleCard extends StatelessWidget {
 
             Navigator.pushNamed(context, ModuleScreen.routeName,
                 arguments: modulos[index]);
+            final socketService =
+                Provider.of<SocketService>(context, listen: false);
+            socketService.sendWsLog(
+              'system-log',
+              null,
+              'entró al módulo ${modulos[index].nombre} en la ruta ${modulos[index].ruta}',
+            );
           },
           child: Card(
             color: Preferences.isDarkMode

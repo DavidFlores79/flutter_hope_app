@@ -25,12 +25,15 @@ class SocketService with ChangeNotifier {
     // Dart client
     String wssToken = await storage.read(key: 'wssToken') ?? '';
     String wssServer = Preferences.wssServer;
+    User apiUser = (Preferences.apiUser != '')
+        ? User.fromJson(Preferences.apiUser)
+        : User();
 
     _socket = IO.io(wssServer, {
       'transports': ['websocket'],
       'autoConnect': true,
       // 'forceNew': true,
-      'extraHeaders': {'x-token': wssToken},
+      'extraHeaders': {'x-token': wssToken, 'x-id': apiUser.id},
     });
 
     _socket.on('connect', (_) {
@@ -48,11 +51,19 @@ class SocketService with ChangeNotifier {
     _socket.disconnect();
   }
 
-  void sendWsMessage(moduleName, type, DocumentLine data, [message = '']) {
+  void sendWsMessage(moduleName, type, data, [message = '']) {
     _socket.emit(moduleName, {
       'message': message,
       'type': type,
-      'data': data.toMap(),
+      'data': data?.toMap(),
+    });
+  }
+
+  void sendWsLog(moduleName, data, [message = '']) {
+    final User apiUser = User.fromJson(Preferences.apiUser);
+    _socket.emit(moduleName, {
+      'message': '${apiUser.nombre} ${apiUser.apellido} $message',
+      'data': data?.toMap(),
     });
   }
 }
