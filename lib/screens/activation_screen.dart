@@ -106,7 +106,8 @@ class ActivationScreen extends StatelessWidget {
 
                                 print('Resultado getLicence: $result');
                                 if (result == true) {
-                                  _navigationService.navigateTo(AuthTokenScreen.routeName);
+                                  _navigationService
+                                      .navigateTo(AuthTokenScreen.routeName);
                                 }
                               } catch (e) {
                                 Notifications.showSnackBar('Error: $e');

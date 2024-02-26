@@ -170,6 +170,7 @@ getFormatedDate(String string, String format) {
 
 confirmDeleteLicence(BuildContext context) {
   final socketService = Provider.of<SocketService>(context, listen: false);
+  final authService = Provider.of<AuthService>(context, listen: false);
   socketService.sendWsLog(
     'system-log',
     null,
@@ -231,20 +232,17 @@ confirmDeleteLicence(BuildContext context) {
                   disabledBackgroundColor: Colors.transparent,
                 ),
                 onPressed: () async {
-                  try {
-                    await Preferences.deleteLicence();
-                    socketService.sendWsLog(
-                      'system-log',
-                      null,
-                      'borró su Licencia',
-                    );
-                    // ignore: use_build_context_synchronously
-                    Navigator.pushReplacementNamed(
-                        context, ActivationScreen.routeName);
-                    await Restart.restartApp();
-                  } catch (error) {
-                    print('Error al eliminar licencia $error');
-                  }
+                  await authService.cleanSessionId();
+                  socketService.sendWsLog(
+                    'system-log',
+                    null,
+                    'borró su Licencia',
+                  );
+                  await Preferences.deleteLicence();
+                  // ignore: use_build_context_synchronously
+                  Navigator.pushReplacementNamed(
+                      context, ActivationScreen.routeName);
+                  await Restart.restartApp();
                 },
                 child: const Text('Confirmar'),
               ),

@@ -60,7 +60,9 @@ class SocketService with ChangeNotifier {
   }
 
   void sendWsLog(moduleName, data, [message = '']) {
-    final User apiUser = User.fromJson(Preferences.apiUser);
+    final User apiUser = (Preferences.apiUser != '')
+        ? User.fromJson(Preferences.apiUser)
+        : User();
     _socket.emit(moduleName, {
       'message': '${apiUser.nombre} ${apiUser.apellido} $message',
       'data': data?.toMap(),
