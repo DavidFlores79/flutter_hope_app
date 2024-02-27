@@ -275,7 +275,7 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
   }
 
   Future<List<DocumentLine>> releaseSolpeds() async {
-    isLoading = true;
+    isLoadingData = true;
     result = false;
     print('Peticion LIberar Solped - Aprobar');
     _endPoint = '/api/v1/release-purchase-request/release';
@@ -309,28 +309,35 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
       switch (response.statusCode) {
         case 200:
           result = true;
-          isLoading = false;
+          isLoadingData = false;
           print('200: Aprobar Liberar Solped ${response.body}');
-          // solpedResponse = BuscarSolpedsResponse.fromJson(response.body);
-          // Notifications.showSnackBar(
-          //     solpedResponse?.message ?? 'Registros Liberados correctamente.');
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(serverResponse!.message!);
           searchByDates();
           notifyListeners();
           break;
+        case 400:
+          isLoadingData = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(serverResponse!.message!);
+          notifyListeners();
+          print('400: ${response.body}');
+          break;
         case 401:
+          print('401: ${response.body}');
           if (!response.body.contains('code')) {
             logout();
             print('logout');
             break;
           }
-          isLoading = false;
+          isLoadingData = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
           break;
         case 404:
-          isLoading = false;
+          isLoadingData = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido.');
@@ -338,7 +345,7 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
           print('404: ${response.body}');
           break;
         case 422:
-          isLoading = false;
+          isLoadingData = false;
           result = false;
           print('422: ${response.body}');
           ValidatorResponse validatorResponse =
@@ -359,19 +366,19 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
           notifyListeners();
           break;
         case 500:
-          isLoading = false;
+          isLoadingData = false;
           print('500: ${response.body}');
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
-          isLoading = false;
+          isLoadingData = false;
           result = false;
       }
       notifyListeners();
     } catch (e) {
       print('Error $e');
-      isLoading = false;
+      isLoadingData = false;
       if (e.toString().contains('TimeoutException')) {
         Notifications.showSnackBar(
             'Tiempo de espera agotado. Favor de reintentar');
@@ -382,7 +389,7 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
   }
 
   Future<List<DocumentLine>> rejectSolpeds() async {
-    isLoading = true;
+    isLoadingData = true;
     result = false;
     print('Peticion LIberar Solped - Rechazar');
     _endPoint = '/api/v1/release-purchase-request/reject';
@@ -417,36 +424,35 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
       switch (response.statusCode) {
         case 200:
           result = true;
-          isLoading = false;
+          isLoadingData = false;
           print('200: Rechazar Solped ${response.body}');
-          // solpedResponse = BuscarSolpedsResponse.fromJson(response.body);
-          // Notifications.showSnackBar(
-          //     solpedResponse?.message ?? 'Registros Rechazados correctamente.');
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(serverResponse!.message!);
           searchByDates();
           notifyListeners();
           break;
         case 400:
-          isLoading = false;
+          isLoadingData = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido.');
+          Notifications.showSnackBar(serverResponse!.message!);
           notifyListeners();
-          print('404: ${response.body}');
+          print('400: ${response.body}');
           break;
         case 401:
+          print('401: ${response.body}');
           if (!response.body.contains('code')) {
             logout();
             print('logout');
             break;
           }
-          isLoading = false;
+          isLoadingData = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
           break;
         case 404:
-          isLoading = false;
+          isLoadingData = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido.');
@@ -454,7 +460,7 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
           print('404: ${response.body}');
           break;
         case 422:
-          isLoading = false;
+          isLoadingData = false;
           result = false;
           print('422: ${response.body}');
           ValidatorResponse validatorResponse =
@@ -474,7 +480,7 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
           Notifications.showSnackBar(messages);
           notifyListeners();
           break;
-        // isLoading = false;
+        // isLoadingData = false;
         // serverResponse = ServerResponse.fromJson(response.body);
         // Notifications.showSnackBar(
         //     serverResponse?.message ?? 'Error Desconocido.');
@@ -482,19 +488,19 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
         // print('422: ${response.body}');
         // break;
         case 500:
-          isLoading = false;
+          isLoadingData = false;
           print('500: ${response.body}');
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
-          isLoading = false;
+          isLoadingData = false;
           result = false;
       }
       notifyListeners();
     } catch (e) {
       print('Error $e');
-      isLoading = false;
+      isLoadingData = false;
       if (e.toString().contains('TimeoutException')) {
         Notifications.showSnackBar(
             'Tiempo de espera agotado. Favor de reintentar');

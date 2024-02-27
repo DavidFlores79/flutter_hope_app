@@ -33,10 +33,24 @@ class _ReleasePurchaseRequestScreenState
   }
 
   listenWSMessages(
-      dynamic data, ReleasePurchaseRequestProvider releasePurchaseRequest) {
+    dynamic data,
+    ReleasePurchaseRequestProvider releasePurchaseRequestProvider,
+  ) {
     final WebsocketMessage message = WebsocketMessage.fromMap(data);
     // print('WS: ${message.type} ${message.data!.id}');
     switch (message.type) {
+      case 'store':
+        print('WS: ${message.type} ${message.data!.id}');
+        // purchaseRequestProvider.addDocumentLine(message.data!);
+        break;
+      case 'update':
+        print('WS: ${message.type} ${message.data!.id}');
+        // purchaseRequestProvider.updateDocumentLine(message.data!);
+        break;
+      case 'delete':
+        print('WS: ${message.type} ${message.data!.id}');
+        // purchaseRequestProvider.removeDocumentLine(message.data!);
+        break;
       case 'release':
         print('WS: ${message.type} ${message.data!.id}');
         // releasePurchaseRequest.release(message.data!);
@@ -57,12 +71,17 @@ class _ReleasePurchaseRequestScreenState
     final releasePurchaseRequest =
         Provider.of<ReleasePurchaseRequestProvider>(context);
     final documentLines = releasePurchaseRequest.documentLines;
-    releasePurchaseRequest.linesSelected = [];
     final List<int> linesSelected = releasePurchaseRequest.linesSelected;
     final orientation = MediaQuery.of(context).orientation;
 
     socketService.socket.on(
         'purchase-request',
+        (data) => listenWSMessages(
+              data,
+              releasePurchaseRequestProvider,
+            ));
+    socketService.socket.on(
+        'release-purchase-request',
         (data) => listenWSMessages(
               data,
               releasePurchaseRequestProvider,
@@ -88,40 +107,66 @@ class _ReleasePurchaseRequestScreenState
                             color: ThemeProvider.blueColor,
                           ),
                         )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: ListView(
-                                children: documentLines!.map((line) {
-                                  print('Line ${line.id}');
-                                  return SelectablePurchaseRequestCard(
-                                    isSelected:
-                                        (linesSelected.contains(line.id))
-                                            ? true
-                                            : false,
-                                    documentLine: line,
-                                  );
-                                }).toList(),
+                      : (documentLines!.isEmpty)
+                          ? GestureDetector(
+                              onTap: () => releasePurchaseRequestProvider
+                                  .searchByDates(),
+                              child: EmptyContainer(
+                                assetImage:
+                                    'assets/images/modules/order-tracking.png',
+                                text:
+                                    'No hay Solicitudes de Pedido disponibles.\nToca para refrescar',
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
-                              child: Row(
-                                children: [
-                                  _RejectPurchaseRequestButton(),
-                                  _ReleasePurchaseRequestButton(),
-                                ],
-                              ),
-                            ),
-                          ],
-                        )
+                            )
+                          : PurchaseRequestList(
+                              documentLines: documentLines,
+                              linesSelected: linesSelected)
                   : EmptyContainer(
                       assetImage: 'assets/images/icons/portrait.png',
                       text:
                           'Coloque el dispositivo en posición VERTICAL para una mejor experiencia.');
         },
       ),
+    );
+  }
+}
+
+class PurchaseRequestList extends StatelessWidget {
+  const PurchaseRequestList({
+    super.key,
+    required this.documentLines,
+    required this.linesSelected,
+  });
+
+  final List<DocumentLine>? documentLines;
+  final List<int> linesSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: ListView(
+            children: documentLines!.map((line) {
+              print('Line ${line.id}');
+              return SelectablePurchaseRequestCard(
+                isSelected: (linesSelected.contains(line.id)) ? true : false,
+                documentLine: line,
+              );
+            }).toList(),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: Row(
+            children: [
+              _RejectPurchaseRequestButton(),
+              _ReleasePurchaseRequestButton(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
