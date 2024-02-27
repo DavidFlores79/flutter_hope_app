@@ -24,6 +24,8 @@ class ModuleScreen extends StatelessWidget {
         Provider.of<VerificacionFacturaMiroProvider>(context, listen: true);
     final monitorInvTiendaProvider =
         Provider.of<MonitorInventarioTiendaProvider>(context);
+    final releasePurchaseRequestProvider =
+        Provider.of<ReleasePurchaseRequestProvider>(context);
 
     List<ModuleScreenDTO> items = [
       ModuleScreenDTO(
@@ -111,7 +113,10 @@ class ModuleScreen extends StatelessWidget {
       ModuleScreenDTO(
         label: 'Liberar Solicitud de Compra',
         route: ReleasePurchaseRequestScreen.routeName,
-        widget: const ReleasePurchaseRequestScreen(),
+        widget: ReleasePurchaseRequestScreen(),
+        icon: FontAwesomeIcons.calendar,
+        onPressedCallback: (BuildContext context) =>
+            showDatesModal(context, releasePurchaseRequestProvider),
       ),
       //****************** SAP BUSINESS ONE *********************
     ];

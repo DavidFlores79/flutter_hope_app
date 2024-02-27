@@ -99,6 +99,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<PurchaseRequestProvider>(
           create: (context) => PurchaseRequestProvider(),
         ),
+        ChangeNotifierProvider<ReleasePurchaseRequestProvider>(
+          create: (context) => ReleasePurchaseRequestProvider(),
+        ),
         ChangeNotifierProvider<SBOItemProvider>(
           create: (context) => SBOItemProvider(),
         ),
@@ -164,7 +167,7 @@ class MyApp extends StatelessWidget {
         PurchaseRequestScreen.routeName: (context) =>
             const PurchaseRequestScreen(),
         ReleasePurchaseRequestScreen.routeName: (context) =>
-            const ReleasePurchaseRequestScreen(),
+            ReleasePurchaseRequestScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );
