@@ -208,3 +208,57 @@ class StorePurchaseReqResponse {
         "data": data?.toMap(),
       };
 }
+
+class PurchaseRequestRejectedResponse {
+  int? code;
+  String? status;
+  String? message;
+  List<DocumentLine>? data;
+  List<int>? solpedRejected;
+  List<int>? solpedSelected;
+
+  PurchaseRequestRejectedResponse({
+    this.code,
+    this.status,
+    this.message,
+    this.data,
+    this.solpedRejected,
+    this.solpedSelected,
+  });
+
+  factory PurchaseRequestRejectedResponse.fromJson(String str) =>
+      PurchaseRequestRejectedResponse.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory PurchaseRequestRejectedResponse.fromMap(Map<String, dynamic> json) =>
+      PurchaseRequestRejectedResponse(
+        code: json["code"],
+        status: json["status"],
+        message: json["message"],
+        data: json["data"] == null
+            ? []
+            : List<DocumentLine>.from(
+                json["data"]!.map((x) => DocumentLine.fromMap(x))),
+        solpedRejected: json["solped_rejected"] == null
+            ? []
+            : List<int>.from(json["solped_rejected"]!.map((x) => x)),
+        solpedSelected: json["solped_selected"] == null
+            ? []
+            : List<int>.from(json["solped_selected"]!.map((x) => x)),
+      );
+
+  Map<String, dynamic> toMap() => {
+        "code": code,
+        "status": status,
+        "message": message,
+        "data":
+            data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
+        "solped_rejected": solpedRejected == null
+            ? []
+            : List<dynamic>.from(solpedRejected!.map((x) => x)),
+        "solped_selected": solpedSelected == null
+            ? []
+            : List<dynamic>.from(solpedSelected!.map((x) => x)),
+      };
+}

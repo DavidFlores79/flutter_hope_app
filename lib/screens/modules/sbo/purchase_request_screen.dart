@@ -62,6 +62,33 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
     }
   }
 
+  listenWSReleaseMessages(
+    dynamic data,
+    PurchaseRequestProvider purchaseRequestProvider,
+  ) {
+    // print('Purchase Release or Reject $data');
+    try {
+      final List<DocumentLine> lines =
+          (data['data'] as List<dynamic>).map((obj) {
+        return DocumentLine.fromMap(obj as Map<String, dynamic>);
+      }).toList();
+
+      switch (data['type']) {
+        case 'release':
+          print('WS Release: ${data['type']} ${data['data']}');
+          purchaseRequestProvider.removeDocumentLines(lines);
+          break;
+        case 'reject':
+          print('WS Reject: ${data['type']} ${data['data']}');
+          purchaseRequestProvider.updateDocumentLines(lines);
+          break;
+        default:
+      }
+    } catch (e) {
+      Notifications.showSnackBar('Error WS Purchase Request: $e');
+    }
+  }
+
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _qtyController = TextEditingController();
 
@@ -77,6 +104,13 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
     socketService.socket.on(
         'purchase-request',
         (data) => listenWSMessages(
+              data,
+              purchaseRequestProvider,
+            ));
+
+    socketService.socket.on(
+        'release-purchase-request',
+        (data) => listenWSReleaseMessages(
               data,
               purchaseRequestProvider,
             ));
@@ -318,6 +352,8 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                                             .isLoading)
                                         ? null
                                         : () async {
+                                            socketService.sendWsLog(
+                                                'Solicitud de Compra - Presionó el boton Guardar.');
                                             if (!purchaseRequestProvider
                                                 .isValidForm()) return;
                                             purchaseRequestProvider.isLoading =
@@ -480,6 +516,8 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
             ),
             TextButton(
               onPressed: () async {
+                socketService.sendWsLog(
+                    'Solicitud de Compra - Presionó el boton Eliminar.');
                 print('Eliminar! ${documentLine.id}');
                 final result = await purchaseRequestProvider
                     .deleteSolped(documentLine.id!);
@@ -517,7 +555,7 @@ class PurchaseRequestCard extends StatelessWidget {
     final fechaSolicitud = Preferences.formatDate(line.requestedAt!);
 
     return GestureDetector(
-      onTap: () => editarSolped(context, line),
+      onTap: () => editPurchaseRequest(context, line),
       child: ListTile(
         tileColor: (line.modified != null && line.modified != false)
             ? Colors.blue.shade100
@@ -569,8 +607,10 @@ class PurchaseRequestCard extends StatelessWidget {
                   ],
                 ),
                 StatusLabel(
-                  status: line.status!,
-                  color: (line.status!.id != 1) ? Colors.red : Colors.green,
+                  status: line.status ?? Estatus(),
+                  color: (line.status != null && line.status!.id != 1)
+                      ? Colors.red
+                      : Colors.green,
                 ),
               ],
             ),
@@ -592,7 +632,7 @@ class PurchaseRequestCard extends StatelessWidget {
   }
 }
 
-editarSolped(context, DocumentLine line) {
+editPurchaseRequest(context, DocumentLine line) {
   final purchaseRequestProvider =
       Provider.of<PurchaseRequestProvider>(context, listen: false);
   final socketService = Provider.of<SocketService>(context, listen: false);
@@ -605,7 +645,7 @@ editarSolped(context, DocumentLine line) {
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20.0))),
         title: const Text(
-          "Editar Pedido",
+          "Editar Solicitud",
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
         ),
@@ -624,6 +664,11 @@ editarSolped(context, DocumentLine line) {
           ),
           TextButton(
             onPressed: () async {
+              socketService.sendWsLog(
+                  'Solicitud de Compra - Presionó el boton Actualizar');
+              Future.microtask(
+                () => Navigator.pop(context),
+              );
               final result = await purchaseRequestProvider.updateSolped(line);
               if (result) {
                 socketService.sendWsMessage(
@@ -636,10 +681,6 @@ editarSolped(context, DocumentLine line) {
                   'Pedido de Compra Actualizado',
                 );
               }
-
-              Future.microtask(
-                () => Navigator.pop(context),
-              );
             },
             child: const Text(
               "Actualizar",

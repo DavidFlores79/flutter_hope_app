@@ -171,11 +171,7 @@ getFormatedDate(String string, String format) {
 confirmDeleteLicence(BuildContext context) {
   final socketService = Provider.of<SocketService>(context, listen: false);
   final authService = Provider.of<AuthService>(context, listen: false);
-  socketService.sendWsLog(
-    'system-log',
-    null,
-    'presionó el boton (Borrar Licencia)',
-  );
+  socketService.sendWsLog('presionó el boton (Borrar Licencia)');
 
   return showDialog(
     context: context,
@@ -233,11 +229,7 @@ confirmDeleteLicence(BuildContext context) {
                 ),
                 onPressed: () async {
                   await authService.cleanSessionId();
-                  socketService.sendWsLog(
-                    'system-log',
-                    null,
-                    'borró su Licencia',
-                  );
+                  socketService.sendWsLog('borró su Licencia');
                   await Preferences.deleteLicence();
                   // ignore: use_build_context_synchronously
                   Navigator.pushReplacementNamed(

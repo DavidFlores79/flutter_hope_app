@@ -23,6 +23,9 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
   ServerResponse? serverResponse;
   bool result = false;
   PurchaseRequestResponse? purchaseRequestResponse;
+  PurchaseRequestRejectedResponse? rejectedResponse;
+  List<DocumentLine>? purchaseRequestRejected;
+  List<DocumentLine>? purchaseRequestReleased;
   List<DocumentLine>? documentLines = [];
   List<int> linesSelected = [];
   String _motivoRechazo = '';
@@ -59,6 +62,7 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
     result = false;
     print('Release Purchase Request - Search');
     _endPoint = '/api/v1/release-purchase-request/search-by-date';
+    linesSelected = [];
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -169,6 +173,7 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
     result = false;
     print('Release Purchase Request - Search');
     _endPoint = '/api/v1/release-purchase-request/search-by-date';
+    linesSelected = [];
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -274,7 +279,7 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
     return documentLines!;
   }
 
-  Future<List<DocumentLine>> releaseSolpeds() async {
+  Future<bool> releaseSolpeds() async {
     isLoadingData = true;
     result = false;
     print('Peticion LIberar Solped - Aprobar');
@@ -311,9 +316,10 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
           result = true;
           isLoadingData = false;
           print('200: Aprobar Liberar Solped ${response.body}');
-          serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(serverResponse!.message!);
-          searchByDates();
+          rejectedResponse =
+              PurchaseRequestRejectedResponse.fromJson(response.body);
+          purchaseRequestReleased = rejectedResponse!.data;
+          Notifications.showSnackBar(rejectedResponse!.message!);
           notifyListeners();
           break;
         case 400:
@@ -376,6 +382,7 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
           result = false;
       }
       notifyListeners();
+      return result;
     } catch (e) {
       print('Error $e');
       isLoadingData = false;
@@ -385,10 +392,10 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
       }
       notifyListeners();
     }
-    return documentLines!;
+    return result;
   }
 
-  Future<List<DocumentLine>> rejectSolpeds() async {
+  Future<bool> rejectSolpeds() async {
     isLoadingData = true;
     result = false;
     print('Peticion LIberar Solped - Rechazar');
@@ -426,9 +433,10 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
           result = true;
           isLoadingData = false;
           print('200: Rechazar Solped ${response.body}');
-          serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(serverResponse!.message!);
-          searchByDates();
+          rejectedResponse =
+              PurchaseRequestRejectedResponse.fromJson(response.body);
+          purchaseRequestRejected = rejectedResponse!.data;
+          Notifications.showSnackBar(rejectedResponse!.message!);
           notifyListeners();
           break;
         case 400:
@@ -498,6 +506,7 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
           result = false;
       }
       notifyListeners();
+      return result;
     } catch (e) {
       print('Error $e');
       isLoadingData = false;
@@ -507,7 +516,81 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
       }
       notifyListeners();
     }
-    return documentLines ?? [];
+
+    return result;
+  }
+
+  void updateDocumentLine(DocumentLine updatedLine) {
+    updatedLine.quantity =
+        double.parse(updatedLine.quantity!).toStringAsFixed(3);
+    updatedLine.modified = true;
+    int index = documentLines!.indexWhere((line) => line.id == updatedLine.id);
+
+    if (index != -1) {
+      documentLines![index] = updatedLine;
+      notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
+    }
+  }
+
+  void addDocumentLine(DocumentLine createdLine) {
+    int index = documentLines!.indexWhere((line) => line.id == createdLine.id);
+    if (index == -1) {
+      print('lo agrego');
+      final DateTime requestedAt = DateTime.parse(createdLine.requestedAt!);
+      final DateTime date1 = DateTime.parse(fecha1);
+      final DateTime date2 = DateTime.parse(fecha2);
+
+      print(' req: $requestedAt date1: $date1 date2: $date2');
+
+      if ((requestedAt.isAfter(date1) && requestedAt.isBefore(date2)) ||
+          requestedAt.isAtSameMomentAs(date2) ||
+          requestedAt.isAtSameMomentAs(date1)) {
+        documentLines!.add(createdLine);
+      }
+      // documentLines!.add(createdLine);
+      notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
+    }
+  }
+
+  void removeDocumentLine(DocumentLine lineToDelete) {
+    int index = documentLines!.indexWhere((line) => line.id == lineToDelete.id);
+    if (index != -1) {
+      documentLines!.removeAt(index);
+      notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
+    }
+  }
+
+  void removeDocumentLines(List<DocumentLine> linesToDelete) {
+    // Itera sobre la lista de líneas a eliminar
+    for (var lineToDelete in linesToDelete) {
+      // Encuentra el índice de la línea a eliminar
+      int index =
+          documentLines!.indexWhere((line) => line.id == lineToDelete.id);
+      if (index != -1) {
+        // Si se encuentra, elimina la línea
+        documentLines!.removeAt(index);
+      }
+    }
+    notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
+  }
+
+  void updateDocumentLines(List<DocumentLine> updatedLines) {
+    for (var updatedLine in updatedLines) {
+      // Realiza las operaciones necesarias en cada línea
+      updatedLine.quantity =
+          double.parse(updatedLine.quantity!).toStringAsFixed(3);
+      updatedLine.modified = true;
+
+      // Encuentra el índice de la línea a actualizar
+      int index =
+          documentLines!.indexWhere((line) => line.id == updatedLine.id);
+      if (index != -1) {
+        // Si se encuentra, actualiza la línea
+        documentLines![index] = updatedLine;
+      }
+    }
+
+    notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
   }
 
   logout() async {

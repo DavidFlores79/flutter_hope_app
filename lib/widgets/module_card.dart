@@ -39,8 +39,6 @@ class ModuleCard extends StatelessWidget {
             final socketService =
                 Provider.of<SocketService>(context, listen: false);
             socketService.sendWsLog(
-              'system-log',
-              null,
               'entró al módulo ${modulos[index].nombre} en la ruta ${modulos[index].ruta}',
             );
           },

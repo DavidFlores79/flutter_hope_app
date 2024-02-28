@@ -522,6 +522,39 @@ class PurchaseRequestProvider extends ChangeNotifier {
     }
   }
 
+  void removeDocumentLines(List<DocumentLine> linesToDelete) {
+    // Itera sobre la lista de líneas a eliminar
+    for (var lineToDelete in linesToDelete) {
+      // Encuentra el índice de la línea a eliminar
+      int index =
+          documentLines!.indexWhere((line) => line.id == lineToDelete.id);
+      if (index != -1) {
+        // Si se encuentra, elimina la línea
+        documentLines!.removeAt(index);
+      }
+    }
+    notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
+  }
+
+  void updateDocumentLines(List<DocumentLine> updatedLines) {
+    for (var updatedLine in updatedLines) {
+      // Realiza las operaciones necesarias en cada línea
+      updatedLine.quantity =
+          double.parse(updatedLine.quantity!).toStringAsFixed(3);
+      updatedLine.modified = true;
+
+      // Encuentra el índice de la línea a actualizar
+      int index =
+          documentLines!.indexWhere((line) => line.id == updatedLine.id);
+      if (index != -1) {
+        // Si se encuentra, actualiza la línea
+        documentLines![index] = updatedLine;
+      }
+    }
+
+    notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
+  }
+
   bool queryHasNumbers(String query) {
     // Comprueba si el String solo contiene números
     if (RegExp(r'^[0-9]+$').hasMatch(query)) {

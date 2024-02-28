@@ -32,3 +32,33 @@ class WebsocketMessage {
         "data": data?.toMap(),
       };
 }
+
+class WSDocumentLineList {
+  String? type;
+  List<DocumentLine>? data;
+
+  WSDocumentLineList({
+    this.type,
+    this.data,
+  });
+
+  factory WSDocumentLineList.fromJson(String str) =>
+      WSDocumentLineList.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory WSDocumentLineList.fromMap(Map<String, dynamic> json) =>
+      WSDocumentLineList(
+        type: json["type"],
+        data: json["data"] == null
+            ? []
+            : List<DocumentLine>.from(
+                json["data"]!.map((x) => DocumentLine.fromMap(x))),
+      );
+
+  Map<String, dynamic> toMap() => {
+        "type": type,
+        "data":
+            data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
+      };
+}

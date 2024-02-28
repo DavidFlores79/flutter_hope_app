@@ -52,20 +52,27 @@ class SocketService with ChangeNotifier {
   }
 
   void sendWsMessage(moduleName, type, data, [message = '']) {
-    _socket.emit(moduleName, {
-      'message': message,
-      'type': type,
-      'data': data?.toMap(),
-    });
+    try {
+      _socket.emit(moduleName, {
+        'message': message,
+        'type': type,
+        'data': data != null && data is! List ? data.toMap() : data,
+      });
+    } catch (e) {
+      print('*********  Error WS: $e');
+    }
   }
 
-  void sendWsLog(moduleName, data, [message = '']) {
-    final User apiUser = (Preferences.apiUser != '')
-        ? User.fromJson(Preferences.apiUser)
-        : User();
-    _socket.emit(moduleName, {
-      'message': '${apiUser.nombre} ${apiUser.apellido} $message',
-      'data': data?.toMap(),
-    });
+  void sendWsLog([message = '']) {
+    try {
+      final User apiUser = (Preferences.apiUser != '')
+          ? User.fromJson(Preferences.apiUser)
+          : User();
+      _socket.emit('system-log', {
+        'message': '${apiUser.nombre} ${apiUser.apellido} $message',
+      });
+    } catch (e) {
+      print('***********  Error WS: $e');
+    }
   }
 }
