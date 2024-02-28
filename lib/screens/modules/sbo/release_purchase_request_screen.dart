@@ -175,7 +175,7 @@ class PurchaseRequestList extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(bottom: 20),
+          padding: const EdgeInsets.only(bottom: 30, left: 15, right: 15),
           child: Row(
             children: [
               _RejectPurchaseRequestButton(),

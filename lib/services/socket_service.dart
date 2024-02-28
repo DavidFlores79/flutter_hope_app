@@ -60,6 +60,7 @@ class SocketService with ChangeNotifier {
       });
     } catch (e) {
       print('*********  Error WS: $e');
+      _socket.emit('system-log', {'message': 'E: $e'});
     }
   }
 
@@ -73,6 +74,7 @@ class SocketService with ChangeNotifier {
       });
     } catch (e) {
       print('***********  Error WS: $e');
+      _socket.emit('system-log', {'message': 'E: $e'});
     }
   }
 }

@@ -44,84 +44,88 @@ class _SelectablePurchaseRequestCardState
           ),
         ],
       ),
-      child: CheckboxListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        activeColor: ThemeProvider.blueColor,
-        controlAffinity: ListTileControlAffinity.leading,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              widget.documentLine.itemCode!,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
+      child: Card(
+        elevation: 3,
+        child: CheckboxListTile(
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          activeColor: ThemeProvider.blueColor,
+          controlAffinity: ListTileControlAffinity.leading,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                widget.documentLine.itemCode!,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            Row(
-              children: [
-                const Text(
-                  'Cant. ',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text('${widget.documentLine.quantity}'),
-              ],
-            ),
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(widget.documentLine.itemDescription!),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'Centro: ',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text('${widget.documentLine.warehouseCode}'),
-                  ],
-                ),
-                _StatusLabel(
-                  status: widget.documentLine.status!,
-                  color: (widget.documentLine.status!.id != 1)
-                      ? Colors.red
-                      : Colors.green,
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const Text(
-                  'F. Solicitud: ',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(requestedDate),
-              ],
-            ),
-          ],
-        ),
-        value: widget.isSelected,
-        onChanged: (value) {
-          setState(() {
-            widget.isSelected = value!;
-            final posicionExiste = releasePurchaseRequestProvider.linesSelected
-                .contains(widget.documentLine.id);
+              Row(
+                children: [
+                  const Text(
+                    'Cant. ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text('${widget.documentLine.quantity}'),
+                ],
+              ),
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(widget.documentLine.itemDescription!),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Text(
+                        'Centro: ',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text('${widget.documentLine.warehouseCode}'),
+                    ],
+                  ),
+                  _StatusLabel(
+                    status: widget.documentLine.status!,
+                    color: (widget.documentLine.status!.id != 1)
+                        ? Colors.red
+                        : Colors.green,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text(
+                    'F. Solicitud: ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(requestedDate),
+                ],
+              ),
+            ],
+          ),
+          value: widget.isSelected,
+          onChanged: (value) {
+            setState(() {
+              widget.isSelected = value!;
+              final posicionExiste = releasePurchaseRequestProvider
+                  .linesSelected
+                  .contains(widget.documentLine.id);
 
-            posicionExiste
-                ? releasePurchaseRequestProvider.linesSelected
-                    .remove(widget.documentLine.id)
-                : releasePurchaseRequestProvider.linesSelected
-                    .add(widget.documentLine.id!);
-          });
-          print(
-              '***************** Cuantos ${releasePurchaseRequestProvider.linesSelected.length}');
-        },
+              posicionExiste
+                  ? releasePurchaseRequestProvider.linesSelected
+                      .remove(widget.documentLine.id)
+                  : releasePurchaseRequestProvider.linesSelected
+                      .add(widget.documentLine.id!);
+            });
+            print(
+                '***************** Cuantos ${releasePurchaseRequestProvider.linesSelected.length}');
+          },
+        ),
       ),
     );
   }

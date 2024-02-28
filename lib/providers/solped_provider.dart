@@ -394,7 +394,7 @@ class SolpedProvider extends ChangeNotifier {
     };
 
     if (quantity == '') {
-      Notifications.showSnackBar('No se realizo ningún cambio');
+      Notifications.showSnackBar('No se realizó ningún cambio');
       return false;
     }
 

@@ -145,8 +145,8 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                               )
                             ],
                           ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 25),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          margin: const EdgeInsets.only(top: 20, bottom: 5),
                           child: Form(
                               key: purchaseRequestProvider.formKey,
                               child: Column(
@@ -159,7 +159,9 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                                         AutovalidateMode.onUserInteraction,
                                     decoration: InputDecorationsRounded
                                         .authInputDecorationRounded(
-                                      color: ThemeProvider.blueColor,
+                                      color: (Preferences.isDarkMode)
+                                          ? ThemeProvider.whiteColor
+                                          : ThemeProvider.blueColor,
                                       hintText: '904001526',
                                       labelText: 'Material',
                                       suffixIcon:
@@ -311,18 +313,6 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                                                           ? oldValue
                                                           : newValue;
                                                 }),
-                                                // FilteringTextInputFormatter
-                                                //     .allow(RegExp(r'[0-9.]')),
-                                                // TextInputFormatter.withFunction(
-                                                //     (oldValue, newValue) {
-                                                //   final text = newValue.text;
-                                                //   return text.isEmpty
-                                                //       ? newValue
-                                                //       : double.tryParse(text) ==
-                                                //               null
-                                                //           ? oldValue
-                                                //           : newValue;
-                                                // }),
                                               ],
                                               validator: (value) {
                                                 return (value != null &&
@@ -337,7 +327,9 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                                               },
                                               decoration: InputDecorationsRounded
                                                   .authInputDecorationRounded(
-                                                color: ThemeProvider.blueColor,
+                                                color: (Preferences.isDarkMode)
+                                                    ? ThemeProvider.whiteColor
+                                                    : ThemeProvider.blueColor,
                                                 hintText: '0',
                                                 labelText: 'Cantidad',
                                                 suffixIcon: FontAwesomeIcons
@@ -421,6 +413,7 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
                                               'Para crear una Solicitud de Compra seleccione el artículo y agregue la cantidad que desea pedir.',
                                               textAlign: TextAlign.center,
                                             ),
+                                            SizedBox(height: 15),
                                           ],
                                         )
                                       : Container(),
@@ -556,76 +549,79 @@ class PurchaseRequestCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => editPurchaseRequest(context, line),
-      child: ListTile(
-        tileColor: (line.modified != null && line.modified != false)
-            ? Colors.blue.shade100
-            : Colors.transparent,
-        minVerticalPadding: 20,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              line.itemCode!,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
+      child: Card(
+        elevation: 3,
+        child: ListTile(
+          tileColor: (line.modified != null && line.modified != false)
+              ? Colors.blue.shade100
+              : Colors.transparent,
+          minVerticalPadding: 20,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                line.itemCode!,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            Row(
-              children: [
-                const Text(
-                  'Cant. ',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text('${line.quantity}'),
-              ],
-            ),
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(line.itemDescription!),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'Almacén: ',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text('${line.warehouseCode}'),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      'Creador: ',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text('${line.createdBy}'),
-                  ],
-                ),
-                StatusLabel(
-                  status: line.status ?? Estatus(),
-                  color: (line.status != null && line.status!.id != 1)
-                      ? Colors.red
-                      : Colors.green,
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const Text(
-                  'F. Solicitud: ',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(fechaSolicitud),
-              ],
-            ),
-          ],
+              Row(
+                children: [
+                  const Text(
+                    'Cant. ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text('${line.quantity}'),
+                ],
+              ),
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(line.itemDescription!),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Text(
+                        'Almacén: ',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text('${line.warehouseCode}'),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text(
+                        'Creador: ',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text('${line.createdBy}'),
+                    ],
+                  ),
+                  StatusLabel(
+                    status: line.status ?? Estatus(),
+                    color: (line.status != null && line.status!.id != 1)
+                        ? Colors.red
+                        : Colors.green,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text(
+                    'F. Solicitud: ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(fechaSolicitud),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
