@@ -529,6 +529,9 @@ class ReleasePurchaseRequestProvider extends ChangeNotifier {
     if (index != -1) {
       documentLines![index] = updatedLine;
       notifyListeners(); // Asegurándote de notificar a los oyentes del cambio
+    } else if (updatedLine.rejectionText != null) {
+      // El elemento no existe y rejection_text no es nulo, agrégalo a la lista
+      documentLines!.add(updatedLine);
     }
   }
 
