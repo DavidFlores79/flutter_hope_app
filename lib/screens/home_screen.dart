@@ -19,9 +19,7 @@ class HomeScreen extends StatelessWidget {
     final modulosProvider =
         Provider.of<ModulosProvider>(context, listen: false);
     modulosProvider.getModulosApp();
-    if (socketService.serverStatus != ServerStatus.onLine) {
-      socketService.connect();
-    }
+    socketService.checkConnection();
     Preferences.getDeviceModel();
     // print('DeviceModel: ${Preferences.deviceModel}');
 

@@ -85,6 +85,7 @@ class _ReleasePurchaseRequestScreenState
     final releasePurchaseRequestProvider =
         Provider.of<ReleasePurchaseRequestProvider>(context);
     final socketService = Provider.of<SocketService>(context, listen: false);
+    socketService.checkConnection();
     final releasePurchaseRequest =
         Provider.of<ReleasePurchaseRequestProvider>(context);
     final documentLines = releasePurchaseRequest.documentLines;
