@@ -1,4 +1,5 @@
-export 'package:hope_app/providers/sbo/release_purchase_request_provider.dart';
+export 'package:hope_app/providers/sbo/quotations_provider.dart'; //SBO
+export 'package:hope_app/providers/sbo/release_purchase_request_provider.dart'; //SBO
 
 export 'package:hope_app/providers/consulta_stock_provider.dart';
 export 'package:hope_app/providers/inventario_tienda_provider.dart';

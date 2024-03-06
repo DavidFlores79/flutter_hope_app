@@ -88,7 +88,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
-  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_barcode_scanner: 7a1144744c28dc0c57a8de7218ffe5ec59a9e4bf
   flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
   onesignal_flutter: 2c2f01520fa953d93fad18162538cc98d6da009b
@@ -98,4 +98,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: f6ecfdb7a5c1f4cc1d476fe5ca9bcf3243fe98dd
 
-COCOAPODS: 1.14.2
+COCOAPODS: 1.13.0

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/screens/modules/sbo/quotations_screen.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/widgets/show_alert_filter_calendar.dart';
 import 'package:hope_app/widgets/widgets.dart';
@@ -117,6 +118,11 @@ class ModuleScreen extends StatelessWidget {
         icon: FontAwesomeIcons.calendar,
         onPressedCallback: (BuildContext context) =>
             showDatesModal(context, releasePurchaseRequestProvider),
+      ),
+      ModuleScreenDTO(
+        label: 'Oferta de Ventas',
+        route: QuotationsScreen.routeName,
+        widget: QuotationsScreen(),
       ),
       //****************** SAP BUSINESS ONE *********************
     ];

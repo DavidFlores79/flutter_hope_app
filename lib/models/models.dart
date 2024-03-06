@@ -1,3 +1,5 @@
+export 'package:hope_app/models/sbo/quotations/quotations_response.dart'; //SBO
+
 export 'package:hope_app/models/sbo/websocket/websocket_message_response.dart'; //SBO
 export 'package:hope_app/models/sbo/supplier/sbo_supplier_response.dart'; //SBO
 export 'package:hope_app/models/sbo/items/search_items_response.dart'; //SBO

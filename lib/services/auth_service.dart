@@ -140,6 +140,7 @@ class AuthService extends ChangeNotifier {
       return result;
     } catch (e) {
       print('500 ***: $e');
+      Notifications.showSnackBar('500 $e');
       if (e.toString().contains('TimeoutException')) {
         Notifications.showSnackBar('Tiempo de espera agotado');
       }

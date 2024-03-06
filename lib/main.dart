@@ -105,6 +105,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<SBOItemProvider>(
           create: (context) => SBOItemProvider(),
         ),
+        ChangeNotifierProvider<QuotationsProvider>(
+          create: (context) => QuotationsProvider(),
+        ),
       ],
       child: const MyApp(),
     );
@@ -168,6 +171,7 @@ class MyApp extends StatelessWidget {
             const PurchaseRequestScreen(),
         ReleasePurchaseRequestScreen.routeName: (context) =>
             ReleasePurchaseRequestScreen(),
+        QuotationsScreen.routeName: (context) => QuotationsScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );

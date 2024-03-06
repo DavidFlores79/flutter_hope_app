@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
@@ -14,11 +15,13 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mp = Provider.of<NavbarProvider>(context);
-    final modulosProvider = Provider.of<ModulosProvider>(
-      context,
-      listen: false,
-    );
+    final socketService = Provider.of<SocketService>(context, listen: false);
+    final modulosProvider =
+        Provider.of<ModulosProvider>(context, listen: false);
     modulosProvider.getModulosApp();
+    if (socketService.serverStatus != ServerStatus.onLine) {
+      socketService.connect();
+    }
     Preferences.getDeviceModel();
     // print('DeviceModel: ${Preferences.deviceModel}');
 
