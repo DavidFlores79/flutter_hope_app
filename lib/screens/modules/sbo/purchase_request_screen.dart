@@ -95,6 +95,7 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
   @override
   Widget build(BuildContext context) {
     final socketService = Provider.of<SocketService>(context, listen: false);
+    socketService.checkConnection();
     final purchaseRequestProvider =
         Provider.of<PurchaseRequestProvider>(context);
     final itemProvider = Provider.of<SBOItemProvider>(context);

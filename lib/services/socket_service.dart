@@ -51,6 +51,12 @@ class SocketService with ChangeNotifier {
     _socket.disconnect();
   }
 
+  void checkConnection() {
+    if (serverStatus != ServerStatus.onLine) {
+      connect();
+    }
+  }
+
   void sendWsMessage(moduleName, type, data, [message = '']) {
     try {
       _socket.emit(moduleName, {
