@@ -67,7 +67,8 @@ class _ReleasePurchaseRequestScreenState
       switch (data['type']) {
         case 'release':
           print('WS: ${data['type']} ${lines}');
-          releasePurchaseRequestProvider.updateDocumentLines(lines!);
+          //releasePurchaseRequestProvider.updateDocumentLines(lines!);
+          releasePurchaseRequestProvider.removeDocumentLines(lines!);
           break;
         case 'reject':
           print('WS: ${data['type']} ${lines}');
