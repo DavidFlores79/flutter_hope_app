@@ -32,16 +32,18 @@ class SocketService with ChangeNotifier {
     _socket = IO.io(wssServer, {
       'transports': ['websocket'],
       'autoConnect': true,
-      // 'forceNew': true,
+      'forceNew': true,
       'extraHeaders': {'x-token': wssToken, 'x-id': apiUser.id},
     });
 
     _socket.on('connect', (_) {
+      print('se ha conectado');
       _serverStatus = ServerStatus.onLine;
       notifyListeners();
     });
 
     _socket.on('disconnect', (_) {
+      print('se ha desconectado');
       _serverStatus = ServerStatus.offLine;
       notifyListeners();
     });
@@ -52,9 +54,23 @@ class SocketService with ChangeNotifier {
   }
 
   void checkConnection() {
-    if (serverStatus != ServerStatus.onLine) {
-      connect();
-    }
+    if (serverStatus != ServerStatus.onLine) reconnect();
+  }
+
+  void reconnect() {
+    _socket.connect();
+
+    _socket.on('connect', (_) {
+      print('se ha conectado ***');
+      _serverStatus = ServerStatus.onLine;
+      notifyListeners();
+    });
+
+    _socket.on('disconnect', (_) {
+      print('se ha desconectado ***');
+      _serverStatus = ServerStatus.offLine;
+      notifyListeners();
+    });
   }
 
   void sendWsMessage(moduleName, type, data, [message = '']) {

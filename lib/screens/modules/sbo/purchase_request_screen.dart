@@ -95,7 +95,6 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
   @override
   Widget build(BuildContext context) {
     final socketService = Provider.of<SocketService>(context, listen: false);
-    socketService.checkConnection();
     final purchaseRequestProvider =
         Provider.of<PurchaseRequestProvider>(context);
     final itemProvider = Provider.of<SBOItemProvider>(context);
@@ -120,6 +119,8 @@ class _PurchaseRequestState extends State<PurchaseRequest> {
       onRefresh: () => purchaseRequestProvider.getCatalogs(),
       child: Consumer<PurchaseRequestProvider>(
         builder: (context, purchaseRequestProvider, _) {
+          // socketService.checkConnection();
+
           return (purchaseRequestProvider.isLoading)
               ? Center(
                   child: SpinKitCubeGrid(
@@ -554,7 +555,7 @@ class PurchaseRequestCard extends StatelessWidget {
         elevation: 3,
         child: ListTile(
           tileColor: (line.modified != null && line.modified != false)
-              ? Colors.blue.shade100
+              ? Colors.blue.shade400
               : Colors.transparent,
           minVerticalPadding: 20,
           title: Row(

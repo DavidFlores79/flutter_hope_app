@@ -35,7 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final sesionExpire = getFormatedDate(Preferences.expirationDate, 'hh:mm a');
     final licenseExpire =
         getFormatedDate(Preferences.licenseExp, 'MMMM dd, yyyy');
-    final socketService = Provider.of<SocketService>(context, listen: false);
+    final socketService = Provider.of<SocketService>(context);
 
     return Scaffold(
       body: SafeArea(
@@ -120,8 +120,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 )
                               : Icon(
                                   FontAwesomeIcons.solidCircleXmark,
-                                  color: ThemeProvider.darkColor,
+                                  color: ThemeProvider.redColor,
+                                ),
+                          const SizedBox(width: 15),
+                          (socketService.serverStatus == ServerStatus.offLine)
+                              ? ElevatedButton(
+                                  style: ButtonStyle(
+                                    shape: MaterialStateProperty.all(
+                                      const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20)),
+                                      ),
+                                    ),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        ThemeProvider.aquaBlueColor),
+                                  ),
+                                  onPressed: () => {
+                                    socketService.reconnect(),
+                                    setState(() {})
+                                  },
+                                  child: Text(
+                                    'Conectar',
+                                    style: TextStyle(
+                                      color: Preferences.isDarkMode
+                                          ? ThemeProvider.whiteColor
+                                          : ThemeProvider.whiteColor,
+                                    ),
+                                  ),
                                 )
+                              : Column(
+                                  children: [
+                                    const SizedBox(width: 15),
+                                    ElevatedButton(
+                                      style: ButtonStyle(
+                                        shape: MaterialStateProperty.all(
+                                          const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20)),
+                                          ),
+                                        ),
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                ThemeProvider.redColor),
+                                      ),
+                                      onPressed: () => {
+                                        socketService.disconnect(),
+                                        setState(() {}),
+                                      },
+                                      child: Text(
+                                        'Desconectar',
+                                        style: TextStyle(
+                                          color: Preferences.isDarkMode
+                                              ? ThemeProvider.whiteColor
+                                              : ThemeProvider.whiteColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                         ],
                       ),
                       const SizedBox(
@@ -130,25 +186,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Align(
                         alignment: Alignment.center,
                         child: ElevatedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20)),
-                                ),
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                              const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
                               ),
-                              backgroundColor: MaterialStateProperty.all(
-                                  ThemeProvider.blueColor),
                             ),
-                            onPressed: () => confirmDeleteLicence(context),
-                            child: Text(
-                              'Borrar Licencia',
-                              style: TextStyle(
-                                color: Preferences.isDarkMode
-                                    ? ThemeProvider.whiteColor
-                                    : ThemeProvider.whiteColor,
-                              ),
-                            )),
+                            backgroundColor: MaterialStateProperty.all(
+                                ThemeProvider.blueColor),
+                          ),
+                          onPressed: () => confirmDeleteLicence(context),
+                          child: Text(
+                            'Borrar Licencia',
+                            style: TextStyle(
+                              color: Preferences.isDarkMode
+                                  ? ThemeProvider.whiteColor
+                                  : ThemeProvider.whiteColor,
+                            ),
+                          ),
+                        ),
                       )
                     ],
                   ),

@@ -16,10 +16,10 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final mp = Provider.of<NavbarProvider>(context);
     final socketService = Provider.of<SocketService>(context, listen: false);
+    socketService.checkConnection();
     final modulosProvider =
         Provider.of<ModulosProvider>(context, listen: false);
     modulosProvider.getModulosApp();
-    socketService.checkConnection();
     Preferences.getDeviceModel();
     // print('DeviceModel: ${Preferences.deviceModel}');
 

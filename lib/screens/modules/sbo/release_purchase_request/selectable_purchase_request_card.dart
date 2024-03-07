@@ -81,10 +81,19 @@ class _SelectablePurchaseRequestCardState
                   Row(
                     children: [
                       const Text(
-                        'Centro: ',
+                        'Almacén: ',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text('${widget.documentLine.warehouseCode}'),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text(
+                        'Creador: ',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text('${widget.documentLine.createdBy}'),
                     ],
                   ),
                   _StatusLabel(

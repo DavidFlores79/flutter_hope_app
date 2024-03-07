@@ -86,7 +86,7 @@ class _ReleasePurchaseRequestScreenState
     final releasePurchaseRequestProvider =
         Provider.of<ReleasePurchaseRequestProvider>(context);
     final socketService = Provider.of<SocketService>(context, listen: false);
-    socketService.checkConnection();
+    // socketService.checkConnection();
     final releasePurchaseRequest =
         Provider.of<ReleasePurchaseRequestProvider>(context);
     final documentLines = releasePurchaseRequest.documentLines;
@@ -128,8 +128,11 @@ class _ReleasePurchaseRequestScreenState
                         )
                       : (documentLines!.isEmpty)
                           ? GestureDetector(
-                              onTap: () => releasePurchaseRequestProvider
-                                  .searchByDates(),
+                              onTap: () => {
+                                socketService
+                                    .sendWsLog("tocó el boton Refrescar"),
+                                releasePurchaseRequestProvider.searchByDates()
+                              },
                               child: EmptyContainer(
                                 assetImage:
                                     'assets/images/modules/order-tracking.png',
