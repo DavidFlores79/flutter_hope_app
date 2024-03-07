@@ -56,7 +56,7 @@ android {
         minSdkVersion 20
         targetSdkVersion 33
         versionCode 11 //incrementar cada vez que se cambie en la PlayStore
-        versionName "1.13.3"
+        versionName "1.13.6"
         multiDexEnabled true
     }
 
