@@ -33,7 +33,12 @@ class SocketService with ChangeNotifier {
       'transports': ['websocket'],
       'autoConnect': true,
       'forceNew': true,
-      'extraHeaders': {'x-token': wssToken, 'x-id': apiUser.id},
+      'extraHeaders': {
+        'x-token': wssToken,
+        'x-id': apiUser.id,
+        'x-fullname': '${apiUser.nombre} ${apiUser.apellido}',
+        'x-mail': apiUser.email,
+      },
     });
 
     _socket.on('connect', (_) {
