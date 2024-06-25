@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 class ME21NProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _inProgress = false;
   final String _apiUrl = Preferences.apiServer;
   final String _proyectName = Preferences.projectName;
   String _endPoint = '/api/v1/mi-endpoint';
@@ -32,7 +33,15 @@ class ME21NProvider extends ChangeNotifier {
   String _claseDocumentoSelected = '';
   String _orgComprasSelected = '';
   String _centroDefault = '';
-  String gpoCompras = '200';
+  String _gpoCompras = '200';
+
+  String get gpoCompras => _gpoCompras;
+
+  set gpoCompras(String value) {
+    _gpoCompras = value;
+    notifyListeners();
+  }
+
   String almacen = '1000';
   String numeroProveedor = '';
   List<ClasesDocumento> _clases = [];
@@ -60,6 +69,11 @@ class ME21NProvider extends ChangeNotifier {
   set isLoading(value) {
     _isLoading = value;
     notifyListeners();
+  }
+
+  get inProgress => _inProgress;
+  set inProgress(value) {
+    _inProgress = value;
   }
 
   List<PedidoPos>? get posiciones => _posiciones;
@@ -127,7 +141,7 @@ class ME21NProvider extends ChangeNotifier {
 
   //Peticiones API
   Future<bool> getCatalogs() async {
-    isLoading = true;
+    inProgress = true;
     result = false;
     print('Peticion ME21N - Get Catalogs');
     _endPoint = '/api/v1/me21n';
@@ -154,7 +168,7 @@ class ME21NProvider extends ChangeNotifier {
       switch (response.statusCode) {
         case 200:
           result = true;
-          isLoading = false;
+          inProgress = false;
           print('200: Catalogs ${response.body}');
           me21nResponse = ME21NResponse.fromJson(response.body);
           centrosUsuario = me21nResponse!.centrosUsuario;
@@ -164,6 +178,8 @@ class ME21NProvider extends ChangeNotifier {
           gpoCompras = me21nResponse!.gpoCompras!;
           claseDocumentoSelected = clases.first.code!;
           centroDefault = centrosUsuario!.first.idcentro!;
+          almacen = me21nResponse!.almacen!;
+          clasesDocumentoProv = me21nResponse!.clasesProveedor!;
           notifyListeners();
           break;
         case 401:
@@ -172,7 +188,7 @@ class ME21NProvider extends ChangeNotifier {
             print('logout');
             break;
           }
-          isLoading = false;
+          inProgress = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
@@ -182,7 +198,7 @@ class ME21NProvider extends ChangeNotifier {
           );
           break;
         case 404:
-          isLoading = false;
+          inProgress = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(serverResponse?.message ?? 'Error 404.');
@@ -190,7 +206,7 @@ class ME21NProvider extends ChangeNotifier {
           print('404: ${response.body}');
           break;
         case 422:
-          isLoading = false;
+          inProgress = false;
           result = false;
           print('422: ${response.body}');
           ValidatorResponse validatorResponse =
@@ -211,19 +227,19 @@ class ME21NProvider extends ChangeNotifier {
           notifyListeners();
           break;
         case 500:
-          isLoading = false;
+          inProgress = false;
           result = false;
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
-          isLoading = false;
+          inProgress = false;
           result = false;
       }
       notifyListeners();
     } catch (e) {
       print('Error $e');
-      isLoading = false;
+      inProgress = false;
       if (e.toString().contains('TimeoutException')) {
         Notifications.showSnackBar(
             'Tiempo de espera agotado. Favor de reintentar');

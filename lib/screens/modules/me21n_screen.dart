@@ -55,6 +55,7 @@ class CreateOrder extends StatefulWidget {
 }
 
 class _CreateOrderState extends State<CreateOrder> {
+  final TextEditingController _qtyController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _searchSupplierController =
       TextEditingController();
@@ -64,6 +65,7 @@ class _CreateOrderState extends State<CreateOrder> {
   @override
   Widget build(BuildContext context) {
     final me21nProvider = Provider.of<ME21NProvider>(context);
+    final supplierProvider = Provider.of<SupplierProvider>(context);
     final materialProvider = Provider.of<MaterialProvider>(context);
 
     return Column(
@@ -112,7 +114,7 @@ class _CreateOrderState extends State<CreateOrder> {
                   children: [
                     CentrosUsuarioDrop(provider: me21nProvider),
                     const SizedBox(width: 10),
-                    _gpoCompras(gpoCompras: me21nProvider.gpoCompras),
+                    _GpoCompras(gpoCompras: me21nProvider.gpoCompras),
                     SizedBox(
                         width: (me21nProvider.clasesDocumentoProv
                                 .contains(me21nProvider.claseDocumentoSelected))
@@ -120,7 +122,7 @@ class _CreateOrderState extends State<CreateOrder> {
                             : 0),
                     (me21nProvider.clasesDocumentoProv
                             .contains(me21nProvider.claseDocumentoSelected))
-                        ? _almacen(almacen: me21nProvider.almacen)
+                        ? _Almacen(almacen: me21nProvider.almacen)
                         : Container()
                   ],
                 ),
@@ -147,7 +149,7 @@ class _CreateOrderState extends State<CreateOrder> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const _Quantity(),
+                    _Quantity(qtyController: _qtyController),
                     const SizedBox(width: 10),
                     //_addPositionButton(searchController: _searchController),
                     Expanded(
@@ -205,9 +207,8 @@ class _CreateOrderState extends State<CreateOrder> {
                             await confirmDuplicate(
                                 me21nProvider, _searchController);
                           }
-                          me21nProvider.formKey.currentState?.reset();
-                          _searchController.clear();
                           _searchSupplierMaterialController.clear();
+                          _qtyController.clear();
                           setState(() {});
                           me21nProvider.isLoading = false;
                         },
@@ -270,7 +271,7 @@ class _CreateOrderState extends State<CreateOrder> {
               }),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 25),
           child: MaterialButton(
             onPressed:
                 (me21nProvider.isLoading || me21nProvider.posiciones!.isEmpty)
@@ -288,7 +289,14 @@ class _CreateOrderState extends State<CreateOrder> {
                         //hacer la peticion al backend
                         final result = await me21nProvider.createOrder();
                         if (result) {
+                          materialProvider.materialSelected = Materials();
+                          supplierProvider.supplierSelected = Supplier();
                           me21nProvider.posiciones = [];
+                          me21nProvider.numeroProveedor = '';
+                          _searchSupplierController.clear();
+                          _searchSupplierMaterialController.clear();
+                          _qtyController.text = '';
+                          setState(() {});
                         }
                       },
             shape:
@@ -313,7 +321,7 @@ class _CreateOrderState extends State<CreateOrder> {
             ),
           ),
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -365,7 +373,6 @@ class _CreateOrderState extends State<CreateOrder> {
             ),
             TextButton(
               onPressed: () async {
-                me21nProvider.formKey.currentState?.reset();
                 _searchController.clear();
                 setState(() {
                   me21nProvider.posiciones?.add(
@@ -408,6 +415,7 @@ class _CreateOrderState extends State<CreateOrder> {
     final me21nProvider = Provider.of<ME21NProvider>(context, listen: false);
     // Configurar el valor inicial solo la primera vez que se construye el widget
     _searchSupplierController.text = me21nProvider.numeroProveedor;
+    me21nProvider.getCatalogs();
   }
 }
 
@@ -565,18 +573,30 @@ class OrgComprasDropdown extends StatelessWidget {
   }
 }
 
-class _gpoCompras extends StatelessWidget {
+class _GpoCompras extends StatefulWidget {
   final String gpoCompras;
 
-  const _gpoCompras({super.key, required this.gpoCompras});
+  const _GpoCompras({super.key, required this.gpoCompras});
+
+  @override
+  State<_GpoCompras> createState() => _GpoComprasState();
+}
+
+class _GpoComprasState extends State<_GpoCompras> {
+  final textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final me21nProvider = Provider.of<ME21NProvider>(context);
+    Future.delayed(const Duration(milliseconds: 500), () {
+      textController.text = me21nProvider.gpoCompras;
+    });
+
     return Expanded(
       child: TextFormField(
         readOnly: true,
         textAlign: TextAlign.center,
-        initialValue: gpoCompras,
+        controller: textController,
         decoration: InputDecorationsRounded.authInputDecorationRounded(
           hintText: '',
           labelText: 'GpoCompras',
@@ -587,10 +607,10 @@ class _gpoCompras extends StatelessWidget {
   }
 }
 
-class _almacen extends StatelessWidget {
+class _Almacen extends StatelessWidget {
   final String almacen;
 
-  const _almacen({super.key, required this.almacen});
+  const _Almacen({super.key, required this.almacen});
 
   @override
   Widget build(BuildContext context) {
@@ -760,14 +780,15 @@ class _SearchSupplierMaterialState extends State<SearchSupplierMaterial> {
 }
 
 class _Quantity extends StatefulWidget {
-  const _Quantity({super.key});
+  final TextEditingController qtyController;
+
+  const _Quantity({super.key, required this.qtyController});
 
   @override
   State<_Quantity> createState() => __QuantityState();
 }
 
 class __QuantityState extends State<_Quantity> {
-  final TextEditingController _qtyController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final me21nProvider = Provider.of<ME21NProvider>(context);
@@ -776,7 +797,7 @@ class __QuantityState extends State<_Quantity> {
       flex: 2,
       child: TextFormField(
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        controller: _qtyController,
+        controller: widget.qtyController,
         keyboardType: TextInputType.number,
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
@@ -957,19 +978,3 @@ class __addPositionButtonState extends State<_addPositionButton> {
     );
   }
 }
-
-// DropdownMenu<String>(
-// initialSelection: clasesDocumento.first.code,
-// onSelected: (String? value) {
-//   // This is called when the user selects an item.
-//   me21nProvider.claseDocumentoSelected = value!;
-//   print('Value: $value');
-// },
-// dropdownMenuEntries: clasesDocumento
-//     .map<DropdownMenuEntry<String>>((ClaseDocumento value) {
-//   return DropdownMenuEntry<String>(
-//     value: value.code,
-//     label: value.name,
-//   );
-// }).toList(),
-// ),

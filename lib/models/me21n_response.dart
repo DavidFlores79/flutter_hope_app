@@ -14,6 +14,8 @@ class ME21NResponse {
   List<ClasesDocumento>? clasesDocumento;
   List<OrgCompras>? orgCompras;
   String? gpoCompras;
+  String? almacen;
+  List<String>? clasesProveedor;
 
   ME21NResponse({
     this.code,
@@ -22,6 +24,8 @@ class ME21NResponse {
     this.clasesDocumento,
     this.orgCompras,
     this.gpoCompras,
+    this.almacen,
+    this.clasesProveedor,
   });
 
   factory ME21NResponse.fromJson(String str) =>
@@ -45,6 +49,10 @@ class ME21NResponse {
             : List<OrgCompras>.from(
                 json["org_compras"]!.map((x) => OrgCompras.fromMap(x))),
         gpoCompras: json["gpo_compras"],
+        almacen: json["almacen"],
+        clasesProveedor: json["clases_proveedor"] == null
+            ? []
+            : List<String>.from(json["clases_proveedor"]!.map((x) => x)),
       );
 
   Map<String, dynamic> toMap() => {
@@ -60,6 +68,10 @@ class ME21NResponse {
             ? []
             : List<dynamic>.from(orgCompras!.map((x) => x.toMap())),
         "gpo_compras": gpoCompras,
+        "almacen": almacen,
+        "clases_proveedor": clasesProveedor == null
+            ? []
+            : List<String>.from(clasesProveedor!.map((x) => x)),
       };
 }
 
