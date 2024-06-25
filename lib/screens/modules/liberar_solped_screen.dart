@@ -20,7 +20,7 @@ class LiberarSolpedScreen extends StatelessWidget {
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () => liberarSolpedProvider.searchByDates(),
+        onRefresh: () => onRefresh(liberarSolpedProvider),
         child: FutureBuilder<List<Posicion>>(
           // Llamada al método async desde el Provider
           future: (futureExecuted != true)
@@ -34,7 +34,11 @@ class LiberarSolpedScreen extends StatelessWidget {
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 150),
                   height: 250,
-                  child: const CupertinoActivityIndicator(),
+                  child: Center(
+                    child: SpinKitCubeGrid(
+                      color: ThemeProvider.blueColor,
+                    ),
+                  ),
                 ),
               );
             }
@@ -44,7 +48,8 @@ class LiberarSolpedScreen extends StatelessWidget {
                 liberarSolpedProvider.posicionesSelected;
             futureExecuted = true;
 
-            return (liberarSolpedProvider.isLoading)
+            return (liberarSolpedProvider.isLoading ||
+                    liberarSolpedProvider.inProgress)
                 ? Center(
                     child: SpinKitCubeGrid(
                       color: ThemeProvider.blueColor,
@@ -52,19 +57,26 @@ class LiberarSolpedScreen extends StatelessWidget {
                   )
                 : (pedidos.isEmpty)
                     ? GestureDetector(
-                      onTap: () => liberarSolpedProvider.searchByDates(),
-                      child: EmptyContainer(
-                          assetImage: 'assets/images/modules/order-tracking.png',
+                        onTap: () => liberarSolpedProvider.searchByDates(),
+                        child: EmptyContainer(
+                          assetImage:
+                              'assets/images/modules/order-tracking.png',
                           text:
                               'No hay Solicitudes de Pedido disponibles.\nToca para refrescar',
                         ),
-                    )
+                      )
                     : SolpedList(
                         pedidos: pedidos, idsSeleccionados: idsSeleccionados);
           },
         ),
       ),
     );
+  }
+
+  onRefresh(LiberarSolpedProvider liberarSolpedProvider) async {
+    liberarSolpedProvider.inProgress = true;
+    await liberarSolpedProvider.searchByDates();
+    liberarSolpedProvider.inProgress = false;
   }
 }
 

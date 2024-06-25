@@ -16,6 +16,7 @@ import 'package:intl/intl.dart';
 class LiberarSolpedProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _inProgress = false;
   final String _apiUrl = Preferences.apiServer;
   final String _proyectName = Preferences.projectName;
   String _endPoint = '/api/v1/mi-endpoint';
@@ -55,6 +56,12 @@ class LiberarSolpedProvider extends ChangeNotifier {
   get isLoading => _isLoading;
   set isLoading(value) {
     _isLoading = value;
+  }
+
+  get inProgress => _inProgress;
+  set inProgress(value) {
+    _inProgress = value;
+    notifyListeners();
   }
 
   bool isValidForm() {
@@ -172,7 +179,7 @@ class LiberarSolpedProvider extends ChangeNotifier {
   }
 
   Future<List<Posicion>> releaseSolpeds() async {
-    isLoading = true;
+    inProgress = true;
     result = false;
     print('Peticion LIberar Solped - Aprobar');
     _endPoint = '/api/v1/liberarsolped/aprobar';
@@ -206,7 +213,7 @@ class LiberarSolpedProvider extends ChangeNotifier {
       switch (response.statusCode) {
         case 200:
           result = true;
-          isLoading = false;
+          inProgress = false;
           print('200: Aprobar Liberar Solped ${response.body}');
           solpedResponse = BuscarSolpedsResponse.fromJson(response.body);
           Notifications.showSnackBar(
@@ -220,14 +227,14 @@ class LiberarSolpedProvider extends ChangeNotifier {
             print('logout');
             break;
           }
-          isLoading = false;
+          inProgress = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
           break;
         case 404:
-          isLoading = false;
+          inProgress = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido.');
@@ -235,7 +242,7 @@ class LiberarSolpedProvider extends ChangeNotifier {
           print('404: ${response.body}');
           break;
         case 422:
-          isLoading = false;
+          inProgress = false;
           result = false;
           print('422: ${response.body}');
           ValidatorResponse validatorResponse =
@@ -256,19 +263,19 @@ class LiberarSolpedProvider extends ChangeNotifier {
           notifyListeners();
           break;
         case 500:
-          isLoading = false;
+          inProgress = false;
           print('500: ${response.body}');
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
-          isLoading = false;
+          inProgress = false;
           result = false;
       }
       notifyListeners();
     } catch (e) {
       print('Error $e');
-      isLoading = false;
+      inProgress = false;
       if (e.toString().contains('TimeoutException')) {
         Notifications.showSnackBar(
             'Tiempo de espera agotado. Favor de reintentar');
@@ -279,7 +286,7 @@ class LiberarSolpedProvider extends ChangeNotifier {
   }
 
   Future<List<Posicion>> rejectSolpeds() async {
-    isLoading = true;
+    inProgress = true;
     result = false;
     print('Peticion LIberar Solped - Rechazar');
     _endPoint = '/api/v1/liberarsolped/rechazar';
@@ -314,7 +321,7 @@ class LiberarSolpedProvider extends ChangeNotifier {
       switch (response.statusCode) {
         case 200:
           result = true;
-          isLoading = false;
+          inProgress = false;
           print('200: Rechazar Solped ${response.body}');
           solpedResponse = BuscarSolpedsResponse.fromJson(response.body);
           Notifications.showSnackBar(
@@ -323,7 +330,7 @@ class LiberarSolpedProvider extends ChangeNotifier {
           notifyListeners();
           break;
         case 400:
-          isLoading = false;
+          inProgress = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido.');
@@ -336,14 +343,14 @@ class LiberarSolpedProvider extends ChangeNotifier {
             print('logout');
             break;
           }
-          isLoading = false;
+          inProgress = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
           break;
         case 404:
-          isLoading = false;
+          inProgress = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido.');
@@ -351,7 +358,7 @@ class LiberarSolpedProvider extends ChangeNotifier {
           print('404: ${response.body}');
           break;
         case 422:
-          isLoading = false;
+          inProgress = false;
           result = false;
           print('422: ${response.body}');
           ValidatorResponse validatorResponse =
@@ -371,7 +378,7 @@ class LiberarSolpedProvider extends ChangeNotifier {
           Notifications.showSnackBar(messages);
           notifyListeners();
           break;
-        // isLoading = false;
+        // inProgress = false;
         // serverResponse = ServerResponse.fromJson(response.body);
         // Notifications.showSnackBar(
         //     serverResponse?.message ?? 'Error Desconocido.');
@@ -379,19 +386,19 @@ class LiberarSolpedProvider extends ChangeNotifier {
         // print('422: ${response.body}');
         // break;
         case 500:
-          isLoading = false;
+          inProgress = false;
           print('500: ${response.body}');
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
-          isLoading = false;
+          inProgress = false;
           result = false;
       }
       notifyListeners();
     } catch (e) {
       print('Error $e');
-      isLoading = false;
+      inProgress = false;
       if (e.toString().contains('TimeoutException')) {
         Notifications.showSnackBar(
             'Tiempo de espera agotado. Favor de reintentar');
