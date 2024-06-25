@@ -23,9 +23,7 @@ class _MigoScreenState extends State<MigoScreen> {
   @override
   Widget build(BuildContext context) {
     final migoProvider = Provider.of<MigoProvider>(context);
-    final Color myColor = ThemeProvider.lightColor;
     final orientation = MediaQuery.of(context).orientation;
-    bool response = false;
 
     return Scaffold(
       backgroundColor: Preferences.isDarkMode
@@ -94,9 +92,8 @@ class _MigoScreenState extends State<MigoScreen> {
                                             //hacer la peticion al backend
                                             //DEV: 4500002493
                                             //QA: 4500087697
-                                            response =
-                                                await migoProvider.getPedido(
-                                                    migoProvider.numeroPedido);
+                                            await migoProvider.getPedido(
+                                                migoProvider.numeroPedido);
                                           },
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
@@ -259,7 +256,7 @@ class ContabilizarButton extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
-      margin: const EdgeInsets.only(bottom: 30),
+      margin: const EdgeInsets.only(bottom: 15),
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
@@ -346,6 +343,16 @@ class _PosicionItemState extends State<_PosicionItem> {
     migoProvider.newValue = posicion.cantidadRecibida.toString();
     bool showError = false;
     var _textController = TextEditingController();
+    final FocusNode _focusNode = FocusNode();
+
+    // Espera un frame antes de seleccionar el texto
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _textController.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: _textController.text.length,
+      );
+      _focusNode.requestFocus();
+    });
 
     return showDialog(
       context: context,
@@ -459,13 +466,24 @@ class _PosicionItemState extends State<_PosicionItem> {
                       controller: _textController
                         ..text = migoProvider.newValue.toString(),
                       autofocus: true,
+                      focusNode: _focusNode,
                       autocorrect: false,
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'[0-9]+[,.]{0,1}[0-9]*'),
-                        ),
+                        if (posicion.umeComercial == 'PZA' ||
+                            posicion.umeComercial == 'Pieza')
+                          FilteringTextInputFormatter.digitsOnly
+                        else
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final text = newValue.text;
+                          return text.isEmpty
+                              ? newValue
+                              : double.tryParse(text) == null
+                                  ? oldValue
+                                  : newValue;
+                        }),
                       ],
                       textAlign: TextAlign.center,
                       onChanged: (value) => {
@@ -688,8 +706,7 @@ class _MigoOrderHeaders extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
           decoration: BoxDecoration(
-            color: const Color.fromARGB(150, 159, 213, 236),
-            borderRadius: BorderRadius.circular(10),
+            color: ThemeProvider.whiteColor,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
