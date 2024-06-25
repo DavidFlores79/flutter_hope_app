@@ -113,7 +113,11 @@ class UpdateContent extends StatelessWidget {
               initialValue: double.parse(material.cantidad!).toString(),
               keyboardType: TextInputType.number,
               inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                if (material.unidadMedida == 'PZA' ||
+                    material.unidadMedida == 'Pieza')
+                  FilteringTextInputFormatter.digitsOnly
+                else
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                 TextInputFormatter.withFunction((oldValue, newValue) {
                   final text = newValue.text;
                   return text.isEmpty
@@ -123,6 +127,17 @@ class UpdateContent extends StatelessWidget {
                           : newValue;
                 }),
               ],
+              // inputFormatters: <TextInputFormatter>[
+              //   FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+              //   TextInputFormatter.withFunction((oldValue, newValue) {
+              //     final text = newValue.text;
+              //     return text.isEmpty
+              //         ? newValue
+              //         : double.tryParse(text) == null
+              //             ? oldValue
+              //             : newValue;
+              //   }),
+              // ],
               validator: (value) {
                 return (value != null && value.isNotEmpty)
                     ? null

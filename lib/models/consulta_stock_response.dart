@@ -4,7 +4,7 @@ import 'package:hope_app/models/centros.dart';
 class ConsultaStockResponse {
   int? code;
   String? status;
-  List<Centros>? centrosUsuario;
+  List<Centro>? centrosUsuario;
   Stock? stock;
 
   ConsultaStockResponse({
@@ -26,8 +26,8 @@ class ConsultaStockResponse {
         stock: json["stock"] == null ? null : Stock.fromMap(json["stock"]),
         centrosUsuario: json["centros_usuario"] == null
             ? []
-            : List<Centros>.from(
-                json["centros_usuario"]!.map((x) => Centros.fromMap(x))),
+            : List<Centro>.from(
+                json["centros_usuario"]!.map((x) => Centro.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -41,65 +41,71 @@ class ConsultaStockResponse {
 }
 
 class Stock {
-    String? centro;
-    List<DetalleStock>? detalleStock;
+  String? centro;
+  List<DetalleStock>? detalleStock;
 
-    Stock({
-        this.centro,
-        this.detalleStock,
-    });
+  Stock({
+    this.centro,
+    this.detalleStock,
+  });
 
-    factory Stock.fromJson(String str) => Stock.fromMap(json.decode(str));
+  factory Stock.fromJson(String str) => Stock.fromMap(json.decode(str));
 
-    String toJson() => json.encode(toMap());
+  String toJson() => json.encode(toMap());
 
-    factory Stock.fromMap(Map<String, dynamic> json) => Stock(
+  factory Stock.fromMap(Map<String, dynamic> json) => Stock(
         centro: json["centro"],
-        detalleStock: json["detalle_stock"] == null ? [] : List<DetalleStock>.from(json["detalle_stock"]!.map((x) => DetalleStock.fromMap(x))),
-    );
+        detalleStock: json["detalle_stock"] == null
+            ? []
+            : List<DetalleStock>.from(
+                json["detalle_stock"]!.map((x) => DetalleStock.fromMap(x))),
+      );
 
-    Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toMap() => {
         "centro": centro,
-        "detalle_stock": detalleStock == null ? [] : List<dynamic>.from(detalleStock!.map((x) => x.toMap())),
-    };
+        "detalle_stock": detalleStock == null
+            ? []
+            : List<dynamic>.from(detalleStock!.map((x) => x.toMap())),
+      };
 }
 
 class DetalleStock {
-    String? centro;
-    String? grupoArticulo;
-    String? numeroMaterial;
-    String? descripcionMaterial;
-    int? stockLibre;
-    int? stockTransito;
+  String? centro;
+  String? grupoArticulo;
+  String? numeroMaterial;
+  String? descripcionMaterial;
+  int? stockLibre;
+  int? stockTransito;
 
-    DetalleStock({
-        this.centro,
-        this.grupoArticulo,
-        this.numeroMaterial,
-        this.descripcionMaterial,
-        this.stockLibre,
-        this.stockTransito,
-    });
+  DetalleStock({
+    this.centro,
+    this.grupoArticulo,
+    this.numeroMaterial,
+    this.descripcionMaterial,
+    this.stockLibre,
+    this.stockTransito,
+  });
 
-    factory DetalleStock.fromJson(String str) => DetalleStock.fromMap(json.decode(str));
+  factory DetalleStock.fromJson(String str) =>
+      DetalleStock.fromMap(json.decode(str));
 
-    String toJson() => json.encode(toMap());
+  String toJson() => json.encode(toMap());
 
-    factory DetalleStock.fromMap(Map<String, dynamic> json) => DetalleStock(
+  factory DetalleStock.fromMap(Map<String, dynamic> json) => DetalleStock(
         centro: json["centro"],
         grupoArticulo: json["grupo_articulo"],
         numeroMaterial: json["numero_material"],
         descripcionMaterial: json["descripcion_material"],
         stockLibre: json["stock_libre"],
         stockTransito: json["stock_transito"],
-    );
+      );
 
-    Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toMap() => {
         "centro": centro,
         "grupo_articulo": grupoArticulo,
         "numero_material": numeroMaterial,
         "descripcion_material": descripcionMaterial,
         "stock_libre": stockLibre,
         "stock_transito": stockTransito,
-    };
+      };
 }

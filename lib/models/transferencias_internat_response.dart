@@ -4,7 +4,7 @@ import 'package:hope_app/models/models.dart';
 class TransferenciasInternasResponse {
   int? code;
   String? status;
-  List<Centros>? centrosUsuario;
+  List<Centro>? centrosUsuario;
   List<OrgCompras>? orgCompras;
   String? userlog;
 
@@ -27,8 +27,8 @@ class TransferenciasInternasResponse {
         status: json["status"],
         centrosUsuario: json["centros_usuario"] == null
             ? []
-            : List<Centros>.from(
-                json["centros_usuario"]!.map((x) => Centros.fromMap(x))),
+            : List<Centro>.from(
+                json["centros_usuario"]!.map((x) => Centro.fromMap(x))),
         orgCompras: json["org_compras"] == null
             ? []
             : List<OrgCompras>.from(

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-class Centros {
+class Centro {
   int? id;
   String? idcentro;
   String? cebe;
@@ -17,7 +17,7 @@ class Centros {
   dynamic updatedAt;
   Pivot? pivot;
 
-  Centros({
+  Centro({
     this.id,
     this.idcentro,
     this.cebe,
@@ -35,11 +35,11 @@ class Centros {
     this.pivot,
   });
 
-  factory Centros.fromJson(String str) => Centros.fromMap(json.decode(str));
+  factory Centro.fromJson(String str) => Centro.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Centros.fromMap(Map<String, dynamic> json) => Centros(
+  factory Centro.fromMap(Map<String, dynamic> json) => Centro(
         id: json["id"],
         idcentro: json["idcentro"],
         cebe: json["cebe"],

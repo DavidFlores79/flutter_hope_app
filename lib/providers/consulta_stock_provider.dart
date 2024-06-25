@@ -28,7 +28,7 @@ class ConsultaStockProvider extends ChangeNotifier {
   final debouncer = Debouncer(duration: const Duration(milliseconds: 700));
   final NavigationService _navigationService = locator<NavigationService>();
   final storage = const FlutterSecureStorage();
-  List<Centros>? centrosUsuario = [];
+  List<Centro>? centrosUsuario = [];
   List<DetalleStock>? materials = [];
   List results = [];
   String _centroDefault = '';

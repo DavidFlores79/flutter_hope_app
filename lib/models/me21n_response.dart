@@ -10,7 +10,7 @@ import 'package:hope_app/models/models.dart';
 class ME21NResponse {
   int? code;
   String? status;
-  List<Centros>? centrosUsuario;
+  List<Centro>? centrosUsuario;
   List<ClasesDocumento>? clasesDocumento;
   List<OrgCompras>? orgCompras;
   String? gpoCompras;
@@ -34,8 +34,8 @@ class ME21NResponse {
         status: json["status"],
         centrosUsuario: json["centros_usuario"] == null
             ? []
-            : List<Centros>.from(
-                json["centros_usuario"]!.map((x) => Centros.fromMap(x))),
+            : List<Centro>.from(
+                json["centros_usuario"]!.map((x) => Centro.fromMap(x))),
         clasesDocumento: json["clases_documento"] == null
             ? []
             : List<ClasesDocumento>.from(json["clases_documento"]!

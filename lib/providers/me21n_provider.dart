@@ -24,7 +24,7 @@ class ME21NProvider extends ChangeNotifier {
   MaterialResponse? materialResponse;
   ME21NResponse? me21nResponse;
   CreateOrderResponse? createOrderResponse;
-  List<Centros>? centrosUsuario = [];
+  List<Centro>? centrosUsuario = [];
   List<PedidoPos>? _posiciones = [];
   List<Materials>? materials = [];
   Materials _materialSelected = Materials();
@@ -292,7 +292,8 @@ class ME21NProvider extends ChangeNotifier {
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(Preferences.truncateMessage(serverResponse?.message ?? 'Error Desconocido.'));
+          Notifications.showSnackBar(Preferences.truncateMessage(
+              serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
           print('404 ${serverResponse?.message}');
           break;

@@ -37,7 +37,7 @@ class Posicion {
   dynamic sociedad;
   String? createdAt;
   String? updatedAt;
-  Centros? centros;
+  Centro? centros;
   Estatus? estatus;
 
   Posicion({
@@ -119,7 +119,7 @@ class Posicion {
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
         centros:
-            json["centros"] == null ? null : Centros.fromMap(json["centros"]),
+            json["centros"] == null ? null : Centro.fromMap(json["centros"]),
         estatus:
             json["estatus"] == null ? null : Estatus.fromMap(json["estatus"]),
       );

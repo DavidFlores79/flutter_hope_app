@@ -11,8 +11,9 @@ class SolpedResponse {
   int? code;
   String? status;
   String? message;
-  List<Centros>? centrosUsuario;
+  List<Centro>? centrosUsuario;
   List<Posicion>? posiciones;
+  ClaseDocumento? claseDocumento;
 
   SolpedResponse({
     this.code,
@@ -20,6 +21,7 @@ class SolpedResponse {
     this.message,
     this.centrosUsuario,
     this.posiciones,
+    this.claseDocumento,
   });
 
   factory SolpedResponse.fromJson(String str) =>
@@ -33,12 +35,15 @@ class SolpedResponse {
         message: json["message"],
         centrosUsuario: json["centros_usuario"] == null
             ? []
-            : List<Centros>.from(
-                json["centros_usuario"]!.map((x) => Centros.fromMap(x))),
+            : List<Centro>.from(
+                json["centros_usuario"]!.map((x) => Centro.fromMap(x))),
         posiciones: json["posiciones"] == null
             ? []
             : List<Posicion>.from(
                 json["posiciones"]!.map((x) => Posicion.fromMap(x))),
+        claseDocumento: json["clase_documento"] == null
+            ? null
+            : ClaseDocumento.fromMap(json["clase_documento"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -51,5 +56,6 @@ class SolpedResponse {
         "posiciones": posiciones == null
             ? []
             : List<dynamic>.from(posiciones!.map((x) => x.toMap())),
+        "clase_documento": claseDocumento?.toMap(),
       };
 }

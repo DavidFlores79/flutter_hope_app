@@ -22,7 +22,7 @@ class TransferenciaInternaProvider extends ChangeNotifier {
   bool result = false;
   MaterialResponse? materialResponse;
   TransferenciasInternasResponse? transferenciasInternasResponse;
-  List<Centros>? centrosUsuario = [];
+  List<Centro>? centrosUsuario = [];
   String _centroDefault = '';
   Materials _materialSelectedFrom = Materials();
   Materials _materialSelectedTo = Materials();
@@ -132,11 +132,13 @@ class TransferenciaInternaProvider extends ChangeNotifier {
           isLoadingCatalogs = false;
           transferenciasInternasResponse =
               TransferenciasInternasResponse.fromJson(response.body);
-          centroDefault = transferenciasInternasResponse!.centrosUsuario!.first.idcentro!;
+          centroDefault =
+              transferenciasInternasResponse!.centrosUsuario!.first.idcentro!;
           orgCompras = transferenciasInternasResponse!.orgCompras!;
           orgComprasSelected = orgCompras.first.code!;
           // $scope.referencia =  $scope.centroUsuario + "965" + $scope.userlog;
-          referencia = '${centroDefault}965${transferenciasInternasResponse!.userlog!}';
+          referencia =
+              '${centroDefault}965${transferenciasInternasResponse!.userlog!}';
           transferencias = [];
           print('200: Catalogs ${response.body}');
           notifyListeners();
@@ -222,7 +224,8 @@ class TransferenciaInternaProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    final List<Map<String, dynamic>> transferenciasMap = transferencias.map((transferencia) => transferencia.toMap()).toList();
+    final List<Map<String, dynamic>> transferenciasMap =
+        transferencias.map((transferencia) => transferencia.toMap()).toList();
     print(jsonEncode(transferenciasMap));
     // isLoading = false;
     // return false;
@@ -232,8 +235,9 @@ class TransferenciaInternaProvider extends ChangeNotifier {
     try {
       isLoading = true;
 
-      final response = await http.post(url,
-          headers: headers, body: jsonEncode(transferenciasMap)).timeout(const Duration(seconds: 30));
+      final response = await http
+          .post(url, headers: headers, body: jsonEncode(transferenciasMap))
+          .timeout(const Duration(seconds: 30));
 
       switch (response.statusCode) {
         case 200:
@@ -345,7 +349,6 @@ class TransferenciaInternaProvider extends ChangeNotifier {
       Notifications.showFloatingSnackBar('Error: $e');
       return false;
     }
-
   }
 
   logout() async {

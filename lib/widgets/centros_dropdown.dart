@@ -9,8 +9,7 @@ class CentrosUsuarioDrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-    final List<Centros> centrosUsuario = (provider as dynamic).centrosUsuario;
+    final List<Centro> centrosUsuario = (provider as dynamic).centrosUsuario;
     final String centroDefault = (provider as dynamic).centroDefault;
 
     return Expanded(
@@ -46,11 +45,10 @@ class CentrosUsuarioDrop extends StatelessWidget {
         ),
         focusColor: ThemeProvider.blueColor,
         value: centroDefault,
-        onChanged:  (String? newValue) {
-                (provider as dynamic).centroDefault = newValue!;
-              }
-            ,
-        items: centrosUsuario.map<DropdownMenuItem<String>>((Centros value) {
+        onChanged: (String? newValue) {
+          (provider as dynamic).centroDefault = newValue!;
+        },
+        items: centrosUsuario.map<DropdownMenuItem<String>>((Centro value) {
           return DropdownMenuItem<String>(
             value: value.idcentro,
             child: Align(

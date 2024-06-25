@@ -25,7 +25,7 @@ class InventarioTiendaProvider extends ChangeNotifier {
   ValidateMaterialWithCenterResponse? validateMaterialCenter;
   InventarioResponse? inventarioResponse;
   bool result = false;
-  List<Centros>? centrosUsuario = [];
+  List<Centro>? centrosUsuario = [];
   List<InventarioSAP>? inventarios = [];
   String _centroDefault = '';
   String _material = '';
@@ -97,7 +97,7 @@ class InventarioTiendaProvider extends ChangeNotifier {
   }
 
   //Peticiones API
-  Future<List<Centros>> getCatalogs() async {
+  Future<List<Centro>> getCatalogs() async {
     _isLoadingCatalogs = true;
     result = false;
     print('Peticion Inventario Tienda - Get Catalogs');

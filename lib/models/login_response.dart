@@ -3,6 +3,8 @@
 
 import 'dart:convert';
 
+import 'package:hope_app/models/models.dart';
+
 class LoginResponse {
   int? code;
   String? status;
@@ -69,6 +71,7 @@ class User {
   String? lastActivity;
   String? createdAt;
   MiPerfil? miPerfil;
+  List<Centro>? centros;
 
   User({
     this.id,
@@ -91,6 +94,7 @@ class User {
     this.lastActivity,
     this.createdAt,
     this.miPerfil,
+    this.centros,
   });
 
   factory User.fromJson(String str) => User.fromMap(json.decode(str));
@@ -120,6 +124,9 @@ class User {
         miPerfil: json["mi_perfil"] == null
             ? null
             : MiPerfil.fromMap(json["mi_perfil"]),
+        centros: json["centros"] == null
+            ? []
+            : List<Centro>.from(json["centros"]!.map((x) => Centro.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -143,6 +150,9 @@ class User {
         "last_activity": lastActivity,
         "created_at": createdAt,
         "mi_perfil": miPerfil?.toMap(),
+        "centros": centros == null
+            ? []
+            : List<dynamic>.from(centros!.map((x) => x.toMap())),
       };
 }
 

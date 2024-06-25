@@ -45,13 +45,12 @@ class MainMaterialSearchDelegate extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     final materialProvider =
         Provider.of<MaterialProvider>(context, listen: false);
-    const centroDefault = '0040';
 
     if (query.isEmpty) {
       return const emptyContainer();
     }
 
-    materialProvider.getMaterialsByQuery(query, centroDefault, moduleName);
+    materialProvider.getMaterialsByQuery(query, moduleName);
 
     return StreamBuilder(
       stream: materialProvider.materialStream,

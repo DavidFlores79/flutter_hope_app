@@ -44,8 +44,7 @@ class SupplierMaterialSearchDelegate extends SearchDelegate {
         Provider.of<MaterialProvider>(context, listen: false);
     final supplierProvider =
         Provider.of<SupplierProvider>(context, listen: false);
-    final me21nProvider =
-        Provider.of<ME21NProvider>(context, listen: false);
+    final me21nProvider = Provider.of<ME21NProvider>(context, listen: false);
 
     if (query.isEmpty) {
       return const emptyContainer();
@@ -56,7 +55,9 @@ class SupplierMaterialSearchDelegate extends SearchDelegate {
           'El proveedor no ha sido seleccionado aun. No se pueden realizar búsquedas de material sin proveedor.');
     } else {
       materialProvider.getMaterialsBySupplierQuery(
-          query, supplierProvider.supplierSelected.numeroProveedor!, me21nProvider.centroDefault);
+          query,
+          supplierProvider.supplierSelected.numeroProveedor!,
+          me21nProvider.centroDefault);
     }
 
     return StreamBuilder(

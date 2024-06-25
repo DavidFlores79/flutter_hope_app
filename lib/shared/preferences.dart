@@ -25,6 +25,16 @@ class Preferences {
   static String _deviceModel = '';
   static String _sapCode = '';
   static String _wssServer = '172.17.1.45';
+  static String _defaultCenter = 'XXXX';
+
+  static String get defaultCenter {
+    return _prefs.getString('defaultCenter') ?? _defaultCenter;
+  }
+
+  static set defaultCenter(String value) {
+    _defaultCenter = value;
+    _prefs.setString('defaultCenter', value);
+  }
 
   static String get activacionServer {
     return _prefs.getString('activacionServer') ?? _activacionServer;

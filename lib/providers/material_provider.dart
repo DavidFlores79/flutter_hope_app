@@ -59,7 +59,8 @@ class MaterialProvider extends ChangeNotifier {
   }
 
   //Peticiones API
-  Future<List<Materials>> searchMaterials(String query, String centroDefault, String moduleName ) async {
+  Future<List<Materials>> searchMaterials(
+      String query, String centroDefault, String moduleName) async {
     print('Peticion API Search');
     _endPoint = '/api/v1/$moduleName/search';
     String numeroMaterial = '';
@@ -118,7 +119,8 @@ class MaterialProvider extends ChangeNotifier {
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(Preferences.truncateMessage(serverResponse?.message ?? 'Error Desconocido.'));
+          Notifications.showSnackBar(Preferences.truncateMessage(
+              serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
           print('404 ${serverResponse?.message}');
           break;
@@ -162,7 +164,8 @@ class MaterialProvider extends ChangeNotifier {
     return materials!;
   }
 
-  Future<List<Materials>> searchMaterialsBySupplier(String query, String supplier, String centroDefault) async {
+  Future<List<Materials>> searchMaterialsBySupplier(
+      String query, String supplier, String centroDefault) async {
     print('Peticion API Search Material Supplier');
     _endPoint = '/api/v1/materials/supplier';
     String numeroMaterial = '';
@@ -224,7 +227,8 @@ class MaterialProvider extends ChangeNotifier {
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(Preferences.truncateMessage(serverResponse?.message ?? 'Error Desconocido.'));
+          Notifications.showSnackBar(Preferences.truncateMessage(
+              serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
           print('404 ${serverResponse?.message}');
           break;
@@ -268,7 +272,8 @@ class MaterialProvider extends ChangeNotifier {
     return materials!;
   }
 
-  Future<List<Materials>> searchTransferMaterials(String query, bool esDe) async {
+  Future<List<Materials>> searchTransferMaterials(
+      String query, bool esDe) async {
     print('Peticion Transferencias Search Material');
     _endPoint = '/api/v1/transferenciasinternas/search';
     String numeroMaterial = '';
@@ -329,7 +334,8 @@ class MaterialProvider extends ChangeNotifier {
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(Preferences.truncateMessage(serverResponse?.message ?? 'Error Desconocido.'));
+          Notifications.showSnackBar(Preferences.truncateMessage(
+              serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
           print('404 ${serverResponse?.message}');
           break;
@@ -373,11 +379,15 @@ class MaterialProvider extends ChangeNotifier {
     return materials!;
   }
 
-  void getMaterialsByQuery(String query, String centroDefault, String moduleName) {
+  void getMaterialsByQuery(String query, String moduleName) {
     debouncer.value = '';
     debouncer.onValue = (value) async {
-      print('hay valor a buscar $value');
-      final results = await searchMaterials(value, centroDefault, moduleName);
+      final centro = Preferences.defaultCenter;
+      if (centro == 'XXXX') {
+        Notifications.showSnackBar(
+            'El usuario no cuenta con Centros asignados');
+      }
+      final results = await searchMaterials(value, centro, moduleName);
       _materialStreamController.add(results);
     };
 
@@ -390,11 +400,13 @@ class MaterialProvider extends ChangeNotifier {
     );
   }
 
-  void getMaterialsBySupplierQuery(String query, String supplier, String centroDefault) {
+  void getMaterialsBySupplierQuery(
+      String query, String supplier, String centroDefault) {
     debouncer.value = '';
     debouncer.onValue = (value) async {
       print('hay valor a buscar $value');
-      final results = await searchMaterialsBySupplier(query, supplier, centroDefault );
+      final results =
+          await searchMaterialsBySupplier(query, supplier, centroDefault);
       _materialStreamController.add(results);
     };
 
@@ -438,5 +450,4 @@ class MaterialProvider extends ChangeNotifier {
     Preferences.apiUser = '';
     _navigationService.navigateTo(LoginScreen.routeName);
   }
-
 }

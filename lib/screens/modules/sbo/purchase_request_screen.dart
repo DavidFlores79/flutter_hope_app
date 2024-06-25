@@ -800,15 +800,6 @@ class UpdateContent extends StatelessWidget {
                           ? oldValue
                           : newValue;
                 }),
-                // FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                // TextInputFormatter.withFunction((oldValue, newValue) {
-                //   final text = newValue.text;
-                //   return text.isEmpty
-                //       ? newValue
-                //       : double.tryParse(text) == null
-                //           ? oldValue
-                //           : newValue;
-                // }),
               ],
               validator: (value) {
                 return (value != null && value.isNotEmpty)

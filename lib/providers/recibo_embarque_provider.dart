@@ -23,7 +23,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
   ServerResponse? serverResponse;
   ReciboEmbarqueResponse? reciboEmbarqueResponse;
   bool result = false;
-  List<Centros>? centrosUsuario = [];
+  List<Centro>? centrosUsuario = [];
   List<Embarque>? embarques = [];
   String _centroDefault = '';
   String palletCaptured = '';
@@ -56,7 +56,7 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
   }
 
   //Peticiones API
-  Future<List<Centros>> getCatalogs() async {
+  Future<List<Centro>> getCatalogs() async {
     _isLoadingCatalogs = true;
     result = false;
     print('Peticion ReciboEmbarque - Get Catalogs');
@@ -108,7 +108,8 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
           _isLoadingCatalogs = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showFloatingSnackBar(serverResponse?.message ?? 'Error 404.');
+          Notifications.showFloatingSnackBar(
+              serverResponse?.message ?? 'Error 404.');
           notifyListeners();
           print('404: ${response.body}');
           break;
@@ -262,15 +263,18 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    embarqueSelected.horaInicio = (embarqueSelected.id != null) ? DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(embarqueSelected.horaInicio!)) : DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
+    embarqueSelected.horaInicio = (embarqueSelected.id != null)
+        ? DateFormat('yyyy-MM-dd HH:mm')
+            .format(DateTime.parse(embarqueSelected.horaInicio!))
+        : DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
     print(embarqueSelected.toJson());
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
-    
+
     try {
       isLoading = true;
 
-    final response = await http
+      final response = await http
           .post(url, headers: headers, body: embarqueSelected.toJson())
           .timeout(const Duration(seconds: 30));
 
@@ -278,7 +282,8 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
         case 200:
           isLoading = false;
           print('200: ${response.body}');
-          reciboEmbarqueResponse = ReciboEmbarqueResponse.fromJson(response.body);
+          reciboEmbarqueResponse =
+              ReciboEmbarqueResponse.fromJson(response.body);
           embarqueSelected = reciboEmbarqueResponse!.dato!;
           notifyListeners();
           print('embarque guardado ${embarqueSelected.id}');
@@ -363,10 +368,10 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       // Si encontramos el pallet, actualizamos su estatus a "DESCARGADO"
       foundPallet.estatus = 'DESCARGADO';
       final result = await guardarEmbarque();
-      if(result) {
-          Notifications.showFloatingSnackBar(
-              'Pallet $palletCaptured fue Descargado correctamente.');
-          notifyListeners(); // Notificamos a los oyentes que el estado ha cambiado
+      if (result) {
+        Notifications.showFloatingSnackBar(
+            'Pallet $palletCaptured fue Descargado correctamente.');
+        notifyListeners(); // Notificamos a los oyentes que el estado ha cambiado
       } else {
         foundPallet.estatus = null;
       }
@@ -392,7 +397,8 @@ class ReciboEmbarqueProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    embarqueSelected.horaInicio = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(embarqueSelected.horaInicio!));
+    embarqueSelected.horaInicio = DateFormat('yyyy-MM-dd HH:mm:ss')
+        .format(DateTime.parse(embarqueSelected.horaInicio!));
     print('******** EMBARQUE A CONTABILIZAR **********');
     print(embarqueSelected.toJson());
 

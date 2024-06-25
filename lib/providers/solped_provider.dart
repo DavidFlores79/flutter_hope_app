@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 
 class SolpedProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  bool _inProgress = false;
   bool _isLoading = false;
   final String _apiUrl = Preferences.apiServer;
   final String _proyectName = Preferences.projectName;
@@ -23,9 +24,9 @@ class SolpedProvider extends ChangeNotifier {
   bool result = false;
   SolpedResponse? solpedResponse;
   MaterialResponse? materialResponse;
-  List<Centros>? centrosUsuario = [];
-  String centroDefault = '';
-  String claseDocumento = 'ZADQ';
+  List<Centro>? centrosUsuario = [];
+  String centroDefault = Preferences.defaultCenter;
+  String claseDocumento = 'NB';
   List<Posicion>? posiciones = [];
   List<Posiciones> posicionesSelected = [];
   List<Materials>? materials = [];
@@ -59,6 +60,12 @@ class SolpedProvider extends ChangeNotifier {
   get isLoading => _isLoading;
   set isLoading(value) {
     _isLoading = value;
+  }
+
+  get inProgress => _inProgress;
+  set inProgress(value) {
+    _inProgress = value;
+    notifyListeners();
   }
 
   bool isValidForm() {
@@ -96,8 +103,11 @@ class SolpedProvider extends ChangeNotifier {
           solpedResponse = SolpedResponse.fromJson(response.body);
           posiciones = solpedResponse?.posiciones;
           centrosUsuario = solpedResponse?.centrosUsuario;
+          claseDocumento = solpedResponse?.claseDocumento?.code ?? 'NB';
+
           if (centrosUsuario != null) {
             centroDefault = centrosUsuario![0].idcentro!;
+            print('CentroDefault $centroDefault');
           }
           notifyListeners();
           break;
