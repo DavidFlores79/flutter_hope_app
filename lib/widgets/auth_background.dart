@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/services/services.dart';
+import 'package:hope_app/shared/preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:restart_app/restart_app.dart';
 
 class AuthBackground extends StatelessWidget {
   final Widget child;
@@ -64,10 +70,88 @@ class LogoBrand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      width: 150,
-      height: 50,
-      child: Image(image: AssetImage('assets/hope-logo.png')),
+    return GestureDetector(
+      onLongPress: () => deleteLicence(context),
+      child: const SizedBox(
+        width: 150,
+        height: 50,
+        child: Image(image: AssetImage('assets/hope-logo.png')),
+      ),
+    );
+  }
+
+  deleteLicence(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Center(
+            child: Text(
+              'Eliminar Licencia',
+              style: TextStyle(
+                color: ThemeProvider.lightColor,
+                fontFamily: 'Roboto',
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(10.0),
+            ),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+          content: const SizedBox(
+            width: double.minPositive,
+            child: Text(
+              '¿Está seguro que desea eliminar la licencia? \n\nEsto reiniciará su aplicación.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+            ),
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: ThemeProvider.lightRed,
+                    disabledForegroundColor: Colors.transparent,
+                    disabledBackgroundColor: Colors.transparent,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Cancelar'),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    // fixedSize: Size((size.width / 5), 20),
+                    foregroundColor: Colors.white,
+                    backgroundColor: ThemeProvider.blueColor,
+                    disabledForegroundColor: Colors.transparent,
+                    disabledBackgroundColor: Colors.transparent,
+                  ),
+                  onPressed: () async {
+                    await authService.cleanSessionId();
+                    // socketService.sendWsLog('borró su Licencia');
+                    await Preferences.deleteLicence();
+                    // ignore: use_build_context_synchronously
+                    Navigator.pushReplacementNamed(
+                        context, ActivationScreen.routeName);
+                    await Restart.restartApp();
+                  },
+                  child: const Text('Confirmar'),
+                ),
+              ],
+            )
+          ],
+        );
+      },
     );
   }
 }
