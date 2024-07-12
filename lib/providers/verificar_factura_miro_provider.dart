@@ -195,6 +195,8 @@ class VerificacionFacturaMiroProvider extends ChangeNotifier {
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
     try {
+      Preferences.copyToClipboard(pedidoRequest.toJson());
+
       final response = await http
           .put(url, headers: headers, body: pedidoRequest.toJson())
           .timeout(const Duration(seconds: 30));

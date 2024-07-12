@@ -159,6 +159,7 @@ class PedidoBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final migoProvider = Provider.of<MigoProvider>(context);
     posiciones = pedido.posiciones;
 
     return Column(
@@ -239,7 +240,10 @@ class PedidoBox extends StatelessWidget {
         Expanded(
           child: ListView(
             children: posiciones.map((posicion) {
-              return _PosicionItem(posicion: posicion, isSelected: false);
+              return _PosicionItem(
+                posicion: posicion,
+                isSelected: migoProvider.posicionesSelected.contains(posicion),
+              );
             }).toList(),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -313,5 +314,9 @@ class Preferences {
     isActive = false;
     code = '';
     sapCode = '';
+  }
+
+  static void copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
   }
 }
