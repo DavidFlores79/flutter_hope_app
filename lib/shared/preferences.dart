@@ -14,6 +14,7 @@ class Preferences {
   static String _activacionRoute = '/configuraciones/public_html';
   static String _apiServer = '172.17.1.45';
   static String _projectName = '/hopesucursales/public_html222';
+  static String _apiKey = 'SXRTMGZ0MjAxNkA=';
   static bool _isActive = false;
   static String _expirationDate = '1979-04-10 00:00:00';
   static String _licenseExp = '1979-04-10 00:00:00';
@@ -80,6 +81,15 @@ class Preferences {
   static set projectName(String value) {
     _projectName = value;
     _prefs.setString('projectName', value);
+  }
+
+  static String get apiKey {
+    return _prefs.getString('apiKey') ?? _apiKey;
+  }
+
+  static set apiKey(String value){
+    _apiKey = value;
+    _prefs.setString('apiKey', value);
   }
 
   static String get apiUser {
