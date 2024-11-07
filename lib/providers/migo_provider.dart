@@ -188,9 +188,7 @@ class MigoProvider extends ChangeNotifier {
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
     try {
-      final response = await http
-          .post(url, headers: headers, body: pedidoContabilizar.toJson())
-          .timeout(const Duration(seconds: 30));
+      final response = await http.post(url, headers: headers, body: pedidoContabilizar.toJson()).timeout(const Duration(seconds: 60));
 
       switch (response.statusCode) {
         case 200:
