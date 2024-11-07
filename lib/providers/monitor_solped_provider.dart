@@ -69,7 +69,7 @@ class MonitorSolpedProvider extends ChangeNotifier {
     };
 
     Map<String, dynamic> dataRaw = {
-      'clase': 'ZADQ',
+      'clase': 'NB',
       'fecha_inicio': fecha1,
       'fecha_fin': fecha2,
     };
@@ -88,7 +88,7 @@ class MonitorSolpedProvider extends ChangeNotifier {
           result = true;
           solpedResponse = SolpedResponse.fromJson(response.body);
           pedidos = solpedResponse?.posiciones;
-          print(pedidos);
+          print('pedidos: $pedidos');
           // if (pedidos?.isNotEmpty == true) {
           //   Notifications.showSnackBar('Solpeds Encontrados');
           // } else {

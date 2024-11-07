@@ -11,6 +11,7 @@ import 'package:hope_app/ui/notifications.dart';
 class ActivationService extends ChangeNotifier {
   final String _apiUrl = Preferences.activacionServer;
   final String _proyectName = Preferences.activacionRoute;
+  final String _apiKey = Preferences.apiKey;
   bool result = false;
   final NavigationService _navigationService = locator<NavigationService>();
 
@@ -24,9 +25,14 @@ class ActivationService extends ChangeNotifier {
     final url =
         Uri.http(_apiUrl, '$_proyectName/api/v1/getLicense', activationData);
 
+  Map<String, String> headers = {
+      'X-Api-Key': _apiKey,
+    };
+    
+
     try {
       final response = await http
-          .post(url, body: json.encode(activationData))
+          .post(url, body: json.encode(activationData), headers: headers)
           .timeout(const Duration(seconds: 30));
 
       final Map<String, dynamic> decodedResp = json.decode(response.body);
